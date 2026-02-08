@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>十年 - 剧本杀</title>
+    <style>
+        :root {
+            --bg: #0d1b2a;
+            --card-bg: #1b263b;
+            --text: #e0e0e0;
+            --accent: #e63946;
+            --primary: #457b9d;
+            --secondary: #a8dadc;
+        }
+
+        body { 
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            line-height: 1.6;
+            background-image: linear-gradient(rgba(13, 27, 42, 0.9), rgba(13, 27, 42, 0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="%231b263b" stroke-width="1"/></svg>');
+        }
+        
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 15px; 
+        }
+        
+        .step-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 20px; 
+            background: var(--card-bg); 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-size: 0.85rem; 
+            border: 1px solid #2a3b5a;
+        }
+        
+        .step { 
+            color: #7d8da6; 
+            transition: 0.3s; 
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .step.active { 
+            color: var(--accent); 
+            font-weight: bold; 
+            background: rgba(230, 57, 70, 0.1);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            min-height: 300px; 
+            border: 1px solid #2a3b5a;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        
+        h1, h2 { 
+            color: var(--accent); 
+            text-align: center; 
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .game-title {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            border-bottom: 1px solid #2a3b5a;
+            padding-bottom: 15px;
+        }
+        
+        .script-text { 
+            white-space: pre-wrap; 
+            background: #14213d; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border: 1px solid #2a3b5a; 
+            margin-top: 15px; 
+            font-size: 1.05rem; 
+            text-align: justify; 
+            line-height: 1.8;
+            max-height: 500px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) #14213d;
+        }
+        
+        .script-text::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .script-text::-webkit-scrollbar-track {
+            background: #14213d;
+            border-radius: 4px;
+        }
+        
+        .script-text::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 4px;
+        }
+
+        .clue-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+        
+        @media (min-width: 600px) {
+            .clue-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .clue-card { 
+            background: #1d3557; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s;
+        }
+        
+        .clue-card:hover {
+            transform: translateX(5px);
+            background: #2a4a75;
+        }
+        
+        .clue-card .clue-number {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        select, input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            background: #0a1929; 
+            border: 1px solid #2a3b5a; 
+            color: white; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2);
+        }
+        
+        button { 
+            background: linear-gradient(135deg, var(--accent), #c1121f); 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 1rem; 
+            margin-top: 20px; 
+            transition: 0.2s; 
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        button:hover { 
+            opacity: 0.9; 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.4);
+        }
+        
+        .btn-secondary { 
+            background: linear-gradient(135deg, var(--primary), #1d3557);
+            margin-top: 10px; 
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(69, 123, 157, 0.4);
+        }
+
+        .hidden { 
+            display: none; 
+        }
+        
+        .warning { 
+            color: #f1c40f; 
+            font-size: 0.85rem; 
+            margin-top: 15px; 
+            text-align: center; 
+            padding: 10px;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #f1c40f;
+        }
+        
+        .truth-box {
+            background: linear-gradient(135deg, #14213d, #1b263b);
+            border: 1px solid var(--secondary);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(168, 218, 220, 0.1);
+        }
+        
+        .role-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .task-box {
+            background: rgba(168, 218, 220, 0.1);
+            border-left: 3px solid var(--secondary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .task-box h4 {
+            color: var(--secondary);
+            margin-top: 0;
+        }
+        
+        .player-info {
+            background: rgba(69, 123, 157, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(69, 123, 157, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="step-bar">
+        <span id="step1" class="step active">1.选择角色</span>
+        <span id="step2" class="step">2.阅读剧本</span>
+        <span id="step3" class="step">3.线索调查</span>
+        <span id="step4" class="step">4.真相揭露</span>
+    </div>
+
+    <div id="view1" class="card">
+        <h1>十年·迷雾</h1>
+        <p class="game-title">十年前的血案，五个被命运捆绑的灵魂，今夜将揭开尘封的真相</p>
+        
+        <div class="player-info">
+            <label>你的代号：</label>
+            <input type="text" id="player-name" placeholder="请输入你的昵称">
+            
+            <label>选择你的身份：</label>
+            <select id="role-select"></select>
+            
+            <div style="margin-top: 20px;">
+                <span class="role-tag">5人剧本</span>
+                <span class="role-tag">现代悬疑</span>
+                <span class="role-tag">硬核推理</span>
+                <span class="role-tag">多结局</span>
+            </div>
+        </div>
+        
+        <button onclick="toStep2()">确认身份，进入迷雾</button>
+        
+        <div class="warning">
+            ⚠️ 本剧本包含复杂的时间线与人物关系，请仔细阅读并做好笔记
+            <br>预计游戏时间：1-2小时
+        </div>
+    </div>
+
+    <div id="view2" class="card hidden">
+        <h2 id="display-role-name">角色名</h2>
+        
+        <div class="task-box">
+            <h4>📌 你的任务</h4>
+            <div id="display-tasks"></div>
+        </div>
+        
+        <div class="script-text" id="display-script">正在加载剧本...</div>
+        
+        <button onclick="toStep3()">我已读完剧本，查看线索</button>
+        
+    </div>
+
+    <div id="view3" class="card hidden">
+        <h2>线索库</h2>
+        <p style="font-size: 0.9rem; color: #a8dadc; text-align: center; margin-bottom: 20px;">
+            结合剧本与线索，找出杀害钱倩的真凶，并指认绑架的组织者
+        </p>
+        
+        <h3 style="color: var(--secondary); margin-top: 20px;">角色专属线索</h3>
+        <div id="personal-clues" class="clue-grid"></div>
+        
+        <h3 style="color: var(--secondary); margin-top: 30px;">公共线索</h3>
+        <div id="common-clues" class="clue-grid"></div>
+        
+        <button onclick="toStep4()">我已掌握关键，指认真凶</button>
+        <button class="btn-secondary" onclick="toStep2()">返回剧本</button>
+    </div>
+
+    <div id="view4" class="card hidden">
+        <h1 style="color: #f1c40f;">🔍 最终审判</h1>
+        <p style="text-align: center; color: #a8dadc;">时间已到，说出你的推理，投票指认真凶与组织者</p>
+        
+        <div class="truth-box">
+            <h3 style="color: var(--secondary);">投票阶段</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 20px;">
+                请先投票选出杀害钱倩的凶手，再投票选出绑架你们的组织者
+            </p>
+            
+            <label>你认为杀害钱倩的凶手是：</label>
+            <select id="vote-murderer">
+                <option value="">请选择...</option>
+                <option value="黄龙">黄龙</option>
+                <option value="金伟">金伟</option>
+                <option value="黎仁清">黎仁清</option>
+                <option value="汪直">汪直</option>
+                <option value="赵天虎">赵天虎</option>
+            </select>
+            
+            <label>你认为绑架的组织者是：</label>
+            <select id="vote-organizer">
+                <option value="">请选择...</option>
+                <option value="黄龙">黄龙</option>
+                <option value="金伟">金伟</option>
+                <option value="黎仁清">黎仁清</option>
+                <option value="汪直">汪直</option>
+                <option value="赵天虎">赵天虎</option>
+            </select>
+            
+            <button onclick="submitVotes()">提交投票</button>
+        </div>
+        
+        <div class="truth-box" style="margin-top: 30px;">
+            <h3 style="color: var(--secondary);">真相揭示</h3>
+            <p style="text-align: center;">完成投票后，输入解密口令查看真相</p>
+            
+            <label>解密口令：</label>
+            <input type="password" id="truth-pass" placeholder="输入暗号">
+            <button onclick="revealTruth()">揭开真相</button>
+            
+            <div id="truth-content" class="hidden" style="margin-top: 20px;">
+                <div class="script-text" id="display-truth" style="border-color: #2ecc71;"></div>
+                
+                <h3 style="color: var(--secondary); margin-top: 30px;">结局</h3>
+                <div id="display-ending" class="script-text" style="border-color: #f1c40f;"></div>
+                
+                <button class="btn-secondary" onclick="location.reload()" style="margin-top: 20px;">重新开始</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CONFIG = {
+        title: "十年·迷雾",
+        password: "666",
+        roles: {
+            "role_1": {
+                name: "黄龙",
+                tasks: "①尽力不要让别人发现你的真实身份和所作所为<br>②搞清楚任龙哥死亡的真相（不只是怎么死的，还有背后的原因）",
+                script: `【背景故事】
+你是A市最大帮派黄龙帮的头目，手下坐拥数不尽的小弟，A市黑道半壁江山都是你的人。为人豪气直爽，对手下人十分和蔼，对敌人也是毫不客气。很有人格魅力，这就是你光鲜亮丽的表面。
+ 
+实际情况究竟如何呢，你真实姓名叫黄东。你一直爱慕着住在同楼层的一个十分漂亮的女子，你知道她叫钱倩，这是你“偶遇”她并一路“贴身保护”得知的情报。而且你还得知了她有了一个男友。你很伤心，但是自己只是个邻居，又能说什么？
+ 
+你经常看到那个男友进出钱倩家门，不过平常看到更多的是钱倩和她哥哥钱大进出。
+ 
+你有一个从小就带着你的大哥，他叫任龙，为人豪爽，对你一直都很好，情同手足。
+ 
+12月22日，20:30。你如往常一样回家，在楼道口撞了一个人，对方没有道歉就急匆匆离开了，天色太黑你也看不清楚是什么人。
+ 
+上楼的路程中看到有个人跑下来，手里还拿着砍刀。你平时在道上混，也得罪了一些人，怕是来算账的，赶紧就转身逃跑了。
+ 
+跑出楼道，你凭借灵巧的身手甩掉了那个人，此时已经是20:37。
+ 
+等你到楼道口已经20:39，又看到一个影子急匆匆下楼，你觉得今晚的事不简单，抓紧回家才是正经事。
+ 
+12月23日，你被一阵急促的敲门声惊醒。你打开房门，发现外面站着几个警察，估计是来问昨晚的事的。多一事不如少一事，你借口说自己昨晚早睡觉了，发生了什么完全不清楚。那些警察简单问了几句就离开了。
+ 
+12月24日，任龙哥突然打电话来，让你去和他跑个业务。他时常带你出去赚点外快，已经习以为常。于是你和他一起来到了一个小巷，一直守着直到夜晚。
+ 
+你看到他手里有个麻袋，小巷尽头还有他准备的一辆面包车。你隐隐知道了些什么，便开口问他，任龙哥也没有回避，他说自己想绑个人，但是一个人不好绑，需要帮手。
+ 
+他向你保证不会有事，他是你最信任的人，你自然放心。晚上的时候，那个目标出现在了小巷里，这个人独臂，你们还没等看清脸就很轻松的就用麻袋套住了他，然后装到了那辆面包上。这时你发现他的金链掉到了地上，你决定顺走这条金链。
+ 
+在车上的时候，你发现任龙哥开车的方向不对，貌似要出省，你依旧忍不住问了出来。他叹了口气，才说了实话。他的金主雇他杀了这个人。不过杀人的行动不会由你来做，而是他亲自动手解决。
+ 
+已经上了贼船，想下也难。就这样车一直开到了海边，他下车带走了那个人，不久之后传来了落水声。任龙哥走了过来，告诉你不会有事的。
+ 
+12月25日，任龙哥发来了短信，让你把一段话打印出来后放在一个信封里，然后放入他发来的地址的家门信箱里。
+ 
+你看了眼地址，发现就是钱倩家，出于好奇，你看了眼信的内容。大致是让收信人去一个废弃工地去取皮包。你假装路过钱倩家，偷偷的把信扔进了门口的信箱，随即跑掉了。
+ 
+12月26日，就当你觉得一切都结束时，任龙突然打来电话，说杀人的事败露，他现在需要跑路。他说，已经给你准备好了后路。任龙给你准备的身份叫做黄龙，并且还将他一手带起的黄龙帮托付给你。你接手了黄龙帮不久，任龙在审讯时死亡的噩耗就传到了你耳朵里。
+ 
+随着时间流逝，你的行事作风越来越趋近任龙大哥，渐渐地也成为了独当一面的帮派老大。你开始觉得自己终有一日也能带领着这个帮派崛起。
+ 
+2016年12月22日，任龙大哥的忌日临近，你在自己的房间拿起当年偷出的金链，开始缅怀过去，这是你和任龙一起做过的那件事的证明，你不会忘记。
+ 
+就在这时，你的意识渐渐昏迷，再苏醒时，你发现自己被绑在一张椅子上，与你一样的还有四人，他们中有三人你好像见过，但是想不起来在哪见过。就在这时，站在你们面前的人……
+
+【戏精建议】
+你是个豪迈奔放的人，但是偶尔会流露出一丝懦弱，而且为大哥的事感到伤心。`,
+                clues: [
+                    "金链：任龙处理掉的那个人掉落的金链，被你收藏了十年",
+                    "信件：2006年12月25日，你按照任龙的指示放在钱倩家门口信箱的信",
+                    "黄龙帮：任龙在跑路前将帮派托付给你，你从此成为黄龙帮老大"
+                ]
+            },
+            "role_2": {
+                name: "金伟",
+                tasks: "①不要被发现你是这次的策划者<br>②尽力不要被发现自己当年的所作所为以及真实身份<br>③搞清楚自己的钱是怎么来的",
+                script: `【背景故事】
+你叫金伟，是一个无业游民，平时住在自己的出租屋内，不常出门，也不常与他人接触。你刚搬到这里不算太久，然而你背着一个另外的故事。
+ 
+你的真实姓名是钱大，是一个很普通人家的长子。就在你2岁那年，你的妹妹钱倩降生了，这个新生命的降生让家里增加了不少欢声笑语。
+ 
+到了情窦初开的年纪，随着身体和心智的发育，你渐渐地对这个你陪伴最长时间的家人产生了点不一样的感情。你不敢承认自己内心的这一变化。妹妹倒是一直没有找男朋友，这让你很是欣慰，就这么一直守护着她过下去，这是你当时的愿望。
+ 
+你一直和你的妹妹生活在一起，享受着这甜蜜温馨的生活。2006年，妹妹突然带回了一个男人，并且介绍说这是她的男朋友刘瑾。你很难受，但毕竟自己无权干涉。
+ 
+可是刘瑾经常前来拜访，你就不得不对他投去一点嫉妒的目光。但是在一段时间的交往中，你发现这个人真的对你们家很好，无论什么事情都很关照，你开始觉得把妹妹托付给这种负责的男人也好，自己只要还能陪她在一起就行。
+ 
+妹妹的身体开始不好，时不时地会恶心，那个男人却突然销声匿迹，再也没有出现过，而妹妹明显没有伤心的样子，还和一个没事人一样，而且就是最近，妹妹的衣着开始暴露了起来。
+ 
+从这些征兆看来，你怀疑妹妹抛弃了刘瑾，有了新欢。从这时开始，妹妹的完美形象在你心中崩塌，你开始密切关注她的行踪，每天对她进行跟踪。在跟踪之中你发现，你的妹妹攀上的是她新工作岗位的老板李东强，一个大款。你明白了妹妹为了钱背叛了爱情，心痛的你回去把自己房间所有有关妹妹的东西都撕掉了。
+ 
+2006年12月22日，你看到自己的妹妹和李东强从公司出来，坐上了李东强的车。你急忙叫了一辆出租车，让司机跟着李东强的车，为此你多支付了钱。
+ 
+此时你发现后面还有一辆车貌似在跟着，不过这种事你已经不在意了。
+ 
+20:00你发现他们的目的地是你和妹妹的家，你顿时明白了之后会怎样。你急火攻心，不能让妹妹就这么堕落下去。
+ 
+你放掉了李东强车油箱里的油，然后回家，偷偷打开家门，盯着家内的情况，看到自己妹妹和李东强聊得很开心，你就心痛。
+ 
+20：30二人的对话终于差不多结束，他们向着妹妹房间走去。你觉得自己再不去阻止一切就都完了。你先回了你自己的房间，拿出你防身用的砍刀。你随即冲进屋内，对着李东强二话不说就砍了一刀，他伸手出来挡，但你使足了全身的力气，一刀就将他的右臂砍了下来。
+ 
+李东强疼的厉声惨叫，捂住伤口，撞开你就逃跑。你没有急着去追他，而是盯着眼前这个自己曾深爱的人。你问她是不是对刘瑾变心了，她没有回答，只是恶狠狠地瞪着你。
+ 
+你已经不想管她的死活，李东强还没有死，你必须要宰了他。
+ 
+他已经跑了，20:32，你提着刀追了出去。在楼道里你碰见了一个人，看不清是谁，但他见到你拔腿就跑，你提着刀追了上去。那个人影一直在人少环境昏暗的地方跑，导致你一直在辛苦地追赶。终于跑着跑着，人不见了。
+ 
+20:36，一束车灯照来，挡住了你的路，上面下来一个警察，举起手枪叫你不要动，你看到黑洞洞的枪口，死亡的恐惧让你瞬间冷静下来，乖乖就范，随后你被关在警局里面等待审讯。
+ 
+2006年12月23日，你被人叫醒，发现周围站着几个警察，你大致知道了情况，乖乖地配合了他们，被押送至警局。在警局里，你得知了自己的妹妹已经死亡的事实，冷静下来之后伤心欲绝的你什么也没有说。
+ 
+就这样一直到了26日，你一直不肯说出任何事情，但警方却在今天把你释放了出去。这让你很是诧异，只听说好像又有一个人被关了进来。
+ 
+你离开了警局。到家以后，你发现自己的家里的信箱莫名多了一封信，因为有警察在家里调查犯罪现场，于是你偷偷取走了信，跑到别处去看。
+ 
+里面的内容是让你去某个废弃工地取个皮包，你虽然有些怀疑，但是依旧去了指定地点，果然有个皮包在那里。你确认内部，发现里面是大量的钞票，你不知道为什么自己会收到这笔钱，但是天降大运，你欣然接受了。 
+有这笔大数额的钱，你根本不用担心生活了。于是你改名金伟一直在调查妹妹的死亡真相，谋划着复仇计划。经过调查，你听说李东强已经被人所杀。
+ 
+      2016年12月15日，你得知了一个地下侦探黎仁清的存在，他非常有名，是都市传奇级的人物，你觉得有他在，一定能帮助你分析清楚当年的真相。
+ 
+在此之前，你已经搞清楚了现在都有谁是当年事件相关人：A市最大帮派黄龙帮头领黄龙，知名作家汪直，优秀警察赵天虎，但是你不知道他们的长相，也不知道他们与当年事件的联系。
+ 
+你买下了一个私人别墅，将地下改为一个监禁室，雇人把包括侦探在内的人都用迷烟迷倒，然后关在了一起。你自己也伪装成被绑架的一员，然后把剩下的事交给了雇来的一名管家。
+ 
+抓不住凶手的话，索性让所有人一起陪葬，反正你也不打算在真相揭晓后活下去。不过到了地牢，你觉得这里面的三个人你见过。而且被绑起来你才发现，你的调查记录还在口袋里，你只好把它撕的粉碎。
+
+『提示』：
+①妹妹和刘瑾分开转而投向李东强的怀抱肯定有问题，找出问题所在有助于推理。
+②你觉得藏身份的事只有你一个人会做吗？ 
+
+【戏精建议】
+你是个木讷，不太爱说话的人，但是对妹妹的爱是偏执的！`,
+                clues: [
+                    "信件：2006年12月26日出现在你家信箱的信，指引你去废弃工地取钱",
+                    "纸屑：你的调查记录，被你撕得粉碎，但还能拼凑",
+                    "别墅：你买下的私人别墅，现在成了监禁所有人的地方"
+                ]
+            },
+            "role_3": {
+                name: "黎仁清",
+                tasks: "①你是凶手，稳住心态<br>②搞清楚钱倩和刘瑾真正的关系以及他们的目的",
+                script: `【背景故事】
+你是A市的知名侦探，破获无数奇案，但是实际情况真的是这样吗？
+ 
+你实际叫李东强，是A市最大公司的董事，身价过亿，人脉极广，黑白通吃，但是心地并不坏，一切权谋都只是为了公司竞争，对待手下人也很好，属于烂好人的类型。
+ 
+2006年，你在公司认识了一个女人，叫做钱倩。她明眸皓齿，肤如凝脂，让你一眼难忘。你接近她，发现她善解人意，就像所有浪漫的爱情故事一样，你们走到了一起，你能给她全天下所有的东西，没有人比你更配得上她了。她的身体不好，经常呕吐不舒服，你也细心照料。
+ 
+12月22日，她告诉你她的家里没有人，可以去她家做客。你不会放过这个女性主动示好的机会。
+ 
+20:00从公司开车载她到达她家。
+ 
+在一番调情之后，20：30你和她步入房间，准备做点什么，一个提刀的男子却突然闯了进来，你不认识他，他不由分说就冲你的右臂砍了一刀，你大声惨叫，痛不欲生，你左手想去掩盖右臂的伤口，却发现整条右臂都已经没有了。
+ 
+你无力还击，只得丢下心爱的女人抓紧逃离。逃到楼下和一个人正好撞在一起，你没有道歉就急忙逃离。你发现自己的车油箱的油漏了出来。
+ 
+你心想周围的人看到自己这个样子估计会起疑心，车没油也回不了家，于是你往一个方向跑开躲在暗处观察情况。同时，你单手将上衣脱下，用左手和嘴巴将上衣缠在右臂残肢上，狠狠勒紧，暂时止住了血，要不过几分钟，你可能就休克过去了。这段说起来很长，但距离你断臂大约也就一分钟左右的光景，现在大约是20：32。
+ 
+这时，有个人跑出钱倩的家，后面还紧跟着一个人，这个时候是20:33，天色太黑你看不清脸，但后者拿着刀，应该就是砍你的人了。
+ 
+20:35你确信他们跑开后你上了楼。发现房门没关，你走了进去，钱倩的房间里有争吵声，你只好先躲进卫生间进一步止血，就在这时，你听到“咚”的一声，然后就是脚步声和关门声。
+ 
+正好血也止住了，你就去了钱倩房间，路上看到钱倩家门关了，进入钱倩房间看到她倒在地上，应该是晕了过去。正当你打算帮她叫救护车时，却听到她昏迷时嘴里说出的是刘瑾的名字，而且裙子有血迹。
+ 
+你怀疑自己被背叛，急火攻心，加上右臂的疼痛本就让你怒气大胜，非要杀了这个背叛玩弄你的女人解愤不可，否则你叱咤商界的英名何存？
+ 
+你一把拿过旁边的围巾，勒在钱倩的脖子上，一脚踩着围巾的一头，一只手拿着围巾的另一头，使了吃奶的力气，狠狠的把钱倩勒死了。由于用力过猛，伤口更疼了，而且失血还让你有些头晕，你把这一切都赖在了钱倩头上。不过你没完全丧失理智，还记得把围巾上的脚印拍掉。
+
+
+20:40，你逃离现场，门没有关。
+ 
+2006年12月23日，案件的事情被发现，你作为嫌疑人被传讯。在审讯时你表示自己确实是她的秘密情人，但是你和她很恩爱，而且根据现场的情况你不可能杀人。
+ 
+根据这几点，你很快被释放，但是嫌疑并未解除。正当你打算离开的时候，你被一个警察拦住，他向你询问有关了手臂的事情。
+ 
+你和他如实汇报了自己确实当晚去过现场，但是对杀人的事一无所知。不过自己掌握有一条关键线索，现在还不是说的时候。他也没有多问，只是让你离开了。
+ 
+2006年12月24日，你定好了诈死的计划，你给手底下最信任的心腹任龙打了通电话，与他商定有关假杀人的事宜。他认为自己一个人动手会被怀疑，所以会找一个不会影响计划的人。
+ 
+为了诈死，你放弃了你的大笔财富，只花了一些钱打造了一条金链，做你日后生活的来源。
+ 
+当晚你故意走进一个小巷，然后被心腹和另一人劫持，被套上麻袋绑住塞到了一辆车上。很长一段时间后，你被从麻袋里放出来，发现周围是沙滩，面前只有你的心腹任龙。他告诉你现在逃跑已经没问题了，剩下的交给他。
+ 
+你感谢了他并且对自己的所作所为开始后悔，拜托他把自己的抚恤金送给钱家，为了隐藏，你甚至用火毁掉了自己的面部，让任龙帮你进行了处理，但是你自己的金链好像丢失了，你无奈地踏上了未知的路途。
+ 
+经过数年不断地摸爬滚打，你一直披着件大衣隐藏自己没有右臂的事实，你凭借自己当年的手段重新经营起自己的事业，化名黎仁清作为一个地下侦探在暗中活跃，甚至成为都市传说。
+ 
+2016年12月15日，你收到匿名客户的一大笔钱，叫你查出四个人的行踪，第一个是A市最大帮派黄龙帮头领黄龙，第二个是知名作家汪直，第三个是一个不出名的名叫金伟的人，第四个人是优秀警察赵天虎，你依靠人脉查到了他们的行踪，并写成信交给了雇主派来的人，完成任务。
+ 
+2016年12月22日，是钱倩的十周年忌日，你打算做点什么事情纪念，于是在自己的合租公寓内拿出自己仅有的一张她的照片缅怀过去，突然你的大脑开始昏沉，晕了过去。
+ 
+再次醒来之时，你发现自己置身于一张桌子前，手脚均被束缚，和自己相同处境的还有四人，其中三个是你见过的面孔，还有一人正站在桌子前……
+
+【个人任务】
+找出钱倩和刘瑾的真正关系（不要透露这个任务）
+『提示』：
+①你的断臂和隐藏身份对你非常有利，也许可以把受伤的原因都说成当侦探留下的。断臂也表示你无法双手作案，不过所有人一开始都不知道你断臂了。
+②断臂这一点，不要轻易利用，一定要伪装成自己“想了很久”突然反应过来的，要不别人一看就觉得你早有预谋了。
+③有些线索直接指向你，虽然你一眼就能看出来是为什么，但别人需要长时间推敲才可能发现，不要心虚。
+④你可能会在接下来的交谈中听到“刘瑾”这个名字，那是你当年公司的人事部部长，但你不要暴露，因为你是黎仁清，不是李东强。
+⑤搞清楚你手下任龙是怎么帮你完成你的目的的吧。
+
+【戏精建议】
+你是个绅士的侦探，举手投足间要优雅。`,
+                clues: [
+                    "照片：你收藏的钱倩的照片，是十年来唯一的纪念",
+                    "烧伤：你的脸部有大面积烧伤，是当年毁容留下的",
+                    "大衣：你总是披着大衣，隐藏你没有右臂的事实"
+                ]
+            },
+            "role_4": {
+                name: "汪直",
+                tasks: "①想办法撇清自己和当年身份的关系，洗清刘瑾的嫌疑（洗清嫌疑后可以自爆）<br>②搞清楚钱大奇怪的目光究竟是为什么",
+                script: `【背景故事】
+你是A市的一个知名作家，发表了知名作品，在读者之间人气极高，可是你却从不在公共场合露脸，一直保持着一种神秘感，真相究竟如何呢？
+ 
+你的真实名字叫刘瑾，原本是A市最大企业的人事部部长。你是个城府很深的人。公司的董事叫李东强，他完全是一个烂好人性格的人，你非常不喜欢他，但你并没有表露出来。
+ 
+某日，你前往酒吧喝酒，在那里你认识了一个非常美丽的女子，她叫钱倩。
+ 
+经过一番交谈后，你们二人非常投缘，顺着酒意，就确立了关系，经过一段时间的交往后，你们用情侣围巾做定情信物。你得知对方有一个哥哥叫钱大，兄妹二人相依为命，一直互相扶持到现在。你很同情他们，所以对她家很好，但是偶尔去她家的时候，你总感觉钱大的目光很不对劲，但又说不出来哪里不对劲。
+ 
+经过一段时间的交往，你们已经互相摸透对方的性格习惯。就在这时，你心生一计，也许可以把李东强搞下来。于是你与钱倩商议让她面试加入公司，与李东强搭上线，尽量抓住他的把柄。钱倩确实不辜负她的本事，再加上有人力部的支持，她成功加入公司。
+ 
+2006年11月，钱倩结识了李东强，凭着美貌与智慧，很快就征服了他，你觉得可以进行下一步计划了。就在此时她告诉你她有了身孕，这让你十分惊喜，但是你又为计划担忧起来，她却表示自己能继续计划。
+ 
+2006年12月22日，计划执行的当天，你打算让她色诱李东强，然后由刘瑾偷拍现场，并且钱倩会对外宣布自己是被强暴，也就是仙人跳，这将是极大的丑闻。
+ 
+19:30刘瑾用备用钥匙进入钱倩家，抱着期待的心情在卫生间等待。
+ 
+等到20:00左右，有两个人的脚步声响起，其中有一个很明显是高跟鞋声。二人坐到客厅开始聊天，都是些很煽情的话语，这让刘瑾开始有点不爽。
+ 
+终于等到20:30，二人走向钱倩房间，你动身准备去拍照，刚要离开卫生间，却发现有人拿着一把大刀走向钱倩房间。你瞬间躲了回去，那个人明显是钱大，你屏住呼吸等待看戏。果然房间里传出了一声惨叫，然后就是急促的脚步声，之后房间里传出一个男人叫喊的声音，但是很快又停止，又是一阵急促的脚步声。
+ 
+20:34，你觉得已经安全，就走出了藏身点，来到钱倩房间，发现她一副茫然若失的样子，裙子上还有些血迹，地上有一只断臂，满屋子的血。你稍微理解了情况，颤抖地问了一句：“没了？”她突然哭了起来，什么都不顾地想要出去。你阻止了她，并且质问她刚才的情况。她突然歇斯底里起来，这让你很是恼火，与她发生了争执，争执声音很大，你害怕会吸引注意力，一番推搡之中，你失手将其推倒，她的脑袋撞到桌角倒在地上再也没有起来。你顿时慌了神，只得逃离现场，出去之后看到地上不少血，而且比起从卫生间出来时好像多了些。
+ 
+20：38你离开的时候把钱倩家的门关上了。
+ 
+     2006年12月23日，死者的消息见报，你这段时间一直躲在自家没有出门。尽量也是选择深夜去24小时便利店购物。你无法忍受这种提心吊胆的生活，终于在早上出逃，仅带着简单的御寒衣物和钱财食物就出了门，等风头过去再回来。
+ 
+     2016年六月份，经历了筹备工作和绕路欣赏风光后，你回到了最熟悉的陌生城市，开始了新的生活。你化名汪直（和刘瑾都是明代宦官），开始记述自己的见闻，写出了一篇游记发表。没想到这部作品反响极好，汪直一跃成为畅销作家，于是他开始走上写作之路。
+ 
+      2016年12月22日，你正在更新一部推理小说，为了寻找灵感，你用了当年的事件做素材，开始写作，可是写着写着就来了困意，昏了过去。等到再次醒来，你发现自己被绑在椅子上，周围有四个人和你一样处境，其中一人长得很像钱大，又好像不是，十年，人的外表可能改变，你自己也想不清楚。然后有一个人站在那里……
+『提示』：
+①搞清楚那个人究竟是不是钱大对于推理有很大帮助，
+②你逃走以后发生了什么，这件事要搞清楚。
+
+【戏精建议】
+你是一个很有理性的高冷作家，不会轻易被感情所动。`,
+                clues: [
+                    "手稿：你正在创作的推理小说《十年杀机》，以当年事件为素材",
+                    "成名作：《天朝游记》，记录了你2006年至今的游历记录",
+                    "围巾：你和钱倩的情侣围巾，其中一条可能出现在案发现场"
+                ]
+            },
+            "role_5": {
+                name: "赵天虎",
+                tasks: "坚持自己当年的判断，如果发现有推翻推理的事实出现，请相信现在的你的判断",
+                script: `【背景故事】
+你叫赵天虎，是A市优秀的人民警察，破获无数大案要案，深受人民爱戴，被誉为罪恶的克星。可是就是这样优秀的警察，也有心头挥之不去的阴霾。
+ 
+这件事从12月22日开始。你当时正好开车路过一栋大楼，看到一辆车。你本来也没觉得奇怪，路上车多得是，可是在顺了一段时间的路后你发现，有一辆出租车在跟踪那辆车。你觉得今晚的事不简单，你一路跟了过去。
+ 
+20:00的时候跟到了目的地，你在稍远的地方停了车，用车上的望远镜观察情况，一直等到 20:31，有一个人影从楼上跑了下来，撞到了一个人之后离开。
+ 
+20:33从楼上下来两个人，一个人追着另一个人在奔跑，追逐者手里好像还有一把砍刀，你觉得自己该出面了，就推算着他们的行动路线。
+ 
+20:36你成功堵住了一个人的去路，但是另一个人不见踪影，这个人手里拿着刀，你把他带回了警局，明天再审。
+ 
+12月23日，有人报案发现了一具女尸。赶到现场楼下，有血的痕迹，自己跟着的那辆车也在，附近角落里留下了一小滩血迹。走进屋内，里面的走廊也是有血的痕迹，这血迹分别延伸至卫生间和一间卧室。在卧室里发现了一具女尸，死者名字叫钱倩。
+ 
+房间里地上也有一滩血迹，还有一只断臂，看样是一只右臂。尸体脖子上缠着一条围巾，脖子的勒痕与围巾看似一致，而且看得出用了很大的力气。头部有击打痕迹，有轻微出血。她的下体处还有血迹流出，具体原因不明。她的哥哥钱大的房间里有很多被撕碎的钱倩照片，意义不明。暂时没有发现其他的物证，只能等待进一步搜查结果。
+ 
+你们在她的邻居家附近调查，但是邻居们都只是说听到了很嘈杂的声音，并没有在意。但是你们注意到一个人，她的邻居黄东在被调查的时候明显有些动摇，眼神游移，也声称自己很早就睡了觉，什么都不知道。你特别记了下这个人的长相。
+ 
+经过详细的调查，你们发现这些血迹以及那辆车和右臂来自于她的上司李东强，而且昨晚抓的人就是钱大，他手里拿着一把带血的砍刀，上面的血与李东强的血一致。审讯时，李东强的右臂确实不见了，他很配合警方的调查，对当时在案发现场供认不讳，而且根据警方的情报，死亡时间为20:30到20:40，李东强的断臂确实是在死者死之前发生，死者的死因是勒死，而且肚子还有胎儿，不过已经死亡，其他的伤痕出现原因不明。
+ 
+只有一只手的他无法作案，此事只好作罢。不过他在临走的时候说有重要的线索，只不过现在还不能说。不过你看到了他剩下的左臂上的带血的手表，不过有血也很合理。
+ 
+钱大相比之下就不配合的多，一直一言不发，就算被质问到了砍刀也一言不发，这让你们很是头疼，砍刀上只有他右手的指纹，这件事他一定脱不了干系。就算如此，什么也问不出来就只能作罢。
+ 
+死者腹里的胎儿是她和他的同公司的人刘瑾的，刘瑾刚被开除不久，警方去传唤他时，却发现他不在家，根据情况来看是出逃。在搜查刘瑾家时，你发现了凶器同款围巾，于是你以钱大若想杀人更应以砍刀杀人为由，将凶手锁定为潜逃的刘瑾，打算草草结案。
+ 
+12月25日，上层为了快速结案，将今天定为最后期限，你们继续在凶案现场——钱倩家里搜证，仍旧一无所获。就在这时，你看到黄东鬼鬼祟祟的在门口不知道在做什么。你打算上前去问话，却发现人已不知踪影。最终搜查结束，没有更多有价值的信息，上面只好把凶手锁定为正在潜逃的刘瑾，并发起了通缉。
+ 
+12月26日，正当钱大正要被问罪故意伤人时，他被保释，保释人不明。警局又接到匿名报案，说李东强被绑架，并且告知了目击地点。从现场监控来看，绑匪有两人，其中一个能辨认出来，是一个叫任龙的大混混，另一人难以辨认，但你内心里觉得这人见过。任龙被逮捕后，对绑架的事实供认不讳，而且还声称已经受雇把他扔进了海里。
+ 
+当被问及是谁雇佣的他时，他突然口吐白沫，服下嘴里藏的毒身亡。一切真相看似明了却又石沉大海。
+ 
+十年后，2016年12月22日，当你缅怀这段时光时，突然意识模糊，等到再醒来时，你发现自己被绑在一个椅子上，和自己同样处境的还有四人，其中有三人你见过，但是印象不深。这时你们一起看向了站在桌子前的人。
+
+『提示』：
+①每一个人都会对案件的推理有独到见解，但是不要把线索讲的太过清楚。第一是看有没有人会讲出与你已知线索相违背的信息，第二是防止透露的信息被某些人利用从而帮助他编造谎言。
+②说不定有人都掌握有你所没有掌握到的信息，注意一下这些信息，也要分辨真伪，加油。
+
+【戏精建议】
+你是个正义的人（大概吧），但是在自己犯过错的地方也会闪烁其词。`,
+                clues: [
+                    "配枪：你随身携带的警用配枪",
+                    "案件记录：钱倩被杀案和李东强被杀案的案件调查记录，里面的记录都少的可怜",
+                    "隐瞒证据：根据当年记者的话，当时警局有极力隐瞒过案件的细节"
+                ]
+            }
+        },
+        commonClues: [
+            "一轮线索：",
+            "1. 死者钱倩脖子上缠绕着围巾，围巾的一端有些许灰尘",
+            "2. 现场是密室，防盗铁窗完好，只有房门可以出入",
+            "3. 死者头部有一处击打伤，下体有血迹流出，量并不大",
+            "4. 死者曾被从床边拖过来，现场有拖拽痕迹",
+            "5. 死亡时间：20:30-20:40之间",
+            "",
+            "二轮线索：",
+            "1. 死者小时候有过自杀倾向，家里安装了防盗铁窗",
+            "2. 卫生间有常备药箱，因为死者曾尝试割腕",
+            "3. 李东强被杀案的凶手任龙，去过银行取过一大笔钱，钱下落不明",
+            "4. 钱大当年与银行有频繁的业务往来，而且貌似都是存钱业务",
+            "5. 保释钱大的人已经无法搜查，相关消息被销毁了",
+            "",
+            "人物特征：",
+            "1. 黎仁清的脸有大面积烧伤，总是披着大衣",
+            "2. 汪直和通缉犯刘瑾有点像",
+            "3. 黄龙带来的金链子很明显已经上了年头",
+            "4. 金伟的纸屑拼起来后是一封信，内容难以确认"
+        ],
+        truth: `【案件真相】
+
+杀害钱倩的真凶：黎仁清（李东强）
+绑架的组织者：金伟（钱大）
+
+【关键证据指向】
+1. 通向洗手间的血迹：是李东强断臂后留下的，证明他回去过现场
+2. 围巾一端的灰尘：是因为李东强一只手抓住围巾一端，另一端用脚踩住，虽然拍掉了脚印，但还是留下痕迹
+3. 死亡时间20:30-20:40：只有李东强有时间和杀机完成勒杀
+4. 李东强假死：如果没做亏心事，为什么要假死毁容？
+5. 黎仁清的断臂：被披着的大衣掩盖，而惯用手以及侦探事务所的字迹变化指向了断臂的事实
+
+【组织者推理】
+1. 别墅非常豪华，富丽堂皇，能拥有这个地方的人肯定非常富有
+2. 想知道当年真相的人应该是：警察赵天虎、爱人汪直、哥哥金伟
+3. 这几个人中能有这么多钱的，就是拿到了李东强大笔财富的金伟
+
+【完整时间线还原】
+2006年12月22日：
+• 刘瑾勾搭上了钱倩，二人秘密坠入爱河，钱倩怀了刘瑾的孩子
+• 刘瑾对于李东强不满，希望和钱倩用计搞下李东强。计划让刘瑾偷拍李东强"强暴"钱倩
+• 钱倩与李东强前往钱倩家，钱大在跟踪钱倩，赵天虎也在跟踪
+• 刘瑾藏在钱倩家卫生间待命
+• 20:00 李东强到达钱倩家
+• 20:30 李东强与钱倩准备进房间，钱大冲了进去，砍掉了李东强的右臂
+• 李东强逃跑，在外面用上衣缠绕断臂止血
+• 钱大与钱倩争执，一脚踹到了钱倩的肚子，导致钱倩流产
+• 20:32 钱大出去追李东强
+• 20:34 刘瑾进入钱倩房间，发现钱倩流产，气急败坏地推倒了钱倩，钱倩头撞到床角昏迷
+• 20:35 李东强返回钱倩家，发现门没关，钱倩房间有动静，他进屋去洗手间处理伤口
+• 20:38 刘瑾离开，关门
+• 李东强到达钱倩房间发现她昏倒，发现她流了产，并且嘴里喃喃刘瑾的名字
+• 李东强气急败坏，用围巾勒死钱倩，伪装成双手勒杀
+• 20:40 李东强逃离现场，没关门
+
+【后续发展】
+• 警局迫于压力要求早结案（任龙作梗），搜查结果草草地定为了畏罪潜逃的刘瑾
+• 李东强与手下任龙策划假谋杀，成功隐姓埋名
+• 其他人也因为自己的计划隐姓埋名
+• 十年后，化名为金伟的钱大发现了所有人的行踪，委托化名为黎仁清的李东强调查
+• 最终全员被金伟用迷烟绑架到别墅
+
+【人物真实身份】
+• 黎仁清 → 李东强（仁清二字可以组合为"倩"，李和黎谐音）
+• 金伟 → 钱大（金对应钱，伟对应大）
+• 汪直 → 刘瑾（二人都是明代宦官）
+• 黄龙 → 黄东（黄东与任龙的名字组合为黄龙）`,
+        
+        endings: {
+            "happy": `【结局1：Happy ending（两个人都抓到）】
+在黎仁清被抓的同时，管家承诺解开所有人的束缚，与此同时赵天虎冲过去制服了金伟，阻止了他的计划。最终二人都被扭送至警局，可喜可贺可喜可贺。`,
+            
+            "good": `【结局2：Good end（只抓到杀人凶手，组织者没抓到）】
+在黎仁清被抓后，管家承诺放走所有人，然后给黎仁清注射了一管液体，黎仁清在挣扎中死亡，其他人被释放。赵天虎查得组织者是金伟，带人找到金伟后，发现了他已经用凶器的同款围巾上吊自尽……`,
+            
+            "normal": `【结局3：Normal end（只抓到组织者，没抓到杀人凶手）】
+众人依旧没解开当年的谋杀之谜，就在此时，赵天虎凭借自己当警察的经验，成功解开束缚，制服管家，并且阻止了金伟的疯狂计划。警察带队带走了金伟，当年的谋杀案却石沉大海……`,
+            
+            "bad": `【结局4：Bad end（两人都没抓到）】
+时间用尽，大家依旧没找到真相，金伟突然大笑起来，吩咐管家释放毒气，众人在金伟的大笑和毒气中失去意识。`
+        }
+    };
+
+    let playerState = { roleKey: '', name: '' };
+
+    window.onload = () => {
+        document.title = CONFIG.title + " - 剧本杀";
+        const select = document.getElementById('role-select');
+        
+        for (let key in CONFIG.roles) {
+            let opt = document.createElement('option');
+            opt.value = key;
+            opt.innerText = CONFIG.roles[key].name;
+            select.appendChild(opt);
+        }
+    };
+
+    function switchView(step) {
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('view' + step).classList.remove('hidden');
+        document.getElementById('step' + step).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function toStep1() {
+        switchView(1);
+    }
+
+    function toStep2() {
+        const name = document.getElementById('player-name').value;
+        if(!name) { 
+            alert("请先输入你的昵称！"); 
+            return; 
+        }
+        
+        playerState.name = name;
+        playerState.roleKey = document.getElementById('role-select').value;
+        const roleData = CONFIG.roles[playerState.roleKey];
+        
+        document.getElementById('display-role-name').innerText = roleData.name;
+        document.getElementById('display-tasks').innerHTML = roleData.tasks;
+        document.getElementById('display-script').innerText = roleData.script;
+        
+        switchView(2);
+    }
+
+    function toStep3() {
+        const roleData = CONFIG.roles[playerState.roleKey];
+        const personalContainer = document.getElementById('personal-clues');
+        const commonContainer = document.getElementById('common-clues');
+        
+        personalContainer.innerHTML = '';
+        commonContainer.innerHTML = '';
+        
+        roleData.clues.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.innerHTML = `<span class="clue-number">${index + 1}</span>${c}`;
+            personalContainer.appendChild(div);
+        });
+        
+        CONFIG.commonClues.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.innerHTML = c.includes("线索：") ? `<strong>${c}</strong>` : c;
+            commonContainer.appendChild(div);
+        });
+        
+        switchView(3);
+    }
+
+    function toStep4() {
+        if(confirm("确定进入最终审判阶段吗？建议充分讨论后再投票！")) {
+            switchView(4);
+        }
+    }
+
+    function submitVotes() {
+        const murderer = document.getElementById('vote-murderer').value;
+        const organizer = document.getElementById('vote-organizer').value;
+        
+        if(!murderer || !organizer) {
+            alert("请完成两项投票！");
+            return;
+        }
+        
+        let result = "";
+        
+        if(murderer === "黎仁清" && organizer === "金伟") {
+            result = "happy";
+            alert("🎉 恭喜！你找出了真凶和组织者！");
+        } else if(murderer === "黎仁清" && organizer !== "金伟") {
+            result = "good";
+            alert("✅ 你找出了真凶，但组织者判断错误。");
+        } else if(murderer !== "黎仁清" && organizer === "金伟") {
+            result = "normal";
+            alert("⚠️ 你找出了组织者，但真凶判断错误。");
+        } else {
+            result = "bad";
+            alert("❌ 真凶和组织者都判断错误。");
+        }
+        
+        playerState.voteResult = result;
+        alert("投票完成！现在可以输入密码查看真相了。");
+    }
+
+    function revealTruth() {
+        const pass = document.getElementById('truth-pass').value;
+        if(pass === CONFIG.password) {
+            document.getElementById('display-truth').innerText = CONFIG.truth;
+            
+            const ending = playerState.voteResult || "bad";
+            document.getElementById('display-ending').innerText = CONFIG.endings[ending];
+            
+            document.getElementById('truth-content').classList.remove('hidden');
+            document.getElementById('truth-pass').disabled = true;
+        } else {
+            alert("口令错误！请确认后再试。");
+        }
+    }
+</script>
+
+</body>
+</html>
