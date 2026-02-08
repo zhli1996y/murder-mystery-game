@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剧本杀大厅 - 提笔绘梨花</title>
+    <style>
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-card: rgba(255, 255, 255, 0.8);
+            --apple-text: #1d1d1f;
+            --apple-text-secondary: #86868b;
+            --apple-blue: #0071e3;
+            --apple-blur: saturate(180%) blur(20px);
+        }
+
+        body {
+            background-color: var(--apple-bg);
+            color: var(--apple-text);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 - Mac 风格毛玻璃 */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(245, 245, 247, 0.72);
+            backdrop-filter: var(--apple-blur);
+            -webkit-backdrop-filter: var(--apple-blur);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+
+        .nav-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        /* 主标题区 */
+        header {
+            max-width: 1100px;
+            margin: 80px auto 40px;
+            padding: 0 40px;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.5rem;
+            color: var(--apple-text-secondary);
+            font-weight: 400;
+        }
+
+        /* 剧本网格布局 */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto 100px;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            flex: 1;
+        }
+
+        /* 苹果风格卡片 */
+        .script-card {
+            background: var(--apple-card);
+            border-radius: 20px;
+            padding: 30px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .script-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            background: #ffffff;
+        }
+
+        .tag-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.05);
+            color: var(--apple-text-secondary);
+            text-transform: uppercase;
+        }
+
+        .script-card h2 {
+            font-size: 1.6rem;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }
+
+        .script-card p {
+            font-size: 1rem;
+            color: var(--apple-text-secondary);
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .btn-enter {
+            color: var(--apple-blue);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-enter::after {
+            content: " 〉";
+            font-size: 0.7rem;
+            margin-left: 5px;
+            transition: transform 0.2s;
+        }
+
+        .script-card:hover .btn-enter::after {
+            transform: translateX(3px);
+        }
+
+        /* 底部版权 */
+        footer {
+            padding: 60px 0;
+            background: #f5f5f7;
+            text-align: center;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: var(--apple-text-secondary);
+            margin: 5px 0;
+        }
+
+        .author {
+            color: var(--apple-text);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 734px) {
+            header h1 { font-size: 2.4rem; }
+            header p { font-size: 1.2rem; }
+            .container { padding: 0 20px; }
+            header { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-content">
+            <div class="nav-logo">Offline LARP</div>
+        </div>
+    </nav>
+
+    <header>
+        <h1>剧本大厅</h1>
+        <p>探索、推理、沉浸其中的精彩故事。</p>
+    </header>
+
+    <main class="container">
+        
+        <a href="script1.html" class="script-card">
+            <div>
+                <div class="tag-row">
+                    <span class="tag">古风武侠</span>
+                    <span class="tag">2人</span>
+                </div>
+                <h2>断剑山庄的杀猪刀</h2>
+                <p>名动江湖的庄主突然陨落，书房之内却充斥着猪的鸣叫。这究竟是道德的沦丧还是厨子的反击？</p>
+            </div>
+            <div class="btn-enter">开始体验</div>
+        </a>
+
+        <div class="script-card" style="opacity: 0.6; pointer-events: none; border-style: dashed;">
+            <div>
+                <div class="tag-row">
+                    <span class="tag">敬请期待</span>
+                </div>
+                <h2>新剧本正在创作</h2>
+                <p>提笔绘梨花正在打磨下一个充满悬念的故事，更多不同题材即将解锁。</p>
+            </div>
+            <div class="btn-enter">Coming Soon</div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>本平台由 <a href="#" class="author">提笔绘梨花</a> 倾力设计</p>
+        <p>© 2026 版权所有 · 基于离线技术构建</p>
+    </footer>
+
+</body>
+</html>
