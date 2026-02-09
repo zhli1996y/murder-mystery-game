@@ -12,6 +12,7 @@
             --apple-text-secondary: #86868b;
             --apple-blue: #0071e3;
             --apple-blur: saturate(180%) blur(20px);
+            --gold-finish: linear-gradient(135deg, #fffcf0 0%, #fff 100%);
         }
 
         body {
@@ -25,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* 顶部导航栏 - Mac 风格毛玻璃 */
+        /* 顶部导航栏 */
         nav {
             position: sticky;
             top: 0;
@@ -46,36 +47,17 @@
             align-items: center;
         }
 
-        .nav-logo {
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
+        .nav-logo { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.5px; }
 
         /* 主标题区 */
-        header {
-            max-width: 1100px;
-            margin: 80px auto 40px;
-            padding: 0 40px;
-        }
+        header { max-width: 1100px; margin: 80px auto 40px; padding: 0 40px; }
+        header h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 10px; }
+        header p { font-size: 1.5rem; color: var(--apple-text-secondary); font-weight: 400; }
 
-        header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            letter-spacing: -1.5px;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 1.5rem;
-            color: var(--apple-text-secondary);
-            font-weight: 400;
-        }
-
-        /* 剧本网格布局 */
+        /* 剧本网格 */
         .container {
             max-width: 1100px;
-            margin: 0 auto 100px;
+            margin: 0 auto 60px;
             padding: 0 40px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -83,7 +65,7 @@
             flex: 1;
         }
 
-        /* 苹果风格卡片 */
+        /* 剧本卡片 */
         .script-card {
             background: var(--apple-card);
             border-radius: 20px;
@@ -95,104 +77,53 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.03);
         }
 
-        .script-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            background: #ffffff;
-        }
-
-        .tag-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .tag {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 12px;
-            background: rgba(0,0,0,0.05);
-            color: var(--apple-text-secondary);
-            text-transform: uppercase;
-        }
-
-        .script-card h2 {
-            font-size: 1.6rem;
-            margin: 0 0 12px 0;
-            font-weight: 600;
-        }
-
-        .script-card p {
-            font-size: 1rem;
-            color: var(--apple-text-secondary);
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
-
-        .btn-enter {
-            color: var(--apple-blue);
-            font-weight: 500;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-enter::after {
-            content: " 〉";
-            font-size: 0.7rem;
-            margin-left: 5px;
-            transition: transform 0.2s;
-        }
-
-        .script-card:hover .btn-enter::after {
-            transform: translateX(3px);
-        }
-
-        /* 底部版权 */
-        footer {
-            padding: 60px 0;
-            background: #f5f5f7;
-            text-align: center;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-
-        footer p {
-            font-size: 0.85rem;
-            color: var(--apple-text-secondary);
-            margin: 5px 0;
-        }
-
-        .author {
-            color: var(--apple-text);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        /* 统计数据样式定制 */
-        .stat-container {
-            margin-top: 12px;
-            font-size: 0.8rem;
-            color: var(--apple-text-secondary);
-            opacity: 0.8;
-            letter-spacing: 0.2px;
-        }
+        .script-card:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.08); background: #ffffff; }
         
-        .stat-value {
-            color: var(--apple-text);
-            font-weight: 500;
+        /* 已结案状态 */
+        .script-card.completed { background: var(--gold-finish); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .completed-badge {
+            display: none; position: absolute; top: 20px; right: -30px;
+            background: #d4af37; color: white; padding: 5px 40px;
+            font-size: 0.7rem; font-weight: 700; transform: rotate(45deg);
+        }
+        .script-card.completed .completed-badge { display: block; }
+
+        .tag-row { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tag { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: rgba(0,0,0,0.05); color: var(--apple-text-secondary); }
+
+        .btn-enter { color: var(--apple-blue); font-weight: 500; font-size: 0.95rem; margin-top: 20px; }
+
+        /* 留言板 & 评分器 */
+        .comment-section { max-width: 800px; margin: 0 auto 100px; padding: 0 40px; width: 100%; box-sizing: border-box; }
+        .envelope {
+            background: #fff; padding: 40px; border-radius: 4px; border: 1px solid #e1e1e1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative;
+        }
+        .envelope::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: repeating-linear-gradient(-45deg, #ff6b6b, #ff6b6b 10px, #fff 10px, #fff 20px, #4d96ff 20px, #4d96ff 30px, #fff 30px, #fff 40px);
         }
 
-        /* 移动端优化 */
-        @media (max-width: 734px) {
-            header h1 { font-size: 2.4rem; }
-            header p { font-size: 1.2rem; }
-            .container { padding: 0 20px; }
-            header { padding: 0 20px; }
+        .rating-container { background: #f9f9fb; padding: 20px; border-radius: 12px; margin-bottom: 30px; }
+        .rating-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 0.9rem; }
+        .stars-group { margin-left: 10px; }
+        .star { cursor: pointer; font-size: 1.4rem; color: #ccc; transition: 0.2s; padding: 0 2px; }
+        .star.active { color: #ffb400; }
+        .copy-hint { 
+            font-size: 0.8rem; color: var(--apple-blue); margin-top: 15px; 
+            cursor: pointer; font-weight: 500; text-align: center;
+            padding: 10px; border: 1px dashed var(--apple-blue); border-radius: 8px;
         }
+
+        footer { padding: 60px 0; background: #f5f5f7; text-align: center; border-top: 1px solid rgba(0,0,0,0.1); }
+        .stat-value { color: var(--apple-text); font-weight: 600; }
+
+        @media (max-width: 734px) { header h1 { font-size: 2.4rem; } .container, .comment-section { padding: 0 20px; } }
     </style>
 </head>
 <body>
@@ -200,6 +131,7 @@
     <nav>
         <div class="nav-content">
             <div class="nav-logo">Offline LARP</div>
+            <div style="font-size: 0.7rem; color: var(--apple-text-secondary); cursor: pointer;" onclick="resetArchives()">重置侦探档案</div>
         </div>
     </nav>
 
@@ -209,63 +141,150 @@
     </header>
 
     <main class="container">
-        
-        <a href="script1.html" class="script-card">
+        <a href="script1.html" class="script-card" data-script-id="script1" onclick="markAsComplete('script1')">
+            <div class="completed-badge">已结案</div>
             <div>
-                <div class="tag-row">
-                    <span class="tag">古风武侠</span>
-                    <span class="tag">2人</span>
-                </div>
+                <div class="tag-row"><span class="tag">古风武侠</span><span class="tag">2人</span></div>
                 <h2>断剑山庄的杀猪刀</h2>
-                <p>名动江湖的庄主突然陨落，书房之内却充斥着猪的鸣叫。这究竟是道德的沦丧还是厨子的反击？</p>
+                <p>名动江湖的庄主突然陨落，书房之内却充斥着猪的鸣叫...</p>
             </div>
-            <div class="btn-enter">开始体验</div>
+            <div class="btn-enter" id="btn-script1">开始体验 〉</div>
         </a>
 
-            <a href="script2.html" class="script-card">
-        <div>
-            <div class="tag-row">
-                <span class="tag">现代悬疑</span>
-                <span class="tag">5人</span>
-            </div>
-            <h2>十年·迷雾</h2>
-            <p>十年前的未解谜案，五个被命运捆绑的灵魂。尘封的真相将在今夜被揭开，谁是真凶？</p>
-        </div>
-        <div class="btn-enter">开始体验</div>
-    </a>
-        
-        <div class="script-card" style="opacity: 0.6; pointer-events: none; border-style: dashed;">
+        <a href="script2.html" class="script-card" data-script-id="script2" onclick="markAsComplete('script2')">
+            <div class="completed-badge">已结案</div>
             <div>
-                <div class="tag-row">
-                    <span class="tag">敬请期待</span>
-                </div>
-                <h2>新剧本正在创作</h2>
-                <p>提笔绘梨花正在打磨下一个充满悬念的故事，更多不同题材即将解锁。</p>
+                <div class="tag-row"><span class="tag">现代悬疑</span><span class="tag">5人</span></div>
+                <h2>十年·迷雾</h2>
+                <p>十年前的未解谜案，五个被命运捆绑的灵魂。尘封的真相将在今夜被揭开。</p>
             </div>
+            <div class="btn-enter" id="btn-script2">开始体验 〉</div>
+        </a>
+
+        <div class="script-card" style="opacity: 0.6; pointer-events: none; border-style: dashed;">
+            <div><div class="tag-row"><span class="tag">敬请期待</span></div>
+            <h2>新剧本创作中</h2>
+            <p>提笔绘梨花正在打磨下一个故事...</p></div>
             <div class="btn-enter">Coming Soon</div>
         </div>
-
     </main>
 
-    <footer>
-        <p>本平台由 <a href="#" class="author">提笔绘梨花</a> 倾力设计</p>
-        
-        <div class="stat-container">
-            <span id="busuanzi_container_site_pv" style="display:none">
-                今日浏览 <span id="busuanzi_value_site_pv" class="stat-value"></span> 次
-            </span>
-            <span style="margin: 0 8px; opacity: 0.3;">|</span>
-            <span id="busuanzi_container_site_uv" style="display:none">
-                今日访客 <span id="busuanzi_value_site_uv" class="stat-value"></span> 位
-            </span>
-        </div>
+    <section class="comment-section">
+        <div class="envelope">
+            <h3 style="text-align:center; margin-top:0; letter-spacing: 1px;">撰写结案报告</h3>
+            
+            <div class="rating-container">
+                <div class="rating-item" data-aspect="logic">
+                    <span>推理难度:</span>
+                    <div class="stars-group">
+                        <span class="star" onclick="setStar('logic', 1)">★</span>
+                        <span class="star" onclick="setStar('logic', 2)">★</span>
+                        <span class="star" onclick="setStar('logic', 3)">★</span>
+                        <span class="star" onclick="setStar('logic', 4)">★</span>
+                        <span class="star" onclick="setStar('logic', 5)">★</span>
+                    </div>
+                </div>
+                <div class="rating-item" data-aspect="story">
+                    <span>剧情沉浸:</span>
+                    <div class="stars-group">
+                        <span class="star" onclick="setStar('story', 1)">★</span>
+                        <span class="star" onclick="setStar('story', 2)">★</span>
+                        <span class="star" onclick="setStar('story', 3)">★</span>
+                        <span class="star" onclick="setStar('story', 4)">★</span>
+                        <span class="star" onclick="setStar('story', 5)">★</span>
+                    </div>
+                </div>
+                <div class="copy-hint" id="copy-btn" onclick="copyRating()">点此生成评分文本并去下方粘贴评论 ↓</div>
+            </div>
 
+            <div class="giscus"></div>
+        </div>
+    </section>
+
+    <footer>
+        <p>本平台由 <a href="#" style="color:var(--apple-text); font-weight:600; text-decoration:none;">提笔绘梨花</a> 倾力设计</p>
+        <div style="margin: 15px 0; font-size: 0.8rem; color: var(--apple-text-secondary);">
+            <span id="busuanzi_container_site_pv" style="display:none">浏览量 <span id="busuanzi_value_site_pv" class="stat-value"></span> | </span>
+            <span id="busuanzi_container_site_uv" style="display:none">访客数 <span id="busuanzi_value_site_uv" class="stat-value"></span></span>
+        </div>
         <p>© 2026 版权所有 · 基于离线技术构建</p>
     </footer>
 
+    <script src="https://giscus.app/client.js"
+        data-repo="zhli1996y/murder-mystery-game"
+        data-repo-id="R_kgDORLR4bw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORLR4b84C2E6h"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+    </script>
+
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+    <script>
+        // --- 评分逻辑 ---
+        let rates = { logic: 0, story: 0 };
+        function setStar(aspect, val) {
+            rates[aspect] = val;
+            const stars = document.querySelectorAll(`[data-aspect="${aspect}"] .star`);
+            stars.forEach((s, i) => s.classList.toggle('active', i < val));
+        }
+
+        function copyRating() {
+            const lStars = "★".repeat(rates.logic) + "☆".repeat(5-rates.logic);
+            const sStars = "★".repeat(rates.story) + "☆".repeat(5-rates.story);
+            const text = `【推理评分：${lStars} | 剧情评分：${sStars}】\n侦探结案报告：`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copy-btn');
+                btn.style.backgroundColor = "#e8f4ff";
+                btn.innerText = "✅ 评分已复制！请在下方粘贴并发送";
+                setTimeout(() => {
+                    btn.style.backgroundColor = "transparent";
+                    btn.innerText = "点此生成评分文本并去下方粘贴评论 ↓";
+                }, 3000);
+            });
+        }
+
+        // --- 成就系统 ---
+        function markAsComplete(id) {
+            let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+            if (!completed.includes(id)) {
+                completed.push(id);
+                localStorage.setItem('larp_achievements', JSON.stringify(completed));
+            }
+            // 实时刷新状态
+            refreshAchievements();
+        }
+
+        function refreshAchievements() {
+            const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+            completed.forEach(id => {
+                const card = document.querySelector(`[data-script-id="${id}"]`);
+                if (card) {
+                    card.classList.add('completed');
+                    const btn = document.getElementById(`btn-${id}`);
+                    if (btn) btn.innerText = '再次回味 〉';
+                }
+            });
+        }
+
+        function resetArchives() {
+            if(confirm('确定要清除所有成就记录吗？')) {
+                localStorage.removeItem('larp_achievements');
+                location.reload();
+            }
+        }
+
+        // 页面加载运行
+        window.onload = refreshAchievements;
+    </script>
 </body>
 </html>
-
-        
