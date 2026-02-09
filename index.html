@@ -13,193 +13,195 @@
             --apple-blue: #0071e3;
             --apple-blur: saturate(180%) blur(20px);
             --gold-finish: linear-gradient(135deg, #fffcf0 0%, #fff 100%);
+            --nav-bg: rgba(245, 245, 247, 0.72);
+        }
+
+        /* 深色模式变量映射 */
+        [data-theme='dark'] {
+            --apple-bg: #000000;
+            --apple-card: rgba(28, 28, 30, 0.8);
+            --apple-text: #f5f5f7;
+            --apple-text-secondary: #8e8e93;
+            --apple-blue: #0a84ff;
+            --nav-bg: rgba(0, 0, 0, 0.72);
+            --gold-finish: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
         }
 
         body {
             background-color: var(--apple-bg);
             color: var(--apple-text);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             margin: 0; -webkit-font-smoothing: antialiased;
-            display: flex; flex-direction: column; min-height: 100vh;
-            overflow-x: hidden;
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 导航栏优化 */
-        nav { position: sticky; top: 0; z-index: 100; background: rgba(245, 245, 247, 0.72); backdrop-filter: var(--apple-blur); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 0; }
+        /* 导航栏 */
+        nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: var(--apple-blur); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 0; }
         .nav-content { max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
-        .nav-logo { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.5px; }
 
-        /* 进度条样式 */
-        .progress-container { width: 120px; height: 6px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; margin-left: 15px; }
-        #progress-bar { width: 0%; height: 100%; background: var(--apple-blue); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* 分类选择器 (iOS Style) */
+        .filter-wrapper { max-width: 1100px; margin: 30px auto 0; padding: 0 40px; }
+        .segmented-control {
+            display: inline-flex; background: rgba(118, 118, 128, 0.12); border-radius: 10px; padding: 2px; position: relative;
+        }
+        .segment-item {
+            padding: 6px 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; border-radius: 8px; transition: 0.2s; position: relative; z-index: 1;
+        }
+        .segment-item.active { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        [data-theme='dark'] .segment-item.active { background: #636366; color: #fff; }
 
-        /* 弹幕滚动区保持 */
-        .danmu-bar { background: #000; height: 36px; overflow: hidden; display: flex; align-items: center; }
-        #danmu-wrapper { display: flex; white-space: nowrap; animation: scroll-left 40s linear infinite; }
-        .danmu-item { font-size: 0.8rem; color: #fff; margin-right: 60px; opacity: 0.8; }
+        /* 搜索框 */
+        .search-area { max-width: 1100px; margin: 20px auto; padding: 0 40px; }
+        .search-input { 
+            width: 100%; max-width: 300px; border: none; background: rgba(118,118,128,0.12); 
+            padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; color: var(--apple-text); outline: none;
+        }
 
-        @keyframes scroll-left { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
-
-        /* 搜索框设计 */
-        .search-area { max-width: 1100px; margin: 40px auto 0; padding: 0 40px; }
-        .search-input { width: 100%; max-width: 300px; border: none; background: rgba(0,0,0,0.05); padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; outline: none; transition: 0.3s; }
-        .search-input:focus { background: rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
-
-        header { max-width: 1100px; margin: 40px auto 20px; padding: 0 40px; }
-        header h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1.8px; margin-bottom: 5px; }
-        header p { color: var(--apple-text-secondary); font-size: 1.1rem; }
-
+        /* 剧本卡片区 */
+        header { max-width: 1100px; margin: 40px auto; padding: 0 40px; }
+        header h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1.5px; margin: 0; }
         .container { max-width: 1100px; margin: 0 auto 100px; padding: 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
 
-        /* 剧本卡片增强 */
         .script-card {
-            background: var(--apple-card); border-radius: 24px; padding: 32px;
-            text-decoration: none; color: inherit; transition: 0.5s cubic-bezier(0.15, 0, 0.15, 1);
-            border: 1px solid rgba(0,0,0,0.03); position: relative; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: space-between;
+            background: var(--apple-card); border-radius: 20px; padding: 30px;
+            text-decoration: none; color: inherit; transition: 0.4s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid rgba(128,128,128,0.1); display: flex; flex-direction: column; justify-content: space-between;
         }
-        .script-card:hover { transform: translateY(-8px) scale(1.01); background: #fff; box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
+        .script-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         
-        .script-card.completed { background: var(--gold-finish); border: 1px solid rgba(212, 175, 55, 0.2); }
-        .completed-badge {
-            display: none; position: absolute; top: 15px; right: 15px;
-            background: #d4af37; color: white; padding: 4px 12px;
-            font-size: 0.7rem; font-weight: 700; border-radius: 20px;
-        }
+        /* 状态与标签 */
+        .tag { font-size: 0.7rem; background: var(--apple-blue); color: #fff; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+        .completed-badge { display: none; font-size: 0.7rem; color: #d4af37; font-weight: 700; }
         .script-card.completed .completed-badge { display: block; }
+        .script-card.completed { border-color: rgba(212, 175, 55, 0.3); }
 
-        .input-area { background: #fff; padding: 12px 40px; border-bottom: 1px solid #e1e1e1; display: flex; justify-content: center; gap: 10px; }
-        .danmu-input { width: 100%; max-width: 500px; border: none; background: #f2f2f7; border-radius: 12px; padding: 10px 16px; font-size: 0.95rem; outline: none; }
-        .send-btn { background: var(--apple-blue); color: #fff; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        /* 深色模式切换按钮 */
+        .theme-toggle {
+            position: fixed; bottom: 30px; left: 30px; width: 44px; height: 44px; 
+            background: var(--apple-card); backdrop-filter: var(--apple-blur);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid rgba(128,128,128,0.1); z-index: 1000;
+        }
 
-        footer { padding: 80px 0; background: #f5f5f7; text-align: center; color: var(--apple-text-secondary); border-top: 1px solid rgba(0,0,0,0.05); }
-
-        @media (max-width: 734px) { header h1 { font-size: 2.2rem; } .container, .search-area { padding: 0 20px; } }
+        footer { padding: 60px 0; text-align: center; color: var(--apple-text-secondary); font-size: 0.8rem; }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
     <nav>
         <div class="nav-content">
-            <div style="display: flex; align-items: center;">
-                <div class="nav-logo">Offline LARP</div>
-                <div class="progress-container"><div id="progress-bar"></div></div>
-            </div>
-            <div style="font-size: 0.75rem; color: var(--apple-text-secondary); cursor: pointer; font-weight: 500;" onclick="clearAllData()">重置侦探档案</div>
+            <div class="nav-logo">Offline LARP</div>
+            <div style="font-size: 0.7rem; color: var(--apple-text-secondary); cursor: pointer;" onclick="localStorage.clear();location.reload();">重置档案</div>
         </div>
     </nav>
 
-    <div class="danmu-bar"><div id="danmu-wrapper"></div></div>
-
-    <div class="input-area">
-        <input type="text" id="danmuInput" class="danmu-input" placeholder="输入灵感，共享案情...">
-        <button class="send-btn" onclick="sendDanmu()">发射</button>
+    <div class="filter-wrapper">
+        <div class="segmented-control">
+            <div class="segment-item active" onclick="filterType('全部', this)">全部</div>
+            <div class="segment-item" onclick="filterType('古风', this)">古风</div>
+            <div class="segment-item" onclick="filterType('现代', this)">现代</div>
+            <div class="segment-item" onclick="filterType('硬核', this)">硬核</div>
+        </div>
     </div>
 
     <div class="search-area">
-        <input type="text" class="search-input" id="searchInput" placeholder="搜索剧本名称..." oninput="filterScripts()">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索案名..." oninput="runFilter()">
     </div>
 
     <header>
-        <h1 id="welcome-text">剧本大厅</h1>
-        <p>每一份档案背后，都隐藏着不为人知的真相。</p>
+        <h1>剧本大厅</h1>
+        <p>真相，隐藏在被忽略的细节之中。</p>
     </header>
 
     <main class="container" id="scriptGrid">
-        <a href="script1.html" class="script-card" data-script-id="script1" onclick="markAsComplete('script1')">
-            <div class="completed-badge">✓ 已破案</div>
+        <a href="script1.html" class="script-card" data-type="古风" data-script-id="script1" onclick="markAsComplete('script1')">
             <div>
-                <span class="tag" style="background:rgba(0,113,227,0.1); color:var(--apple-blue); padding:4px 10px; border-radius:8px; font-weight:600;">古风武侠</span>
-                <h2 style="margin:15px 0 10px; font-size:1.6rem; letter-spacing:-0.5px;">断剑山庄的杀猪刀</h2>
-                <p style="color:var(--apple-text-secondary); font-size:0.95rem; line-height:1.5;">名动江湖的庄主突然陨落，书房之内却充斥着猪的鸣叫。这究竟是道德的沦丧还是世风的日下？</p>
+                <div style="display:flex; justify-content:space-between;">
+                    <span class="tag">古风武侠</span>
+                    <span class="completed-badge">✓ 已结案</span>
+                </div>
+                <h2 style="margin:15px 0 10px;">断剑山庄的杀猪刀</h2>
+                <p style="color:var(--apple-text-secondary); font-size:0.9rem;">庄主陨落，书房内却充斥着猪鸣。这是武林的秘闻还是荒诞的真相？</p>
             </div>
-            <div style="color:var(--apple-blue); font-weight:600; font-size:0.9rem; margin-top:25px;">查阅卷宗 〉</div>
+            <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
         </a>
 
-        <a href="script2.html" class="script-card" data-script-id="script2" onclick="markAsComplete('script2')">
-            <div class="completed-badge">✓ 已破案</div>
+        <a href="script2.html" class="script-card" data-type="现代" data-script-id="script2" onclick="markAsComplete('script2')">
             <div>
-                <span class="tag" style="background:rgba(0,0,0,0.05); padding:4px 10px; border-radius:8px; font-weight:600;">现代悬疑</span>
-                <h2 style="margin:15px 0 10px; font-size:1.6rem; letter-spacing:-0.5px;">十年·迷雾</h2>
-                <p style="color:var(--apple-text-secondary); font-size:0.95rem; line-height:1.5;">十年前的未解谜案，五个被命运捆绑的灵魂。尘封的真相将在今夜被解开。</p>
+                <div style="display:flex; justify-content:space-between;">
+                    <span class="tag">现代悬疑</span>
+                    <span class="completed-badge">✓ 已结案</span>
+                </div>
+                <h2 style="margin:15px 0 10px;">十年·迷雾</h2>
+                <p style="color:var(--apple-text-secondary); font-size:0.9rem;">十年前的未解谜案，五个灵魂。尘封的真相将在今夜解开。</p>
             </div>
-            <div style="color:var(--apple-blue); font-weight:600; font-size:0.9rem; margin-top:25px;">查阅卷宗 〉</div>
+            <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
         </a>
     </main>
 
+    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+
     <footer>
-        <p>© 2026 提笔绘梨花 · 侦探社</p>
+        <p>© 2026 提笔绘梨花 制作</p>
     </footer>
 
     <script>
-        // --- 核心逻辑 ---
-        const scripts = [
-            { id: 'script1', name: '断剑山庄的杀猪刀' },
-            { id: 'script2', name: '十年·迷雾' }
-        ];
+        let currentType = '全部';
 
-        // 搜索过滤
-        function filterScripts() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
+        // --- 过滤逻辑 ---
+        function filterType(type, el) {
+            // 更新UI
+            document.querySelectorAll('.segment-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+            currentType = type;
+            runFilter();
+        }
+
+        function runFilter() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
             const cards = document.querySelectorAll('.script-card');
+
             cards.forEach(card => {
+                const type = card.getAttribute('data-type');
                 const title = card.querySelector('h2').innerText.toLowerCase();
-                card.style.display = title.includes(val) ? 'flex' : 'none';
+                
+                const typeMatch = (currentType === '全部' || type.includes(currentType));
+                const searchMatch = title.includes(searchVal);
+
+                card.style.display = (typeMatch && searchMatch) ? 'flex' : 'none';
             });
         }
 
-        // 更新进度条
-        function updateProgress() {
-            const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
-            const percent = (completed.length / scripts.length) * 100;
-            document.getElementById('progress-bar').style.width = percent + '%';
+        // --- 深色模式逻辑 ---
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        }
+
+        // --- 初始化 ---
+        window.onload = () => {
+            // 加载主题
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
             
-            if(percent === 100) {
-                document.getElementById('welcome-text').innerText = "🎉 传奇侦探诞生";
-            }
-        }
-
-        // 弹幕系统 (复用你的代码并优化)
-        const defaultDanmu = [{ nick: "系统", msg: "欢迎来到侦探电台，保持冷静思考。" }];
-        function renderDanmu() {
-            const wrapper = document.getElementById('danmu-wrapper');
-            const myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
-            wrapper.innerHTML = [...defaultDanmu, ...myDanmu].map(item => `
-                <div class="danmu-item"><span>🕵️ ${item.nick}:</span> ${item.msg}</div>
-            `).join('');
-        }
-
-        window.sendDanmu = function() {
-            const input = document.getElementById('danmuInput');
-            if (!input.value.trim()) return;
-            let myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
-            myDanmu.push({ nick: "我", msg: input.value });
-            localStorage.setItem('my_danmus', JSON.stringify(myDanmu));
-            input.value = ''; renderDanmu();
-        }
-
-        window.markAsComplete = function(id) {
-            let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
-            if (!completed.includes(id)) {
-                completed.push(id);
-                localStorage.setItem('larp_achievements', JSON.stringify(completed));
-            }
-            refresh();
-        }
-
-        window.refresh = function() {
+            // 加载已完成记录
             const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
             completed.forEach(id => {
                 const card = document.querySelector(`[data-script-id="${id}"]`);
                 if (card) card.classList.add('completed');
             });
-            updateProgress();
+        };
+
+        function markAsComplete(id) {
+            let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+            if (!completed.includes(id)) {
+                completed.push(id);
+                localStorage.setItem('larp_achievements', JSON.stringify(completed));
+            }
         }
-
-        function clearAllData() { if(confirm('确定重置所有探案记录吗？')) { localStorage.clear(); location.reload(); } }
-
-        window.onload = () => { renderDanmu(); refresh(); }
-        document.getElementById('danmuInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendDanmu(); });
     </script>
 </body>
 </html>
