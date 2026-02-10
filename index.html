@@ -40,8 +40,8 @@
         .nav-content { max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
 
         /* 弹幕滚动区 */
-        .danmu-bar { background: #000; height: 40px; overflow: hidden; display: flex; align-items: center; }
-        #danmu-wrapper { display: flex; white-space: nowrap; animation: scroll-left 40s linear infinite; }
+        .danmu-bar { background: #000; height: 40px; overflow: hidden; display: flex; align-items: center; position: relative; }
+        #danmu-wrapper { display: flex; white-space: nowrap; position: absolute; animation: scroll-left 40s linear infinite; will-change: transform; }
         .danmu-item { font-size: 0.85rem; color: #fff; margin-right: 60px; display: flex; align-items: center; opacity: 0.9; }
         .danmu-item span { color: #5fb9ff; margin-right: 8px; font-weight: 600; }
 
@@ -63,7 +63,9 @@
         .send-btn {
             background: var(--apple-blue); color: #fff; border: none; padding: 8px 20px;
             border-radius: 20px; font-size: 0.9rem; cursor: pointer; white-space: nowrap;
+            transition: background-color 0.3s;
         }
+        .send-btn:hover { background-color: #0056b3; }
 
         header { max-width: 1100px; margin: 60px auto 40px; padding: 0 40px; }
         header h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 10px; }
@@ -127,6 +129,17 @@
             <div style="font-size: 0.7rem; color: var(--apple-text-secondary); cursor: pointer;" onclick="localStorage.clear();location.reload();">重置档案</div>
         </div>
     </nav>
+
+    <!-- 弹幕滚动区 -->
+    <div class="danmu-bar">
+        <div id="danmu-wrapper"></div>
+    </div>
+
+    <!-- 弹幕发射器 -->
+    <div class="input-area">
+        <input type="text" class="danmu-input" id="danmuInput" placeholder="输入你的感悟或疑问...">
+        <button class="send-btn" onclick="sendDanmu()">发射</button>
+    </div>
 
     <div class="filter-wrapper">
         <div class="segmented-control">
@@ -199,12 +212,12 @@
     <div style="color:#a87c3b; font-weight:600; margin-top:20px; font-family: 'STKaiti', serif;">进入沈家庄 〉</div>
 </a>
 
-        <a href="script4.html" class="script-card" data-type="现代" data-script-id="script4" onclick="markAsComplete('script4')">
+        <a href="script4.html" class="script-card" data-type="现代 欢乐" data-script-id="script4" onclick="markAsComplete('script4')">
     <div>
         <div style="display:flex; justify-content:space-between; align-items: center;">
             <div style="display: flex; gap: 6px;">
                 <span class="tag" style="background: linear-gradient(135deg, #ff6b35, #ff8c42); color: white;">现代欢乐</span>
-                <span style="font-size: 0.7rem; background: rgba(255, 107, 53, 0.1); padding: 3px 8px; border-radius: 6px; color: #ff6b35; display: flex; align-items: center; gap: 3px;">
+               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
                     👤 2人
                 </span>
             </div>
@@ -215,7 +228,6 @@
     </div>
     <div style="color:#ff6b35; font-weight:600; margin-top:20px;">开始体验 〉</div>
 </a>
-
         
     </main>
 
@@ -227,11 +239,53 @@
             <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
             今日用户到访: <span id="busuanzi_value_site_uv"></span> 位
         </div>
-
     </footer>
 
     <script>
         let currentType = '全部';
+
+        // --- 弹幕逻辑 ---
+        const defaultDanmu = [
+            { nick: "系统", msg: "欢迎来到侦探电台，输入感悟并点击发射！" },
+            { nick: "匿名", msg: "断剑山庄那个结局我直接裂开..." },
+            { nick: "侦探甲", msg: "十年迷雾的细节控看过来。" }
+        ];
+
+        function renderDanmu() {
+            const wrapper = document.getElementById('danmu-wrapper');
+            const myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
+            const allDanmu = [...defaultDanmu, ...myDanmu];
+            wrapper.innerHTML = allDanmu.map(item => `
+                <div class="danmu-item"><span>🕵️ ${item.nick}:</span> ${item.msg}</div>
+            `).join('');
+            
+            // 确保动画运行
+            wrapper.style.animation = 'none';
+            setTimeout(() => {
+                wrapper.style.animation = 'scroll-left 40s linear infinite';
+            }, 10);
+        }
+
+        function sendDanmu() {
+            const input = document.getElementById('danmuInput');
+            const val = input.value.trim();
+            if (!val) return;
+            
+            // 初始化存储
+            if (!localStorage.getItem('my_danmus')) {
+                localStorage.setItem('my_danmus', JSON.stringify([]));
+            }
+            
+            let myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
+            myDanmu.push({ nick: "我", msg: val });
+            localStorage.setItem('my_danmus', JSON.stringify(myDanmu));
+            input.value = '';
+            renderDanmu();
+            
+            const btn = document.querySelector('.send-btn');
+            btn.innerText = "已发射!";
+            setTimeout(() => btn.innerText = "发射", 1000);
+        }
 
         // --- 过滤逻辑 ---
         function filterType(type, el) {
@@ -266,71 +320,17 @@
             localStorage.setItem('theme', next);
         }
 
-        // --- 初始化 ---
-        window.onload = () => {
-            // 加载主题
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.body.setAttribute('data-theme', savedTheme);
-            
-            // 加载已完成记录
-            const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
-            completed.forEach(id => {
-                const card = document.querySelector(`[data-script-id="${id}"]`);
-                if (card) card.classList.add('completed');
-            });
-        };
-
+        // --- 成就逻辑 ---
         function markAsComplete(id) {
             let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
             if (!completed.includes(id)) {
                 completed.push(id);
                 localStorage.setItem('larp_achievements', JSON.stringify(completed));
             }
-        }
-    </script>
-
-       <script>
-        // --- 弹幕逻辑 ---
-        const defaultDanmu = [
-            { nick: "系统", msg: "欢迎来到侦探电台，输入感悟并点击发射！" },
-            { nick: "匿名", msg: "断剑山庄那个结局我直接裂开..." },
-            { nick: "侦探甲", msg: "十年迷雾的细节控看过来。" }
-        ];
-
-        function renderDanmu() {
-            const wrapper = document.getElementById('danmu-wrapper');
-            const myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
-            const allDanmu = [...defaultDanmu, ...myDanmu];
-            wrapper.innerHTML = allDanmu.map(item => `
-                <div class="danmu-item"><span>🕵️ ${item.nick}:</span> ${item.msg}</div>
-            `).join('');
+            refreshAchievements();
         }
 
-        window.sendDanmu = function() {
-            const input = document.getElementById('danmuInput');
-            const val = input.value.trim();
-            if (!val) return;
-            let myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
-            myDanmu.push({ nick: "我", msg: val });
-            localStorage.setItem('my_danmus', JSON.stringify(myDanmu));
-            input.value = '';
-            renderDanmu();
-            const btn = document.querySelector('.send-btn');
-            btn.innerText = "已发射!";
-            setTimeout(() => btn.innerText = "发射", 1000);
-        }
-
-        // --- 成就逻辑 ---
-        window.markAsComplete = function(id) {
-            let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
-            if (!completed.includes(id)) {
-                completed.push(id);
-                localStorage.setItem('larp_achievements', JSON.stringify(completed));
-            }
-            refresh();
-        }
-
-        window.refresh = function() {
+        function refreshAchievements() {
             const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
             completed.forEach(id => {
                 const card = document.querySelector(`[data-script-id="${id}"]`);
@@ -338,23 +338,28 @@
             });
         }
 
-        window.clearAllData = function() {
-            localStorage.clear();
-            location.reload();
-        }
-
-        window.onload = function() {
+        // --- 初始化 ---
+        window.onload = () => {
+            // 加载主题
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            
+            // 渲染弹幕
             renderDanmu();
-            refresh();
-        }
-
-        document.getElementById('danmuInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendDanmu();
-        });
+            
+            // 加载已完成记录
+            refreshAchievements();
+            
+            // 弹幕输入框回车支持
+            const danmuInput = document.getElementById('danmuInput');
+            if (danmuInput) {
+                danmuInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendDanmu();
+                    }
+                });
+            }
+        };
     </script>
 </body>
 </html>
-
-
-
-
