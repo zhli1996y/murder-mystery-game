@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完美的不在场证明 - 双人剧本杀</title>
+    <style>
+        :root {
+            --bg: #0a1929;
+            --card-bg: #1e2b3a;
+            --text: #e0e0e0;
+            --accent: #ff6b35;
+            --primary: #4d8af0;
+            --secondary: #00b4d8;
+            --highlight: #ffd166;
+            --mystery: #9d4edd;
+        }
+
+        body { 
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(rgba(10, 25, 41, 0.95), rgba(10, 25, 41, 0.95)),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><pattern id="pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M15,0 L30,15 L15,30 L0,15 Z" fill="none" stroke="%231e2b3a" stroke-width="1.5" opacity="0.3"/><circle cx="15" cy="15" r="2" fill="%234d8af0" opacity="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(%23pattern)"/></svg>');
+        }
+        
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        
+        .step-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 30px; 
+            background: var(--card-bg); 
+            padding: 12px; 
+            border-radius: 10px; 
+            font-size: 0.9rem; 
+            border: 1px solid #2a3d52;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), var(--primary), transparent);
+            z-index: 0;
+            opacity: 0.3;
+        }
+        
+        .step { 
+            color: #7d94b3; 
+            transition: 0.3s; 
+            padding: 8px 15px;
+            border-radius: 6px;
+            background: var(--card-bg);
+            position: relative;
+            z-index: 1;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+        
+        .step.active { 
+            color: var(--highlight); 
+            font-weight: bold; 
+            background: rgba(255, 107, 53, 0.15);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+            min-height: 400px; 
+            border: 1px solid #2a3d52;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--primary), var(--secondary));
+        }
+        
+        h1, h2 { 
+            color: var(--highlight); 
+            text-align: center; 
+            margin-bottom: 25px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after, h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 30%;
+            right: 30%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        
+        .game-title {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            padding: 15px;
+            border: 1px solid rgba(77, 138, 240, 0.3);
+            border-radius: 8px;
+            background: rgba(30, 43, 58, 0.7);
+            line-height: 1.6;
+        }
+        
+        .humor-box {
+            background: rgba(255, 209, 102, 0.1);
+            border-left: 4px solid var(--highlight);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+        
+        .humor-box::before {
+            content: '😂';
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: var(--card-bg);
+            padding: 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        .script-text { 
+            white-space: pre-wrap; 
+            background: #152238; 
+            padding: 25px; 
+            border-radius: 8px; 
+            border: 1px solid #2a3d52; 
+            margin-top: 20px; 
+            font-size: 1.05rem; 
+            text-align: justify; 
+            line-height: 1.8;
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #152238;
+            position: relative;
+        }
+        
+        .script-text::first-letter {
+            font-size: 2.5em;
+            float: left;
+            line-height: 1;
+            margin: 0 10px 0 0;
+            color: var(--secondary);
+        }
+        
+        .script-text::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .script-text::-webkit-scrollbar-track {
+            background: #152238;
+            border-radius: 4px;
+        }
+        
+        .script-text::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .clue-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 20px; 
+            margin-top: 20px; 
+        }
+        
+        @media (min-width: 600px) {
+            .clue-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .clue-card { 
+            background: #25344a; 
+            padding: 20px; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            border-top: 4px solid var(--accent);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .clue-card::before {
+            content: '?';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: rgba(255, 107, 53, 0.2);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .clue-card:hover {
+            transform: translateY(-5px);
+            background: #2c3d56;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .clue-card .clue-number {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        select, input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 12px 0; 
+            background: #0d1a28; 
+            border: 1px solid #2a3d52; 
+            color: var(--text); 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(77, 138, 240, 0.2);
+        }
+        
+        button { 
+            background: linear-gradient(135deg, var(--accent), #ff4d00); 
+            color: white; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 1.1rem; 
+            margin-top: 25px; 
+            transition: 0.3s; 
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover { 
+            opacity: 0.9; 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        
+        button:hover::after {
+            left: 100%;
+        }
+        
+        .btn-secondary { 
+            background: linear-gradient(135deg, var(--primary), #2a5bd7);
+            margin-top: 15px; 
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 8px 20px rgba(77, 138, 240, 0.4);
+        }
+
+        .hidden { 
+            display: none; 
+        }
+        
+        .warning { 
+            color: var(--highlight); 
+            font-size: 0.9rem; 
+            margin-top: 20px; 
+            text-align: center; 
+            padding: 15px;
+            background: rgba(255, 209, 102, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid var(--highlight);
+            border-right: 3px solid var(--highlight);
+        }
+        
+        .truth-box {
+            background: linear-gradient(135deg, #152238, #1e2b3a);
+            border: 2px solid var(--mystery);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(157, 78, 221, 0.2);
+            position: relative;
+        }
+        
+        .truth-box::before {
+            content: '🎭';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            color: var(--mystery);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 2px solid var(--mystery);
+        }
+        
+        .role-tag {
+            display: inline-block;
+            background: rgba(77, 138, 240, 0.2);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(77, 138, 240, 0.4);
+        }
+        
+        .player-info {
+            background: rgba(77, 138, 240, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(77, 138, 240, 0.3);
+        }
+        
+        .secret-box {
+            background: rgba(157, 78, 221, 0.1);
+            border: 1px dashed rgba(157, 78, 221, 0.5);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .secret-title {
+            color: var(--mystery);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .secret-title::before {
+            content: '🤫';
+            font-size: 1.2rem;
+        }
+        
+        .password-box {
+            background: rgba(30, 43, 58, 0.9);
+            border: 3px solid var(--accent);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+        
+        .password-box h4 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .password-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .password-input input {
+            flex: 1;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 10px;
+            background: rgba(13, 26, 40, 0.8);
+            font-weight: bold;
+        }
+        
+        .password-input button {
+            width: auto;
+            padding: 14px 30px;
+            margin-top: 0;
+            font-size: 1rem;
+        }
+        
+        .password-hint {
+            font-size: 0.9rem;
+            color: var(--highlight);
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .reveal-box {
+            background: rgba(0, 180, 216, 0.1);
+            border: 2px solid var(--secondary);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .reveal-box:hover {
+            background: rgba(0, 180, 216, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .reveal-title {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .reveal-title::before {
+            content: '🎯';
+            font-size: 1.3rem;
+        }
+        
+        .gender-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            margin: 0 5px;
+            font-size: 0.8rem;
+        }
+        
+        .male-icon {
+            background: rgba(77, 138, 240, 0.3);
+            color: var(--primary);
+        }
+        
+        .female-icon {
+            background: rgba(255, 107, 53, 0.3);
+            color: var(--accent);
+        }
+        
+        .twist-highlight {
+            background: linear-gradient(120deg, rgba(157, 78, 221, 0.3), transparent);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: var(--mystery);
+        }
+        
+        .floating-icons {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        
+        @keyframes twist {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+        
+        .twist-animation {
+            animation: twist 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="step-bar">
+        <span id="step1" class="step active">一 · 选择身份</span>
+        <span id="step2" class="step">二 · 阅读剧本</span>
+        <span id="step3" class="step">三 · 线索调查</span>
+        <span id="step4" class="step">四 · 真相揭秘</span>
+    </div>
+
+    <div id="view1" class="card">
+        <h1>完美的不在场证明</h1>
+        <div class="game-title">
+            你以为的真相就是真相吗？<br>
+        </div>
+        
+        <div class="humor-box">
+
+        </div>
+        
+        <div class="player-info">
+            <label>你的代号：</label>
+            <input type="text" id="player-name" placeholder="请输入你的侦探代号">
+            
+            <label>选择你的角色：</label>
+            <select id="role-select"></select>
+            
+            <div style="margin-top: 25px;">
+                <span class="role-tag">双人剧本</span>
+  
+            </div>
+        </div>
+        
+        <button onclick="toStep2()">确认身份，开始破案</button>
+        
+        <div class="warning">
+            ⚠️ <br>
+            请仔细阅读每个细节<br>
+            <br>
+            预计游戏时间：1.5-2小时
+        </div>
+    </div>
+
+    <div id="view2" class="card hidden">
+        <h2 id="display-role-name">角色名</h2>
+        
+        <div class="secret-box">
+            <div class="secret-title">你的秘密任务</div>
+            <div id="display-tasks"></div>
+        </div>
+        
+        <div class="humor-box">
+          <br>
+            👀 眼睛可能会骗你，但逻辑不会（希望如此）
+        </div>
+        
+        <div class="script-text" id="display-script">正在加载剧本...</div>
+        
+        <button onclick="toStep3()">我已读完剧本，查看线索</button>
+        
+    </div>
+
+    <div id="view3" class="card hidden">
+        <h2>线索调查</h2>
+        <div class="humor-box">
+            🔍 注意：这些线索可能互相矛盾<br>
+            🤔 这正是破案的关键！矛盾之处必有蹊跷
+        </div>
+        
+        <h3 style="color: var(--secondary); margin-top: 20px;">个人线索</h3>
+        <div id="personal-clues" class="clue-grid"></div>
+        
+        <h3 style="color: var(--secondary); margin-top: 30px;">共享线索</h3>
+        <div id="common-clues" class="clue-grid"></div>
+        
+        <h3 style="color: var(--mystery); margin-top: 30px;">矛盾点提示</h3>
+        <div id="contradictions" class="clue-grid"></div>
+        
+        <button onclick="toStep4()">我已掌握关键，揭晓真相</button>
+        <button class="btn-secondary" onclick="toStep2()">返回剧本</button>
+    </div>
+
+    <div id="view4" class="card hidden">
+        <h1 style="color: var(--mystery);">🎭 最终揭秘</h1>
+        <div class="humor-box">
+            🎢 <br>
+            🤯   </div>
+        
+        <div class="truth-box">
+            <h3 style="color: var(--secondary);">真相投票</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 20px; text-align: center;">
+                根据你的推理，做出以下判断
+            </p>
+            
+            <label>你认为王医生和李老师的关系是：</label>
+            <select id="vote-relationship">
+                <option value="">请选择...</option>
+                <option value="同一个人">同一个人</option>
+                <option value="夫妻关系">夫妻关系</option>
+                <option value="兄妹关系">兄妹关系</option>
+                <option value="毫无关系">毫无关系</option>
+            </select>
+            
+            <label>你认为真正的凶手是：</label>
+            <select id="vote-murderer">
+                <option value="">请选择...</option>
+                <option value="王医生">王医生（男性）</option>
+                <option value="李老师">李老师（女性）</option>
+                <option value="王丽">王丽（神秘的第三人）</option>
+                <option value="其他NPC">其他NPC</option>
+            </select>
+            
+            <label>你认为凶手的主要动机是：</label>
+            <select id="vote-motive">
+                <option value="">请选择...</option>
+                <option value="灭口">灭口（李婷发现了秘密）</option>
+                <option value="报复">报复（情感纠葛）</option>
+                <option value="金钱">金钱（勒索）</option>
+                <option value="心理疾病">心理疾病（控制欲）</option>
+            </select>
+            
+            <button onclick="submitVotes()">提交判断</button>
+        </div>
+        
+        <div class="truth-box" style="margin-top: 30px;">
+            <h3 style="color: var(--secondary);">真相揭示</h3>
+            <p style="text-align: center; color: var(--highlight);">完成判断后，选择你想看的结局</p>
+            
+            <div id="ending-options">
+                <div class="reveal-box" onclick="selectEnding('perfect')">
+                    <div class="reveal-title">结局一：完美推理</div>
+                    <div style="font-size: 0.9rem;">你识破了所有诡计，真相大白</div>
+                </div>
+                
+                <div class="reveal-box" onclick="selectEnding('partial')">
+                    <div class="reveal-title">结局二：部分真相</div>
+                    <div style="font-size: 0.9rem;">你找到了真凶，但没完全解开谜题</div>
+                </div>
+                
+                <div class="reveal-box" onclick="selectEnding('failed')">
+                    <div class="reveal-title">结局三：被耍了</div>
+                    <div style="font-size: 0.9rem;">你被骗了</div>
+                </div>
+                
+                <div class="reveal-box" onclick="selectEnding('twist')">
+                    <div class="reveal-title" style="color: var(--mystery);">隐藏结局：反转再反转</div>
+                    <div style="font-size: 0.9rem;">你以为的结局，只是另一个开始</div>
+                </div>
+            </div>
+            
+            <!-- 密码验证区域 -->
+            <div id="password-section" class="password-box hidden">
+                <h4>🔐 真相验证</h4>
+                <p style="color: var(--text); margin-bottom: 15px;">
+                    请输入解密口令查看真相<br>
+                    <span style="font-size: 0.9rem; color: var(--highlight);">（提示：数字密码，三位数）</span>
+                </p>
+                
+                <div class="password-input">
+                    <input type="password" id="truth-password" placeholder="输入解密口令" maxlength="3" inputmode="numeric">
+                    <button onclick="verifyPassword()">验证</button>
+                </div>
+                
+                <div class="password-hint">
+                    口令正确才能打开！
+                </div>
+            </div>
+            
+            <!-- 真相显示区域 -->
+            <div id="truth-content" class="hidden" style="margin-top: 30px;">
+                <h3 style="color: var(--secondary);">真相复盘</h3>
+                <div class="script-text" id="display-truth" style="border-color: var(--mystery);"></div>
+                
+                <h3 style="color: var(--secondary); margin-top: 30px;">你的结局</h3>
+                <div id="display-ending" class="script-text" style="border-color: var(--accent);"></div>
+                
+                <button class="btn-secondary" onclick="location.reload()" style="margin-top: 25px;">重新开始</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 创建浮动图标效果
+    function createFloatingIcons() {
+        const icons = ['🎭', '👔', '👗', '🕵️', '👁️', '❓', '🔍', '🎪'];
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+                const icon = document.createElement('div');
+                icon.className = 'floating-icons';
+                icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + 'vw';
+                icon.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                icon.style.opacity = Math.random() * 0.3 + 0.1;
+                icon.style.animationDuration = (Math.random() * 20 + 20) + 's';
+                icon.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(icon);
+                
+                // 移除图标
+                setTimeout(() => {
+                    icon.remove();
+                }, 25000);
+            }, i * 200);
+        }
+    }
+
+    // 剧本配置
+    const CONFIG = {
+        title: "完美的不在场证明",
+        password: "666",  // 解密口令
+        roles: {
+            "陈明": {
+                name: "陈明 · 焦虑的程序员",
+                tasks: `1. 弄清楚王医生到底知道什么\n2. 查明昨晚翻林浩房间的人是谁\n3. 决定是否告诉林浩你发现的一切`,
+                script: `你是"快码科技"公司的程序员，最近正在开发一个重要的项目。三天前，你的室友林浩（另一个玩家）告诉你，他可能被人跟踪了。你一开始没在意，直到昨晚发生了一件事——
+
+昨晚（周五）的时间线：
+- 20:00 你在公司加班，收到林浩的微信："我觉得有人在翻我的东西"
+- 21:30 你提前下班回家，在公寓楼下看到一个穿风衣的高挑身影快速离开
+- 22:00 林浩还没回来，你在他房间发现抽屉被翻过，但没丢东西
+- 23:15 林浩醉醺醺地回家，说去见了个"很厉害的人"
+
+今天（周六）的重要经历：
+下午2点，你按照林浩的建议，去见了王医生。
+
+王医生的诊所在老城区一栋旧楼的三层。你按门铃后，一个沉稳的男声从对讲机传来："请进，门没锁。"
+
+推开诊室的门，你看到一个穿着白大褂的中年男人背对着你，正在整理书架。他转过身来——约莫45岁，戴着金丝眼镜，头发梳得一丝不苟，嘴角有颗痣。
+
+"陈先生是吧？请坐。"他的声音很温和，手指修长。
+
+你在沙发上坐下，注意到诊室布置得很精致：红木书桌、皮质转椅、墙上挂着一幅抽象画。最引人注目的是书架上一排心理学著作和...等等，那是什么？你看到书桌抽屉半开着，里面似乎有...
+
+"不必紧张，"王医生走到你面前，递给你一杯茶，"林浩和我提过你。他说你最近压力很大。"
+
+你确实压力大。项目deadline、房东催租、还有这莫名其妙的跟踪事件。你和王医生聊了一个小时，他给了你一些放松的建议，还开了点安神药。
+
+关键细节：
+1. 王医生抽烟——你看到他书桌上的烟灰缸里有三个烟蒂，品牌是"中华"
+2. 他接了一个电话，对方称呼他"王主任"
+3. 他左手无名指有戒痕，但现在没戴戒指
+4. 诊室的钟慢了5分钟，你提醒了他，他笑着说："时间总是过得很快，不是吗？"
+
+离开前，王医生突然严肃地说："陈先生，有件事我要提醒你。林浩...他可能对你隐瞒了一些事情。你们公寓的301室，住的是什么人？"
+
+你愣住了。301是空置的，房东说暂时不出租。
+
+"我只是随口问问。"王医生又恢复了温和的笑容，"记住，每天按时吃药。"
+
+你的秘密：
+1. 你其实知道林浩在偷偷调查什么——他怀疑前女友失踪和你们公寓有关
+2. 你上周在垃圾桶里发现了一张撕碎的照片，拼起来是三个人的合影：林浩、一个陌生女人、还有一个...背影
+3. 你的笔记本电脑有自动录影功能，昨晚客厅的摄像头拍到了那个"风衣人"的背影
+
+此刻，你需要弄清楚：王医生到底在暗示什么？昨晚那个神秘人是谁？301室到底有什么秘密？`,
+                clues: [
+                    "线索A1：王医生诊室的烟蒂——品牌：中华，滤嘴有淡红色唇印",
+                    "线索A2：诊室的钟慢了5分钟，王医生说'时间总是过得很快'",
+                    "线索A3：王医生左手无名指有戒痕，但现在没戴戒指",
+                    "线索A4：王医生接电话时被称呼为'王主任'",
+                    "线索A5：你的电脑录像显示'风衣人'身高约175cm，步态有些奇特"
+                ]
+            },
+            "林浩": {
+                name: "林浩 · 八卦的记者",
+                tasks: `1. 查明李老师和301室的关系\n2. 搞清楚昨晚出现在301室的人是谁\n3. 决定是否让陈明卷入这件事`,
+                script: `你是《都市快报》的实习记者，最近在做一个关于"城市神秘失踪案"的专题。巧的是，你前女友三个月前失踪了，警察说她自己离开了，但你总觉得不对劲。
+
+三天前，你开始调查你们公寓楼的历史，发现了一些奇怪的事情。
+
+昨晚（周五）的诡异经历：
+- 19:30 你假装出门，其实躲在楼梯间观察
+- 20:45 你看到301室（空置房）的门开了一条缝，里面有灯光
+- 21:00 你冒险进去查看，发现房间竟然有人居住的痕迹！衣柜里有女人的衣服
+- 21:30 你听到脚步声，赶紧躲进衣柜。从缝隙里，你看到一个苗条的身影在房间里走动
+- 22:00 你趁那人离开，逃回自己房间，发现抽屉被翻过
+
+今天（周六）的关键会面：
+下午3点，你通过线人介绍，见到了李老师。
+
+见面的地方是一个老旧社区的活动室。你推门进去时，一个穿着碎花连衣裙的年轻女人正在给几个孩子讲故事。她抬起头，对你笑了笑——约莫30岁，长发及肩，五官精致，左眼角有颗泪痣。
+
+"林先生？稍等，我马上结束。"她的声音轻柔甜美。
+
+你观察着她。她很会哄孩子，几个调皮的小孩在她面前都很听话。十分钟后，孩子们被家长接走，她请你坐下。
+
+"这里简陋了些，不好意思。"李老师给你倒了杯水，"你说你想了解失踪案？"
+
+你说明了来意，提到了前女友，还有昨晚在301室的发现。李老师认真地听着，不时点头。她的手指很漂亮，涂着淡粉色的指甲油。
+
+"301室..."她若有所思，"我听说过那栋公寓的一些传闻。不过林先生，你确定要继续查下去吗？有些事情，不知道反而更安全。"
+
+你坚持要查。李老师叹了口气，从包里拿出一个文件夹："这是我收集的一些资料。但你要答应我，看完就烧掉，不要告诉任何人是我给你的。"
+
+关键细节：
+1. 李老师不抽烟——但活动室角落的垃圾桶里有两个烟蒂，和你早上在公寓楼梯间看到的是同一种牌子
+2. 她接电话时，对方叫她"李主任"
+3. 她右手腕有一道浅浅的疤痕，像是旧伤
+4. 活动室的钟快了5分钟，她注意到了，但没调："时间嘛，快一点慢一点又有什么关系呢？"
+
+离开前，李老师突然抓住你的手腕，很用力："林浩，听我一句劝。有些真相会伤害所有人，包括你的室友陈明。他...知道得越少越好。"
+
+你的秘密：
+1. 你前女友失踪前，曾和你提过"301室住着一个奇怪的女人"
+2. 你偷拍了301室衣柜里的衣服，发现那些衣服的尺寸，和昨晚你看到的那个"苗条身影"完全吻合
+3. 你在活动室窗外看到一辆车，车牌号很熟悉——好像是王医生的车？但你不确定
+
+此刻，你需要查明：李老师到底是谁？她为什么知道301室？她和王医生有什么关系？`,
+                clues: [
+                    "线索B1：活动室垃圾桶的烟蒂——品牌：中华，滤嘴有淡红色唇印",
+                    "线索B2：活动室的钟快了5分钟，李老师说'快一点慢一点又有什么关系'",
+                    "线索B3：李老师右手腕有一道浅浅的疤痕",
+                    "线索B4：李老师接电话时被称呼为'李主任'",
+                    "线索B5：你偷拍的照片显示301室衣柜里的衣服尺码：身高175cm左右"
+                ]
+            }
+        },
+        commonClues: [
+            "线索C1：301室调查报告——三年前租给过一个叫'王丽'的心理医生",
+            "线索C2：王丽的档案——女性，35岁，都市心理咨询中心前主任",
+            "线索C3：车辆记录——同一辆车在周六下午出现在两个不同地点",
+            "线索C4：烟蒂比对结果——两处烟蒂的DNA检测结果相同",
+            "线索C5：时间线矛盾——王医生和李老师在同一时间都有'在场证明'",
+            "线索C6：公寓监控——周五晚只有一个神秘人出入301室",
+            "线索C7：失踪案档案——李婷最后见过的人是心理咨询师王丽",
+            "线索C8：惊人发现——王医生和李老师的指纹有部分重叠"
+        ],
+        contradictions: [
+            "矛盾点1：<span class='gender-icon male-icon'>♂</span>王医生是男性 vs <span class='gender-icon female-icon'>♀</span>李老师是女性",
+            "矛盾点2：两处都发现了相同品牌的烟蒂，但只有一处有人抽烟？",
+            "矛盾点3：'王主任'和'李主任'——什么机构有两个主任？",
+            "矛盾点4：一个钟快5分钟，一个钟慢5分钟——故意的？",
+            "矛盾点5：两人都对301室表现出异常的兴趣"
+        ],
+        truth: `【真相复盘：完美的不在场证明】
+
+🎭 核心诡计：一人分饰三角
+
+真实身份：王丽，35岁，心理学硕士，都市心理咨询中心前主任。
+
+三重伪装：
+1. 王医生（男性装扮）：对陈明展示的身份，刻意压低声音，贴假喉结，穿男装
+2. 李老师（女性装扮）：对林浩展示的身份，正常女装，温柔声线
+3. 神秘人（中性装扮）：夜晚活动的身份，风衣+帽子，模糊性别特征
+
+🔍 叙述性诡计揭秘：
+
+性别误导手法：
+• 对陈明：剧本中全部使用"他"指代王医生，描述为"中年男人"、"沉稳的男声"
+• 对林浩：剧本中全部使用"她"指代李老师，描述为"年轻女人"、"轻柔甜美"
+• 事实：王丽是女性，但擅长变装和声音伪装
+
+细节选择性描述：
+• 陈明注意到：喉结（假的）、男装、低沉声音
+• 林浩注意到：长发（假发）、裙子、女性化举止
+• 两人都注意到：烟蒂（都有女性唇印）、"主任"称呼、对301室的兴趣
+
+🕵️ 时间诡计解密：
+
+周五晚的不在场证明破解：
+1. 19:50-20:30：以王医生身份在诊所（有预约记录，但提前结束）
+2. 20:30：快速换装，从诊所后门离开，成为"神秘人"
+3. 20:45：出现在公寓301室（林浩看到的"苗条身影"）
+4. 21:15：再次换装，成为李老师，赶到活动中心
+5. 21:30-22:00：以李老师身份教课（监控拍到）
+
+关键：诊所和活动中心都有她的同伙帮忙伪造记录。
+
+🔐 杀人动机与真相：
+
+三个月前：
+• 李婷（林浩前女友）因焦虑找王丽（王医生身份）咨询
+• 偶然发现王丽的秘密：双重身份、伪造专业资质
+• 试图勒索，约在301室（王丽的秘密据点）交易
+• 交易破裂，王丽失手杀死李婷
+• 伪装成失踪案，尸体藏在301室墙体中
+
+🎯 为什么接近陈明和林浩：
+
+1. 试探：了解他们知道多少，是否构成威胁
+2. 离间：制造矛盾，让他们互相怀疑，无暇追查真相
+3. 备用计划：如有必要，将其中一人变成"新失踪者"
+
+🤡 黑色幽默元素：
+
+• 王丽的变装日常：赶场换装、差点穿帮的搞笑时刻
+• 玩家的先入为主：看到白大褂=医生=男性，看到裙子=老师=女性
+• 真相的荒诞：一场精心策划的谋杀，起因是身份被揭穿
+
+💡 核心反转：
+
+当你意识到<span class='twist-highlight'>王医生和李老师是同一个人</span>时，所有的矛盾都迎刃而解：
+• 相同的烟蒂——同一个人抽的烟
+• 相同的"主任"称呼——同一个人
+• 对301室的兴趣——那是她的秘密据点
+• 矛盾的时间线——她在两个身份间快速切换`,
+        endings: {
+            "perfect": `【结局一：完美推理 🏆】
+
+你们识破了王丽的三重伪装，并找到了关键证据：301室墙体中的尸体、变装道具、伪造的记录。
+
+报警后，警察包围了心理咨询中心。王丽正在给患者做咨询，看到你们时，她愣了一下，然后笑了。
+
+"终于可以休息了。"她举起双手，没有反抗。
+
+审讯室里，王丽交代了一切。原来，她从小就有异装癖，但家庭不能接受。成年后，她发现可以通过变装体验不同的人生，渐渐上瘾。当李婷威胁要曝光她时，恐惧让她失去了理智。
+
+法庭上，王丽以精神疾病为由辩护，但你们提供的录音证据（她从王医生切换到李老师声音的片段）让她被判无期徒刑。
+
+一年后，你们收到一封来自监狱的信：
+
+"亲爱的陈明、林浩：
+谢谢你们，让我不必继续扮演别人。
+这身囚服，是我穿过最真实的衣服。
+王丽（或者你们想叫我王医生？李老师？）"
+
+PS：你们的故事被林浩写成报道，获得了新闻奖。陈明开发了一款'识破伪装'的APP，意外火爆。`,
+            "partial": `【结局二：部分真相 ⚠️】
+
+你们确定王丽是凶手，但没完全解开三重身份之谜。警方根据你们的线索逮捕了王丽，但在审讯时，她只承认了杀人，不承认双重身份。
+
+"我只是个普通的心理医生，"王丽平静地说，"至于李老师...那是我的双胞胎妹妹，三年前去世了。我偶尔会穿她的衣服纪念她。"
+
+没有直接证据证明她假扮李老师，案件陷入僵局。最终，王丽因过失杀人被判15年。
+
+三个月后，你们各自收到一个包裹。
+
+陈明收到的是一张照片：他加班时，窗外有一个模糊的人影。
+林浩收到的是一段录音："时间嘛，快一点慢一点又有什么关系呢？"
+
+包裹里还有一张字条："游戏还没结束。等我出来，我们再玩。PS：替我向301室的新房客问好。"
+
+你们冲到301室，发现真的有新房客搬进来了——一个和王丽长得一模一样的女人。
+
+"你们好，"她微笑道，"我是王丽的妹妹，李婷。"`,
+            "failed": `【结局三：被耍了 😅】
+
+你们互相怀疑，甚至报警指控对方。警方调查期间，发现你们两人都有"作案动机"：陈明欠高利贷，林浩的前女友失踪...
+
+就在你们在警局争吵时，王丽彻底消失了。她辞去了工作，注销了所有身份，像人间蒸发一样。
+
+一个月后，你们各自收到一个包裹。
+
+陈明收到的"证据"显示：林浩在调查中发现陈明欠债，可能为了钱参与犯罪。
+林浩收到的"证据"显示：陈明曾私下见过李婷，可能知道失踪真相。
+
+你们在警局相遇，拿出"证据"对峙，才发现所有证据都是伪造的——笔迹、照片、录音，全是假的。
+
+警官苦笑着摇头："你们被耍了。真正的凶手早跑了。"
+
+最后一封信寄到警局："亲爱的两位'侦探'：
+人类真好骗，不是吗？
+性别、身份、证据...都是表演的一部分。
+谢谢你们精彩的表演。
+观众：王丽"
+
+PS：你们的故事成了警校的反面教材。`,
+            "twist": `【隐藏结局：反转再反转 🔄】
+
+在揭露王丽的三重身份后，你们发现一个更惊人的真相。
+
+李婷其实没死。
+
+她现身了，和王丽站在一起。
+
+"抱歉骗了你们，"李婷说，"这是一个心理学实验——'叙述性诡计对人类认知的影响'。"
+
+原来，李婷是心理学博士，王丽是她的研究助手。整个案件是她们设计的实验：
+• 测试人们如何被简单的性别暗示操纵
+• 观察侦探们在信息不对称下的互动模式
+• 研究先入为主对推理的影响
+
+你们的所有反应都被记录下来，成为一篇轰动学界的论文。
+
+作为补偿，她们支付了你们丰厚的"实验参与费"。
+
+但就在你们以为一切都结束时...
+
+陈明的电脑收到一封匿名邮件："实验第一阶段结束。第二阶段开始：你们现在知道自己被实验了，这会改变你们的行为吗？"
+
+林浩的手机响了，未知号码："继续观察中。谢谢配合。"
+
+你们对视一眼，突然不确定：刚才的'真相'，是不是另一个诡计的开始？
+
+🎬 全剧终（也许）`
+        }
+    };
+
+    let playerState = { 
+        roleKey: '', 
+        name: '',
+        voteRelationship: '',
+        voteMurderer: '',
+        voteMotive: '',
+        selectedEnding: ''
+    };
+
+    window.onload = () => {
+        document.title = CONFIG.title + " - 双人剧本杀";
+        const select = document.getElementById('role-select');
+        
+        // 添加角色选项
+        for (let key in CONFIG.roles) {
+            let opt = document.createElement('option');
+            opt.value = key;
+            opt.innerText = CONFIG.roles[key].name;
+            select.appendChild(opt);
+        }
+        
+        // 创建浮动图标
+        createFloatingIcons();
+        setInterval(createFloatingIcons, 30000);
+    };
+
+    function switchView(step) {
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('view' + step).classList.remove('hidden');
+        document.getElementById('step' + step).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function toStep1() {
+        switchView(1);
+    }
+
+    function toStep2() {
+        const name = document.getElementById('player-name').value;
+        if(!name) { 
+            alert("请先输入你的侦探代号！"); 
+            return; 
+        }
+        
+        playerState.name = name;
+        playerState.roleKey = document.getElementById('role-select').value;
+        const roleData = CONFIG.roles[playerState.roleKey];
+        
+        document.getElementById('display-role-name').innerText = roleData.name;
+        document.getElementById('display-tasks').innerHTML = roleData.tasks.replace(/\n/g, '<br>');
+        document.getElementById('display-script').innerText = roleData.script;
+        
+        switchView(2);
+    }
+
+    function toStep3() {
+        const roleData = CONFIG.roles[playerState.roleKey];
+        const personalContainer = document.getElementById('personal-clues');
+        const commonContainer = document.getElementById('common-clues');
+        const contradictionsContainer = document.getElementById('contradictions');
+        
+        personalContainer.innerHTML = '';
+        commonContainer.innerHTML = '';
+        contradictionsContainer.innerHTML = '';
+        
+        // 个人线索
+        roleData.clues.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.innerHTML = `<span class="clue-number">${index + 1}</span>${c}`;
+            personalContainer.appendChild(div);
+        });
+        
+        // 公共线索
+        CONFIG.commonClues.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.innerHTML = `<span class="clue-number">C${index + 1}</span>${c}`;
+            commonContainer.appendChild(div);
+        });
+        
+        // 矛盾点
+        CONFIG.contradictions.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.style.borderTopColor = 'var(--mystery)';
+            div.innerHTML = `<span class="clue-number" style="background:var(--mystery)">!</span>${c}`;
+            contradictionsContainer.appendChild(div);
+        });
+        
+        switchView(3);
+    }
+
+    function toStep4() {
+        if(confirm("确定要揭晓真相吗？建议充分讨论所有矛盾点！")) {
+            switchView(4);
+        }
+    }
+
+    function submitVotes() {
+        const relationship = document.getElementById('vote-relationship').value;
+        const murderer = document.getElementById('vote-murderer').value;
+        const motive = document.getElementById('vote-motive').value;
+        
+        if(!relationship || !murderer || !motive) {
+            alert("请完成所有判断！");
+            return;
+        }
+        
+        playerState.voteRelationship = relationship;
+        playerState.voteMurderer = murderer;
+        playerState.voteMotive = motive;
+        
+        let score = 0;
+        if(relationship === "同一个人") score += 3;
+        if(murderer === "王丽") score += 3;
+        if(motive === "灭口") score += 2;
+        
+        let message = "";
+        if(score >= 8) {
+            message = "🎉 神探！你完全看破了所有诡计！";
+        } else if(score >= 5) {
+            message = "✅ 不错！你掌握了大部分真相！";
+        } else if(score >= 3) {
+            message = "⚠️ 有进步空间！你只看到了部分真相。";
+        } else {
+            message = "😅 被叙述性诡计骗到了吧？";
+        }
+        
+        alert(message + "\n\n现在请选择你想看的结局。");
+    }
+
+    function selectEnding(ending) {
+        playerState.selectedEnding = ending;
+        
+        // 移除之前的选择
+        document.querySelectorAll('.reveal-box').forEach(box => {
+            box.style.border = '2px solid var(--secondary)';
+        });
+        
+        // 高亮当前选择
+        event.currentTarget.style.border = '3px solid var(--accent)';
+        
+        // 显示密码验证区域
+        document.getElementById('password-section').classList.remove('hidden');
+        document.getElementById('truth-password').value = ''; // 清空密码框
+        
+        // 隐藏真相区域（如果之前显示过）
+        document.getElementById('truth-content').classList.add('hidden');
+        
+        // 滚动到密码区域
+        document.getElementById('password-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 密码验证函数
+    function verifyPassword() {
+        const passwordInput = document.getElementById('truth-password');
+        const password = passwordInput.value;
+        
+        if (password === CONFIG.password) {
+            // 密码正确，显示真相
+            document.getElementById('password-section').classList.add('hidden');
+            document.getElementById('truth-content').classList.remove('hidden');
+            
+            // 填充真相和结局
+            document.getElementById('display-truth').innerHTML = CONFIG.truth;
+            document.getElementById('display-ending').innerText = CONFIG.endings[playerState.selectedEnding];
+            
+            // 滚动到真相区域
+            document.getElementById('truth-content').scrollIntoView({ behavior: 'smooth' });
+            
+            // 添加一些动画效果
+            const truthBoxes = document.querySelectorAll('.reveal-box');
+            truthBoxes.forEach((box, index) => {
+                setTimeout(() => {
+                    box.classList.add('twist-animation');
+                    setTimeout(() => {
+                        box.classList.remove('twist-animation');
+                    }, 1000);
+                }, index * 200);
+            });
+            
+        } else {
+            // 密码错误
+            alert("❌ 口令错误！请重新输入。\n\n提示：数字密码，经典的侦探密码");
+            passwordInput.value = '';
+            passwordInput.focus();
+            
+            // 抖动密码框
+            passwordInput.style.animation = 'none';
+            setTimeout(() => {
+                passwordInput.style.animation = 'shake 0.5s';
+            }, 10);
+            
+            // 添加抖动动画
+            if (!document.querySelector('style[data-shake-animation]')) {
+                const style = document.createElement('style');
+                style.setAttribute('data-shake-animation', 'true');
+                style.textContent = `
+                    @keyframes shake {
+                        0%, 100% { transform: translateX(0); }
+                        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                        20%, 40%, 60%, 80% { transform: translateX(5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+    }
+
+    // 添加回车键支持
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('truth-password');
+        if (passwordInput) {
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyPassword();
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
