@@ -39,6 +39,39 @@
         nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: var(--apple-blur); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 0; }
         .nav-content { max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
 
+        /* 弹幕滚动区 */
+        .danmu-bar { background: #000; height: 40px; overflow: hidden; display: flex; align-items: center; }
+        #danmu-wrapper { display: flex; white-space: nowrap; animation: scroll-left 40s linear infinite; }
+        .danmu-item { font-size: 0.85rem; color: #fff; margin-right: 60px; display: flex; align-items: center; opacity: 0.9; }
+        .danmu-item span { color: #5fb9ff; margin-right: 8px; font-weight: 600; }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* 弹幕发射器 */
+        .input-area {
+            background: #fff; padding: 15px 40px; border-bottom: 1px solid #e1e1e1;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .danmu-input {
+            width: 100%; max-width: 500px; border: 1px solid #d2d2d7; border-radius: 20px;
+            padding: 8px 15px; font-size: 0.9rem; outline: none; transition: 0.3s;
+        }
+        .danmu-input:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0,113,227,0.1); }
+        .send-btn {
+            background: var(--apple-blue); color: #fff; border: none; padding: 8px 20px;
+            border-radius: 20px; font-size: 0.9rem; cursor: pointer; white-space: nowrap;
+        }
+
+        header { max-width: 1100px; margin: 60px auto 40px; padding: 0 40px; }
+        header h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 10px; }
+
+        .container { max-width: 1100px; margin: 0 auto 100px; padding: 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+
+
+        
         /* 分类选择器 (iOS Style) */
         .filter-wrapper { max-width: 1100px; margin: 30px auto 0; padding: 0 40px; }
         .segmented-control {
@@ -189,7 +222,12 @@
     <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
 
     <footer>
-        <p>© 2026 提笔绘梨花 制作</p>
+        <p>© 2026 提笔绘梨花</p>
+        <div style="margin-top:10px; font-size:0.75rem; color:var(--apple-text-secondary);">
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            今日用户到访: <span id="busuanzi_value_site_uv"></span> 位
+        </div>
+
     </footer>
 
     <script>
@@ -250,8 +288,73 @@
             }
         }
     </script>
+
+       <script>
+        // --- 弹幕逻辑 ---
+        const defaultDanmu = [
+            { nick: "系统", msg: "欢迎来到侦探电台，输入感悟并点击发射！" },
+            { nick: "匿名", msg: "断剑山庄那个结局我直接裂开..." },
+            { nick: "侦探甲", msg: "十年迷雾的细节控看过来。" }
+        ];
+
+        function renderDanmu() {
+            const wrapper = document.getElementById('danmu-wrapper');
+            const myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
+            const allDanmu = [...defaultDanmu, ...myDanmu];
+            wrapper.innerHTML = allDanmu.map(item => `
+                <div class="danmu-item"><span>🕵️ ${item.nick}:</span> ${item.msg}</div>
+            `).join('');
+        }
+
+        window.sendDanmu = function() {
+            const input = document.getElementById('danmuInput');
+            const val = input.value.trim();
+            if (!val) return;
+            let myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
+            myDanmu.push({ nick: "我", msg: val });
+            localStorage.setItem('my_danmus', JSON.stringify(myDanmu));
+            input.value = '';
+            renderDanmu();
+            const btn = document.querySelector('.send-btn');
+            btn.innerText = "已发射!";
+            setTimeout(() => btn.innerText = "发射", 1000);
+        }
+
+        // --- 成就逻辑 ---
+        window.markAsComplete = function(id) {
+            let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+            if (!completed.includes(id)) {
+                completed.push(id);
+                localStorage.setItem('larp_achievements', JSON.stringify(completed));
+            }
+            refresh();
+        }
+
+        window.refresh = function() {
+            const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+            completed.forEach(id => {
+                const card = document.querySelector(`[data-script-id="${id}"]`);
+                if (card) card.classList.add('completed');
+            });
+        }
+
+        window.clearAllData = function() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        window.onload = function() {
+            renderDanmu();
+            refresh();
+        }
+
+        document.getElementById('danmuInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendDanmu();
+        });
+    </script>
 </body>
 </html>
+
 
 
 
