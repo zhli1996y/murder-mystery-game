@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园不可思议事件 · 五人封闭本</title>
+    <style>
+        :root {
+            --bg: #0f1a20;
+            --card-bg: #1a2a2f;
+            --text: #e8dfd0;
+            --accent: #c53030;
+            --primary: #8a6d3b;
+            --secondary: #a87c3b;
+            --poem: #d4b483;
+        }
+
+        body { 
+            font-family: 'SimSun', 'STKaiti', 'PingFang SC', 'Microsoft YaHei', serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            line-height: 1.8;
+            background-image: 
+                linear-gradient(rgba(15, 26, 32, 0.95), rgba(15, 26, 32, 0.95)),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><pattern id="pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M20,0 L40,20 L20,40 L0,20 Z" fill="none" stroke="%231a2a2f" stroke-width="1" opacity="0.3"/></pattern></defs><rect width="100%" height="100%" fill="url(%23pattern)"/></svg>');
+        }
+        
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        
+        .step-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 30px; 
+            background: var(--card-bg); 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 0.9rem; 
+            border: 1px solid #2c3e3c;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            z-index: 0;
+        }
+        
+        .step { 
+            color: #8a9a9a; 
+            transition: 0.3s; 
+            padding: 8px 15px;
+            border-radius: 4px;
+            background: var(--card-bg);
+            position: relative;
+            z-index: 1;
+            border: 1px solid transparent;
+        }
+        
+        .step.active { 
+            color: var(--secondary); 
+            font-weight: bold; 
+            background: rgba(138, 108, 59, 0.2);
+            border: 1px solid rgba(168, 124, 59, 0.4);
+            box-shadow: 0 0 15px rgba(168, 124, 59, 0.2);
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+            min-height: 400px; 
+            border: 1px solid #2c3e3c;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary), var(--primary));
+        }
+        
+        h1, h2 { 
+            color: var(--secondary); 
+            text-align: center; 
+            margin-bottom: 25px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+            font-family: 'STKaiti', serif;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after, h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+        }
+        
+        .game-title {
+            color: var(--poem);
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            padding: 15px;
+            border: 1px solid rgba(168, 124, 59, 0.3);
+            border-radius: 8px;
+            background: rgba(26, 42, 47, 0.7);
+            line-height: 1.6;
+        }
+        
+        .poem {
+            font-family: 'STKaiti', serif;
+            color: var(--poem);
+            font-size: 1rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 3px solid var(--primary);
+            background: rgba(138, 108, 59, 0.1);
+            font-style: italic;
+        }
+        
+        .script-text { 
+            white-space: pre-wrap; 
+            background: #142428; 
+            padding: 25px; 
+            border-radius: 8px; 
+            border: 1px solid #2c3e3c; 
+            margin-top: 20px; 
+            font-size: 1.05rem; 
+            text-align: justify; 
+            line-height: 1.9;
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #142428;
+            position: relative;
+        }
+        
+        .script-text::first-letter {
+            font-size: 2.5em;
+            float: left;
+            line-height: 1;
+            margin: 0 10px 0 0;
+            color: var(--secondary);
+            font-family: 'STKaiti', serif;
+        }
+        
+        .script-text::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .script-text::-webkit-scrollbar-track {
+            background: #142428;
+            border-radius: 4px;
+        }
+        
+        .script-text::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .clue-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 20px; 
+            margin-top: 20px; 
+        }
+        
+        @media (min-width: 600px) {
+            .clue-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .clue-card { 
+            background: #1d302d; 
+            padding: 20px; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .clue-card::before {
+            content: '〓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: rgba(138, 108, 59, 0.2);
+            font-size: 1.5rem;
+            font-family: 'SimSun', serif;
+        }
+        
+        .clue-card:hover {
+            transform: translateX(5px);
+            background: #243a36;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .clue-card .clue-number {
+            display: inline-block;
+            background: var(--primary);
+            color: #1a2a2f;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 12px;
+            font-weight: bold;
+            font-family: 'STKaiti', serif;
+        }
+
+        select, input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 12px 0; 
+            background: #0a1619; 
+            border: 1px solid #2c3e3c; 
+            color: var(--text); 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            font-family: 'SimSun', 'STKaiti', serif;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(168, 124, 59, 0.2);
+        }
+        
+        button { 
+            background: linear-gradient(135deg, var(--primary), var(--accent)); 
+            color: #f5f1e8; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 1.1rem; 
+            margin-top: 25px; 
+            transition: 0.3s; 
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-family: 'STKaiti', serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover { 
+            opacity: 0.9; 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 20px rgba(197, 48, 48, 0.3);
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        
+        button:hover::after {
+            left: 100%;
+        }
+        
+        .btn-secondary { 
+            background: linear-gradient(135deg, #1d302d, #2c3e3c);
+            margin-top: 15px; 
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 8px 20px rgba(44, 62, 60, 0.3);
+        }
+
+        .hidden { 
+            display: none; 
+        }
+        
+        .warning { 
+            color: #e67e22; 
+            font-size: 0.9rem; 
+            margin-top: 20px; 
+            text-align: center; 
+            padding: 15px;
+            background: rgba(230, 126, 34, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #e67e22;
+            border-right: 3px solid #e67e22;
+        }
+        
+        .truth-box {
+            background: linear-gradient(135deg, #142428, #1a2a2f);
+            border: 1px solid var(--primary);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(138, 108, 59, 0.1);
+            position: relative;
+        }
+        
+        .truth-box::before {
+            content: '❖';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            color: var(--secondary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .role-tag {
+            display: inline-block;
+            background: rgba(138, 108, 59, 0.3);
+            color: var(--poem);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(168, 124, 59, 0.5);
+        }
+        
+        .task-box {
+            background: rgba(168, 124, 59, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .task-box h4 {
+            color: var(--secondary);
+            margin-top: 0;
+            font-family: 'STKaiti', serif;
+            font-size: 1.2rem;
+        }
+        
+        .player-info {
+            background: rgba(138, 108, 59, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(168, 124, 59, 0.3);
+        }
+        
+        .secret-box {
+            background: rgba(197, 48, 48, 0.1);
+            border: 1px dashed rgba(197, 48, 48, 0.5);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .secret-title {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .ending-option {
+            background: rgba(138, 108, 59, 0.1);
+            border: 1px solid rgba(168, 124, 59, 0.3);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .ending-option:hover {
+            background: rgba(168, 124, 59, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .ending-title {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-family: 'STKaiti', serif;
+        }
+        
+        .snowflake {
+            position: fixed;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 1000;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        
+        .password-box {
+            background: rgba(26, 42, 47, 0.8);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .password-box h4 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-family: 'STKaiti', serif;
+        }
+        
+        .password-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .password-input input {
+            flex: 1;
+            text-align: center;
+            font-size: 1.1rem;
+            letter-spacing: 5px;
+            background: rgba(10, 22, 25, 0.8);
+        }
+        
+        .password-input button {
+            width: auto;
+            padding: 14px 25px;
+            margin-top: 0;
+        }
+        
+        .password-hint {
+            font-size: 0.85rem;
+            color: var(--poem);
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="step-bar">
+        <span id="step1" class="step active">一 · 选择身份</span>
+        <span id="step2" class="step">二 · 阅读命缘</span>
+        <span id="step3" class="step">三 · 查探线索</span>
+        <span id="step4" class="step">四 · 真相抉择</span>
+    </div>
+
+    <div id="view1" class="card">
+        <h1>校园不可思议事件</h1>
+        <div class="game-title">
+            中元节深夜，H大旧教学楼，五人探险，一人殒命枯井。<br>
+            每个人都有自己的秘密，每个人都是潜在的凶手。<br>
+            但真正的恶魔，只有一个。
+        </div>
+        
+        <div class="poem">
+            月隐枯井畔，鬼影现荒园<br>
+            锁命微笑里，谁人得昭雪
+        </div>
+        
+        <div class="player-info">
+            <label>你的代号：</label>
+            <input type="text" id="player-name" placeholder="请输入你的昵称">
+            
+            <label>选择你的角色：</label>
+            <select id="role-select"></select>
+            
+            <div style="margin-top: 25px;">
+                <span class="role-tag">五人封闭本</span>
+                <span class="role-tag">校园惊悚</span>
+                <span class="role-tag">时间诡计</span>
+                <span class="role-tag">多线复仇</span>
+                <span class="role-tag">死亡微笑</span>
+            </div>
+        </div>
+        
+        <button onclick="toStep2()">确认身份，踏入旧教学楼</button>
+        
+        <div class="warning">
+            ⚠️ 本格推理，细节为王。请仔细阅读个人剧本，记录时间线。<br>
+            中元节夜11:00-0:00，每一分钟都可能改变结局。<br>
+            预计游戏时间：2-3小时
+        </div>
+    </div>
+
+    <div id="view2" class="card hidden">
+        <h2 id="display-role-name">角色名</h2>
+        
+        <div class="task-box">
+            <h4>🎯 你的任务</h4>
+            <div id="display-tasks"></div>
+        </div>
+        
+        <div class="secret-box">
+            <div class="secret-title">你的隐秘</div>
+            <div id="display-secrets"></div>
+        </div>
+        
+        <div class="script-text" id="display-script">正在加载剧本，请稍候...</div>
+        
+        <button onclick="toStep3()">我已通晓命缘，查看线索</button>
+        
+    </div>
+
+    <div id="view3" class="card hidden">
+        <h2>线索查探</h2>
+        <div class="poem">
+            枯井、假人、血包、毒药……<br>
+            每一件物证都在诉说谎言。
+        </div>
+        
+        <h3 style="color: var(--secondary); margin-top: 20px;">个人物证</h3>
+        <div id="personal-clues" class="clue-grid"></div>
+        
+        <h3 style="color: var(--secondary); margin-top: 30px;">现场 & 公共线索</h3>
+        <div id="common-clues" class="clue-grid"></div>
+        
+        <button onclick="toStep4()">我已理清头绪，做出抉择</button>
+        <button class="btn-secondary" onclick="toStep2()">返回命缘</button>
+    </div>
+
+    <div id="view4" class="card hidden">
+        <h1 style="color: var(--secondary);">⚖️ 最终裁决</h1>
+        <div class="poem">
+            午夜零点，多出来的第七个人究竟是谁？<br>
+            枯井边的石头、小树林的假人、厕所的哭声……<br>
+            投下你的判断，让真相浮出水面。
+        </div>
+        
+        <div class="truth-box">
+            <h3 style="color: var(--secondary);">关键三问</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 20px; text-align: center;">
+                根据你掌握的证据，做出你的选择
+            </p>
+            
+            <label>① 真正的凶手是？</label>
+            <select id="vote-murderer">
+                <option value="">请选择...</option>
+                <option value="郝闺蜜">郝闺蜜</option>
+                <option value="李小弟">李小弟</option>
+                <option value="林校花">林校花</option>
+                <option value="王学习">王学习</option>
+                <option value="赵帅哥">赵帅哥</option>
+            </select>
+            
+            <label>② 张恶霸的直接死因？</label>
+            <select id="vote-cause">
+                <option value="">请选择...</option>
+                <option value="中毒">中毒（死亡微笑）</option>
+                <option value="摔死">摔死（坠入枯井）</option>
+                <option value="惊吓">惊吓致死</option>
+                <option value="石头砸死">被石头砸死</option>
+            </select>
+            
+            <label>③ 谁将尸体推入枯井？</label>
+            <select id="vote-mover">
+                <option value="">请选择...</option>
+                <option value="赵帅哥">赵帅哥</option>
+                <option value="林校花">林校花</option>
+                <option value="王学习">王学习</option>
+                <option value="郝闺蜜">郝闺蜜</option>
+                <option value="李小弟">李小弟</option>
+            </select>
+            
+            <button onclick="submitVotes()">提交推理</button>
+        </div>
+        
+        <div class="truth-box" style="margin-top: 30px;">
+            <h3 style="color: var(--secondary);">结局的走向</h3>
+            <p style="text-align: center; color: var(--poem);">选择你希望看到的最终章</p>
+            
+            <div id="ending-options">
+                <div class="ending-option" onclick="selectEnding('昭雪')">
+                    <div class="ending-title">结局一 · 枯井昭雪</div>
+                    <div style="font-size: 0.9rem;">真凶伏法，所有冤屈得以伸张，生者释然。</div>
+                </div>
+                
+                <div class="ending-option" onclick="selectEnding('错位')">
+                    <div class="ending-title">结局二 · 错位的罪</div>
+                    <div style="font-size: 0.9rem;">无辜者蒙冤，真凶逍遥，但惩罚以另一种方式降临。</div>
+                </div>
+                
+                <div class="ending-option" onclick="selectEnding('永夜')">
+                    <div class="ending-title">结局三 · 永夜</div>
+                    <div style="font-size: 0.9rem;">真相永远沉入枯井，每个人都带着秘密活下去。</div>
+                </div>
+            </div>
+            
+            <!-- 密码验证区域 -->
+            <div id="password-section" class="password-box hidden">
+                <h4>🔐 真相解锁</h4>
+                <p style="color: var(--text); margin-bottom: 15px;">
+                    请输入解密口令查看完整案件解析<br>
+                    <span style="font-size: 0.85rem; color: var(--poem);">（提示：三位数字，生物室出现血水的时间分钟）</span>
+                </p>
+                
+                <div class="password-input">
+                    <input type="password" id="truth-password" placeholder="输入口令" maxlength="3">
+                    <button onclick="verifyPassword()">验证</button>
+                </div>
+                
+                <div class="password-hint">
+                    口令错误将无法查看真相，请仔细回忆剧本。
+                </div>
+            </div>
+            
+            <!-- 真相显示区域 -->
+            <div id="truth-content" class="hidden" style="margin-top: 30px;">
+                <h3 style="color: var(--secondary);">案件解析</h3>
+                <div class="script-text" id="display-truth" style="border-color: var(--primary);"></div>
+                
+                <h3 style="color: var(--secondary); margin-top: 30px;">你所见的结局</h3>
+                <div id="display-ending" class="script-text" style="border-color: var(--secondary);"></div>
+                
+                <button class="btn-secondary" onclick="location.reload()" style="margin-top: 25px;">重历轮回</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 雪花氛围 (可选)
+    function createSnowflakes() {
+        const snowflakes = ['☾', '☽', '✧', '·', '*'];
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                flake.style.left = Math.random() * 100 + 'vw';
+                flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                flake.style.opacity = Math.random() * 0.4 + 0.2;
+                flake.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                flake.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(flake);
+                setTimeout(() => flake.remove(), 15000);
+            }, i * 200);
+        }
+    }
+
+    // ==================== 剧本核心配置 ====================
+    const CONFIG = {
+        title: "校园不可思议事件",
+        password: "115",   // 11:15 生物室血水事件
+        roles: {
+            "郝闺蜜": {
+                name: "郝闺蜜",
+                tasks: "你不是凶手，请洗清嫌疑，并挖掘事件真相。",
+                secrets: "1. 你的表姐是被张恶霸强奸后上吊的，你考进H大就是为了复仇。\n2. 你挖了陷阱，做了假人，本想吓张恶霸并推他入坑。\n3. 假人提前吓到张恶霸，他喊着“不要杀我”跑向枯井，你只得藏起假人。",
+                script: `【郝闺蜜剧本——你的表姐在全国最好的大学H大上学，她既是你最亲的同龄人，也是你追逐的目标，你努力的学习，只为能在H大与姐姐团聚。
+可是当你信心满满想向表姐展示自己的模拟考成绩绝对能考上H大的时候，家里却传来了姐姐自杀的消息。无论你如何追问家里人就是不告诉你表姐为什么自杀，并让你好好学习不要多想。你无论如何都不会相信那个活泼开朗的表姐会无缘无故自杀，于是你加倍努力学习考上了H大，要去姐姐自杀的地方一探究竟。
+上了大学以后，你稍微一打听就知道了事情的来龙去脉。原来是和表姐同届的张恶霸看上了漂亮的表姐，追求不成恼羞成怒就强奸了她。还拍下她的裸照威胁她，羞愧难当又无可奈何的表姐最后不得不选择自杀。而张恶霸家有钱有势，花了一大笔钱平息了各方，赔偿加威胁了表姐家，就平息了这件事。你非常伤心，并下定决心为表姐报仇，要让这个恶霸付出生命的代价。
+     你打听到张恶霸的未婚妻——林校花，是和你同一届的学生，于是找机会成为了林校花的好朋友，借着林校花认识了张恶霸，并不时的在张恶霸身边出现，引起张恶霸的注意。
+    这个张恶霸真的是好色成性，只要是稍微有点姿色的女人他都不会放过。从林校花口中你也得知，这个林校花也不想嫁给张恶霸，但是迫于家里的压力，她没办法左右。这个张恶霸不仅不喜欢她，还时常的打她。你很同情林校花，这更加坚定了你要杀张恶霸的决心。
+     你计划先在小树林里事先挖好一个深坑设一个陷阱，然后把张恶霸骗到小树林，趁他不注意的时候将他推下去，并用石头砸死他，造成他失足跌进坑里不小心碰到头而死的假象。于是你用了几天的时间在小树林里一个隐秘的地方挖好陷阱，选择这个地方是为了祭奠你的表姐，你听说表姐就是在这个小树林里上吊自杀的。
+也许是上天的眷顾，杀死张恶霸的机会很快就来了。在七月十四中元节的前一天，林校花约你中元节晚上和张恶霸他们一起去旧教学楼探险，去看一看学校里传说的“H大校园七大不思议事件”是真是假。你想都没想就答应了，并打算在小树林里弄个上吊的假人吓一吓张恶霸。
+【中元节晚，11点】
+你和林校花来到学校后门和张恶霸他们会合，你画了个美美的妆，前几天张恶霸已经很明显的在追求你了，你一直欲擒故纵的吊着他，所以你决定今天晚上勾引张恶霸，把他骗去小树林。
+你们6个人从后门翻墙进入学校。王学习和李小弟弄开了旧教学楼的大门，一行人上了4楼，教学楼有东头和西头两个楼梯口，你们在西头的楼梯数了好几遍也没发现台阶多一阶。张恶霸有点不耐烦了，想回去了。赵帅哥却说，这个不灵我们就去试试下一个好了，一行人都同意，张恶霸也就点头了。
+11：15，一行人又来到4楼的生物室，张恶霸命令王学习去查看水龙头。王学习害怕的打开了水龙头将手伸过去摸水，收回来的时候他的手上一片血红。这时林校花惊声尖叫，有血！王学习也跟着叫了起来，并失手把手电筒掉到了地上，手电筒瞬间就熄灭了。陷入黑暗后大家的叫声更大了。
+  你听见有人慌慌张张跑出去的声音，你一害怕也跑了出去。跑到2楼后发现就剩自己了，你又想到今天晚上那么好的机会不能浪费，就安慰了一下自己，又回头到4楼生物室找他们。到生物室的时候刚好看见李小弟从里面出来，李小弟说里面没人，二人商量一下决定上5楼看一下。
+11：20，李小弟和你在5楼音乐室里看见张恶霸和王学习，王学习正在用手机照贝多芬的眼睛。李小弟进去后殷勤的给了张恶霸一瓶水，并在一旁夸赞张恶霸胆子大。你见张恶霸，觉得时机成熟了，便把他叫到一旁，暗示张恶霸和自己单独去小树林看看，并让张恶霸支开王学习和李小弟。张恶霸果然很高兴，转头命令王学习和李小弟去查看二楼的厕所，说完就亲密的搂着你去了小树林。
+11：25，你和张恶霸到达小树林，你把张恶霸带到陷阱附近。你悄悄踢开路上的一块石头，前面的一棵树上突然下落一个长发白衣的鬼，那是你提前设置好吓张恶霸的假人。这一路来你知道张恶霸是个胆子很大的人，你想凭着张恶霸的大胆，应该会上前查看，到时候趁他不备就推他进深坑。没想到张恶霸一看见那个白影就吓的不行，大叫着不要杀我！不要杀我！是你自己上吊自杀的，不关我的事，然后抱着头转身就跑。你想追上去的时候，张恶霸已经跑没影了。你不得不放弃今晚杀他的计划，为了不被别人发现，你将假人放下来连同绳子一起扔进了深坑里。
+11：30，刚把假人扔进去，你就听到了脚步声，一回头发现赵帅哥来了，还好晚上小树林视野不好，为了不让赵帅哥发现陷阱，你快步迎了上去试图挡住赵帅哥的视线。还好赵帅哥只是打听张恶霸的去向，你告诉赵帅哥张恶霸像发了疯一样跑向旧教学楼了，随后赵帅哥就匆匆的走了。
+然后你又找了些东西将洞口简易的隐藏了起来，做好这些以后你决定去校长雕像看看张恶霸到底怎么了，因为约定了在那里集合。
+11：45，你来到校长像前，一个人也没有。正在这时，李小弟也来了，你问他有没有见过张恶霸，李小弟说他一直在旧教学楼，谁也没看见。因为12点校长雕像的传说，所以二人决定在这里等一会。过了5分钟，林校花来了，说自己在旧教学楼呆了半天，谁也没见着。又过了5分钟，王学习走来，他说自己一直在4楼生物室待着。最后接近12点的时候赵帅哥也来了，他说现在就差张恶霸没来集合了，大家等一下。
+ 0：00，你们5个人在雕像前等张恶霸，这时远远的看见一个黑影从学校正门走来，这个黑影佝偻着背，手里拿着一根铁棒托在地上发出沉重的“哗啦啦”的声音，一瘸一拐的向你们走来，很明显不是张恶霸。这时张帅哥说了句，那是不是多出来的人。林校花马上尖叫着喊到鬼啊！大家吓得拔腿就跑，从后门翻墙各自回家了。
+    结果第二天，竟然传来了张恶霸的死讯，你作为嫌疑人受到了传唤……。`,
+                clues: [
+                    "购买假发和假人的收据。",
+                    "家里发现一张郝闺蜜和漂亮女人的亲密合影，经指认正是被张恶霸强奸后上吊的表姐。",
+                    "小树林里发现一个被简单隐藏的深坑，内有长发白衣假人。"
+                ]
+            },
+            "李小弟": {
+                name: "李小弟",
+                tasks: "你不是凶手，请洗清嫌疑，并挖掘事件真相。",
+                secrets: "1. 表哥李大哥曾被张恶霸打断腿，你接近张恶霸想让他坐牢。\n2. 你给张恶霸喝了强效迷幻药，希望他精神失常。\n3. 你在二楼厕所被“女鬼”吓跑，之后在小树林外遇见赵帅哥。",
+                script: `【李小弟剧本——你在上高中的时候，你最引以为傲的表哥，在外校的李大哥被人打断了腿，虽然你一直想了解真相，但是李大哥怕你做傻事一直不肯告诉你。而李大哥本来是个喜爱运动、学习优秀的校草，却在这件事以后意志消沉，还经常被人嘲笑是瘸子，一天天忧郁起来。看着李大哥这样被人毁了一辈子，你在心中默默的许下了誓言，以后遇见这个人一定要给他一个让他一辈子都会后悔的教训。     上了大学以后你遇见了张恶霸，并无意中从王学习口中得知他和张恶霸是一个高中的，而且就是李大哥的高中。你特意从王学习口中打听到张恶霸在高中时确实打断过他们学校校草李大哥的腿。于是你决定跟在张恶霸的身边，怂恿他做更多的坏事，最好能让他去坐牢。    可即使张恶霸在大一的时候强奸了一个女孩，致使这个女孩在学校小树林里上吊自杀，也是他父亲花了一笔钱就不了了之。你觉得靠张恶霸做坏事自食其果这个计划看来是不行了，于是你开始考虑下一步计划，能毁掉他最重视的东西。    到你们上大二的时候，学校来了个新生赵帅哥，总是跟在张恶霸的身边，并很快和张恶霸成为了好朋友。而张恶霸的未婚妻林校花也作为新生来这个学校上学，美名其曰培养感情。但林校花虽然好看，张恶霸却对她不感兴趣，而是依旧在外面花天酒地。 在七月十四中元节的前一天，你和赵帅哥、张恶霸和王学习在一起。赵帅哥说起学校里流传的一个恐怖传说，传说学校建造之前是一个乱葬岗，而极阴之地就在学校的旧教学楼那里。自从那个教学楼建成之后就怪事不断。不断地有学生撞见灵异事件，所以现在教学楼只用于简单的实验，平时是不开放的。赵帅哥约张恶霸中元节晚上来学校探险。张恶霸当然是不相信这种鬼神之说的，但是赵帅哥极力劝说张恶霸。并和张恶霸打赌谁先害怕回家谁就是胆小鬼，必须无条件答应对方的三个条件。最后张恶霸被赵帅哥说服，并说要叫上林校花和林校花的好朋友郝闺蜜。你知道张恶霸叫林校花，只是因为他最近看上了她的好朋友郝闺蜜。你觉得这次鬼节探险是一次很好的机会，月黑风高夜最适合制造意外了。
+【中元节，11点】
+你们一行6人在学校后门集合，你们从后门翻墙进入学校开启这次试胆大会。你注意到林校花和郝闺蜜都画着精致的妆，真不知道她们是来探险的还是来约会的。
+王学习和你弄开了旧教学楼的大门，一行人上了4楼，教学楼有东头和西头两个楼梯口。你们在西头的楼梯数了好几遍也没发现台阶多一阶。张恶霸有点不耐烦了，想回去了。赵帅哥却说，这个不灵我们就去试试下一个好了，一行人都同意，张恶霸也就点头了。
+
+11点15一行人又来到4楼的生物室，张恶霸命令王学习去查看水龙头。王学习很害怕的样子颤抖着打开了水龙头将手伸过去摸水，收回来的时候他的手上一片血红。这时林校花大叫一声，有血！王学习也跟着叫了起来，并把手上的手电筒吓得掉在了地上，手电筒瞬间就熄灭了。大家陷入黑暗之后叫声更大了，你听见了大家吓得四散逃开的声音，你也有点害怕就跑下了楼。
+跑到二楼你突然想起自己还没对张恶霸下手呢，怎么能就这样跑了。你安慰了自己一会，觉得可能是看花眼了也不一定。于是你又回到4楼生物室，发现生物室已经没人了，出门时遇见郝闺蜜。两人商量着一起上了5楼。
+11：20，你和郝闺蜜在音乐室看到了张恶霸和王学习，此时王学习正在用手机光照贝多芬的眼睛。你忙拿出来事先放好强效迷幻药的矿泉水给张恶霸喝，并殷勤的夸赞张恶霸胆子大。张恶霸大手一挥说是你们胆子太小了，你看那个赵帅哥都被吓得没影了。你心里默默的想到，这个迷幻药可是我花大力气从黑市搞到的，你一喝下去就会产生各种各样的幻觉，我再稍微吓吓你，哪怕你胆子再大也会被吓疯，下半辈子你最好疯疯癫癫的过吧。
+张恶霸喝完水后，郝闺蜜把张恶霸拉到一边说了些悄悄话，张恶霸就指使你和王学习去二楼查看厕所，然后张恶霸和郝闺蜜就很亲密的走了。于是你和王学习来到二楼厕所，你觉得闲着也是闲着，就提议去看看厕所最后一格能不能打开，王学习也觉得来都来了就去看看吧。这时厕所最后一格突然传来女人的哭声，借着窗户透进来惨白的月光，你们看见了厕所的门缓缓的被打开了，一只女人惨白的手慢慢的从里面伸了出来。你和王学习大叫着吓跑了，慌乱中两个人朝不同的地方跑去。
+11：25，你跑到3楼西面的楼梯，觉得今天晚上实在太恐怖了，自己就不要乱跑了，去小树林看看张恶霸怎么样了，然后就去校长像前集合吧。正在这时，突然有人在身后拍了一下你的肩膀，把你吓了一跳，一回头发现原来是赵帅哥。赵帅哥问张恶霸去哪里了？你告诉他张恶霸和郝闺蜜去了小树林，赵帅哥就匆匆的走了。你觉得跟着赵帅哥容易被发现，就等了一会再去小树林。
+11点40，你决定去小树林看看，在路上却远远看到一个女生的人影从小树林走向校长雕像。你估计是郝闺蜜，于是决定过去问问。
+11点45，你到校长雕像前，发现果然是郝闺蜜，郝闺蜜问你有没有见过张恶霸，你说你一直在旧教学楼，谁也没看见，你也没多问张恶霸的事，他肯定不在小树林了。因为12点校长雕像的传说，所以二人决定在这里等一会。
+过了5分钟，林校花来了，说自己在旧教学楼呆了半天，谁也没见着。又过了5分钟，王学习走来，他说自己一直在4楼生物室待着。最后接近12点的时候赵帅哥也来了，他说现在就剩张恶霸了没来了，我们等他一会。午夜零点多你们5个人在雕像前等张恶霸，这时远远的看见一个黑影从学校正门走来，这个黑影佝偻着背，手里拿着一根铁棒托在地上发出沉重的“哗啦啦”的声音，一瘸一拐的向你们走来，很明显不是张恶霸。这时张帅哥说了句，那是不是多出来的人。林校花马上尖叫着喊到鬼啊！大家吓得拔腿就跑，从后门翻墙各自回家了。结果第二天，竟然传来了张恶霸的死讯，你作为嫌疑人受到了传唤……
+任务：
+   你不是凶手，请洗清嫌疑，并挖掘事件真相。
+`,
+                clues: [
+                    "一张黑市的收据，只有商品编号（对应强效迷幻药）。",
+                    "李小弟有一个表哥叫李大哥，曾与张恶霸同校，现残疾。"
+                ]
+            },
+            "林校花": {
+                name: "林校花",
+                tasks: "你是凶手，但请尽力掩饰，并观察他人反应。",
+                secrets: "1. 你被迫嫁给张恶霸，受尽打骂，爱上赵帅哥却被拒。\n2. 你从黑市购得剧毒“死亡微笑”及解药，中元节前已服下解药。\n3. 你在二楼厕所装鬼吓跑李小弟和王学习，之后追上张恶霸将他毒死在枯井边。",
+                script: `【林校花剧本——你一直觉得自己就是那童话故事里的灰姑娘，亲生母亲死了以后没人疼没人爱的，爸爸给自己娶了后妈，还生了个弟弟，重男轻女的父亲就更不把你放在眼里。在你18岁的时候父亲把你送入一所大学，并告诉你，张氏财团的公子就在这个学校上学，以后你就是他的未婚妻了，这几年是你们培养感情的时间，毕业之后就嫁给他。你知道自己没有资格反抗，只能听从，希望那是一个好人。当你上大学见到自己的未婚夫张恶霸时，你顿时觉得世界一片灰暗。这个张恶霸仗着自己有钱有势的老爸为非作歹、无恶不作，更是好色成性，身边的女人三天两头的换。你了解到这些情况以后，曾经委婉的告诉过自己的父亲。父亲却冷冰冰的说，为了生意这个张公子就是白痴你也得嫁。
+父亲退婚这条路走不通，你决定从张恶霸那里下手，让张恶霸讨厌他主动退婚。于是你把张恶霸在学校做的坏事偷偷告诉张董事长，让张董事长训斥张恶霸。没想到张董事长训斥完张恶霸以后，张恶霸找到你打了你一顿，骂你是监视自己的贱货，这辈子时间长着，看到底是谁折磨谁。
+你没想到反而激起了张恶霸的这个心思，绝望让你蹲坐在地上痛哭起来。这时一个人过来，是你们同级的赵帅哥，他将你扶起来，帮你擦了眼泪，说没有什么过不去的，自己的命运要靠自己争取。你从没见过这么温柔而且帅气的男人，一下就打动了你的心。你觉得自己爱上了这个人，甚至还大着胆子给他写了封情书。可惜在那次相遇以后赵帅哥就对你冷冷淡淡的，在收到情书以后还为难的说，“你是张恶霸的未婚妻，我是他的朋友，你这样不好吧。这件事我会替你保密的，但是请你以后不要这样了。”你心里愤愤不平的想到，这个张恶霸有未婚妻却可以在外头逍遥快活，自己却因为他追求不到幸福，退婚也无望，如果他死了多好。这个念头窜入你的头脑后就一直挥散不去，想想自己以后要是嫁给了他，不仅得天天看着他花天酒地，稍有不顺心还会被打，还不如现在就弄死他，自己还能去追求自己的幸福。
+还好有你的闺蜜郝闺蜜为你解忧，你经常跟她倒苦水，每次和她聊完之后你都会觉得心里轻松了很多。
+你小心翼翼的在黑市百般打听，终于弄到了一盒剧毒的药物，还有一些配套的东西，但一直没找到机会研究，万一被人发现就惨了。在买了毒药之后没几天，张恶霸突然过来找你，说他和赵帅哥打赌在中元节晚上去旧教学楼探险，叫你带着你的闺蜜郝闺蜜一起去，刚好凑够6个人。你本来犹豫着要不要答应，但听到了赵帅哥的名字立马就答应了，并叫上郝闺蜜。你把毒药盒装进了包里，预感着这次应该是个机会。与此同时你还画了个美美的妆，想吸引赵帅哥的注意。
+【中元节，晚11点】
+   你带着郝闺蜜在学校后门集合，你频频向赵帅哥抛媚眼，但赵帅哥却不为所动，这让你有点失望。王学习和李小弟弄开了旧教学楼的大门，一行人上了4楼，教学楼有东头和西头两个楼梯口，你们在西头的楼梯数了好几遍也没发现台阶多一阶。张恶霸有点不耐烦了，想回去了。赵帅哥却说，这个不灵我们就去试试下一个好了，一行人都同意，张恶霸也就点头了。
+11点15，一行人又来到4楼的生物室，张恶霸命令王学习去查看水龙头。王学习害怕的打开了水龙头将手伸过去摸水，你对这些传说本来就半信半疑，所以你高度集中的盯着王学习的手，却看见收回来的手上一片血红，你忍不住惊声尖叫起来，有血！王学习也跟着叫了起来，并失手把手电筒掉到了地上，手电筒瞬间就熄灭了。陷入黑暗后大家的叫声更大了，你吓得夺门而逃，跑到二楼的厕所，躲进了最里面的一个隔间。冷静下来之后，你觉得周围更恐怖了，只好劝自己，没有什么灵异，都是假的。
+11点20多，你平静好了，觉得今晚的确有点古怪，是个下手的好机会，不能再拖了，否则后悔终生。借着微弱的月光你打开了毒药和使用说明。毒药叫做死亡微笑，是粉末状的，对着想要对付的人洒过去之后，那人一旦吸入，就会肺部麻痹，全身僵硬，面部肌肉抽动，形成微笑的表情，不久之后就会因为窒息而死。为了避免投毒者误吸，还有一瓶解药可供提前服下。你刚准备服下解药，却听到门外传来人说话的声音，是李小弟，要打开厕所门看看，你这才发现自己是躲在了第四个传说中的厕所里。你怕他们发现自己，立马急中生智的发出嘤嘤的哭声，并缓缓的推开门，将自己的手臂缓缓的伸出去装成女鬼。果然两个人大叫了一声，立马跑的没影了。
+11点25，你迅速将解药服下，揣着毒药和其他东西，然后出了旧教学楼。你正准备寻找张恶霸呢，却突然远远的看见张恶霸大叫着“不要杀我！不要杀我!”跌跌撞撞的在小树林的方向跑向枯井，你立马追上去。
+11点33，你跑到枯井的时候看见张恶霸跌倒了，摔倒了还不停的向后退直到靠到枯井口再退不了，还不停的向空中挥舞着双手说到，不要过来！你不要过来！走开！显然已经被吓傻了。
+你心里想着，你这个恶魔真是恶有恶报，就让我为你解脱吧。你取出毒药，洒在了张恶霸脸上，张恶霸立刻就不动了，脸上浮现出诡异的微笑。过了一会，你上前摸了摸他的脉搏，已然是停止了。于是你从后门方向绕回了旧教学楼，藏在教学楼外等待时间。
+11：45，你看见王学习从旧教学楼里出来，于是悄悄跟了上去，刚准备追上去制造不在场证明，却看见一个男人的身影匆匆忙忙的从枯井方向窜向小树林方向。王学习愣了一下就改道向枯井走去，你不想再去枯井，就看王学习走远后径直去了校长雕像。
+11：50，你到达校长雕像前，看见了李小弟和郝闺蜜，你说自己在旧教学楼呆了半天，谁也没见着。过了5分钟，王学习走来，他说自己一直在4楼生物室待着。最后接近12点的时候赵帅哥也来了，他说，现在就剩张恶霸了没来了，我们等他一会。
+0：00，你们5个人在雕像前等张恶霸，这时远远的看见一个黑影从学校正门走来，这个黑影佝偻着背，手里拿着一根铁棒托在地上发出沉重的“哗啦啦”的声音，一瘸一拐的向你们走来，很明显不是张恶霸。这时张帅哥说了句，那是不是多出来的第七人。你马上尖叫着喊到，鬼啊！然后拔腿就跑，把大家吓得都跑了起来，而后大家都从后门翻墙各自回家了。回去之后，你将毒药相关的东西全部销毁掉，第一次安心的睡着了。第二天，张恶霸的死讯还是传了出来，你作为嫌疑人受到了传唤……很显然，你是凶手，祝你好运。
+`,
+                clues: [
+                    "一个日记本，上面写着：如果他死了多好。",
+                    "结婚合同，林校花毕业后必须嫁给张恶霸。",
+                    "一张黑市的收据，只有商品编号（对应死亡微笑毒药）。"
+                ]
+            },
+            "王学习": {
+                name: "王学习",
+                tasks: "你不是凶手，请洗清嫌疑，并挖掘事件真相。",
+                secrets: "1. 高中时被张恶霸霸凌，保留着所有病历和药瓶。\n2. 你准备了强力昏迷药手帕，想在音乐室迷晕张恶霸并推下楼。\n3. 因李小弟和郝闺蜜突然闯入未得手，之后返回生物室擦掉假血包。",
+                script: `【王学习剧本——你是一个内向、胆小、懦弱的人，这就注定了你天生是一个适合被欺负的人。校园霸凌事件在任何地方都是见怪不怪的事情，你正是被霸凌的其中一员。在一次次的羞辱中低下了头，在大家的嘲笑声中握紧了拳头，但每次挣扎过后你还是无奈的松开。因为那个领头人是张恶霸，那个集万千光芒于一身的人。他家有钱有势，他长得高大帅气，他身边总是围绕着讨好的小弟，漂亮的妹子。甚至打断了校草李大哥的腿，也只是得到一通批评，第二天照样来学校上学。    高中三年地狱般的生活没有磨灭你的希望，你总是幻想着上大学后摆脱张恶霸的日子，可以过上没有懦弱和小心翼翼的生活，可以凭借着优异的学习得到同学老师的赞赏，可以有一个真正的朋友。是这些幻想支撑着你考上全国最好的大学H大，因为你觉得凭借张恶霸的学习成绩，他考八辈子也不可能考上这所学校。你将你被打之后用的每一瓶药，去医院的每一次病历都保存下来，用这些屈辱的历史鞭策你前进。
+   但是你们又在H大相遇了，张恶霸告诉你，他爸爸花了一大笔钱把他弄进了这个学校。你的心瞬间冷了下来，仿佛坠入了地狱，你忘记了在金钱和权力面前恶魔也能被伪装成天使。你又成为了张恶霸的奴隶，而张恶霸自从上了大学以后先是在学校收了一帮小弟，其中对他最忠心最殷勤的就数李小弟了。而后，在这帮小弟的怂恿下更是肆无忌惮、无法无天。在大一的时候就强暴了一个姑娘，致使姑娘在学校的小树林里上吊自杀。这件事当然被他爸花了一大笔钱私了，最后不了了之。你们上大二的时候，学校来了一个新生叫赵帅哥，他对大家都避而不急的张恶霸却很感兴趣，经常主动找张恶霸称兄道弟，不久他们就成为了很好的朋友。而林校花作为张恶霸的未婚妻也作为大一新生被父母送来上学，说是培养两个人的感情。 在七月十四中元节的前一天，赵帅哥、李小弟、张恶霸和你在一起。赵帅哥说起学校里流传的一个恐怖传说，传说学校建造之前是一个乱葬岗，而极阴之地就在学校的旧教学楼那里。自从那个教学楼建成之后就怪事不断。不断地有学生撞见灵异事件，所以现在教学楼只用于简单的实验，平时是不开放的。赵帅哥约张恶霸中元节晚上来学校探险。张恶霸当然是不相信这种鬼神之说的，但是赵帅哥极力劝说张恶霸。并和张恶霸打赌谁先害怕回家谁就是胆小鬼，必须无条件答应对方的三个条件。最后张恶霸被赵帅哥说服，并说要叫上林校花和林校花的好朋友郝闺蜜。其实你对这种传说也不相信，如果说这个世界上真的有鬼的话那也是张恶霸，他才是真正的魔鬼。但是你觉得这是一次机会，如果张恶霸在这次试胆大会上意外死亡了，那你就可以永远摆脱他的魔爪。于是你决定好好计划一下如何制造这个意外。张恶霸在你的心中种下了恶，注定要开出魔的花。【中元节，晚11点】
+你们在学校后门集合，你和李小弟弄开了旧教学楼的大门，一行人上了4楼，教学楼有东头和西头两个楼梯口，你们在西头的楼梯数了好几遍也没发现台阶多一阶。张恶霸有点不耐烦了，想回去了。赵帅哥却说，这个不灵我们就去试试下一个好了，一行人都同意，张恶霸也就点头了。
+11：15，一行人又来到4楼的生物室，张恶霸命令你去查看水龙头。你想机会来了，你将事先准备好的血包偷偷捏在手里，假装害怕的去开水龙头，整个房间只有你拿了把手电筒，只要手上照出血，谁也不会注意水龙头到底出没出血。你将手伸向水龙头同时捏爆血包，将手收回时故意用手电筒照着。果然林校花立马惊声尖叫着，有血！你也乘机叫了起来，随后把手电筒扔到地上摔灭了，一没有了灯光大家叫的声音更大了。你听见了大家吓得四散逃开的声音，你也跑了出去，只是躲在4楼生物室门口，蹲在那里装作很害怕的样子。你知道张恶霸根本就不会害怕，只是趁机制造和他单独相处的机会。张恶霸在陷入黑暗后也出了门。在门口看见你，于是把你揪起来，要求你和他一起去5楼音乐室。张恶霸说，那个胆小鬼赵帅哥一吓就跑没影了，你和我一起去看看那个贝多芬，我要看看他的眼睛是不是真的会动，要是会动我就挖出他的眼睛，这个赌局我赢定了。你装作很害怕的样子，其实心里暗暗打算在音乐室偷偷动手。
+11点20，张恶霸和你上到5楼音乐室，张恶霸要求你用手机去照贝多芬头像。你已经准备好了喷了强力昏迷药的手帕，准备把他迷昏之后推到楼下去。这个强力昏迷药可是你从黑市花大力气才弄到的。你刚准备动手的时候，李小弟和郝闺蜜突然一起进来了。李小弟殷勤的给了张恶霸一瓶水，并在那夸赞张恶霸胆子大。张恶霸喝了水以后，郝闺蜜把张恶霸拉到一边说了些悄悄话。张恶霸就指使李小弟和你去二楼查看厕所，然后张恶霸和郝闺蜜就很亲密的走了。于是李小弟和你来到二楼厕所，李小弟觉得闲着也是闲着，就提议去看看厕所最后一格能不能打开，你也觉得来都来了就去看看吧。这时厕所最后一格突然传来女人的哭声，借着窗户透进来惨白的月光，你们看见了厕所的门缓缓的被打开了，一只女人惨白的手慢慢的从里面伸了出来。李小弟和你大叫着吓跑了，慌乱中两个人朝不同的地方跑去。惊魂甫定，你准备去继续自己的行动，但又想到生物室有血，要是死人了肯定会彻底调查，如果发现这个假的血包，做了手脚的自己难免会被怀疑，于是你先去到生物室将血擦干净，血包的袋子冲到水管里去，然后才出了旧教学楼。
+11：45，你离开了旧教学楼，但你并不知道张恶霸去了哪里，于是你向校长雕像前走去，因为之前约好午夜时分在校长雕像前集合，你想去看看张恶霸在不在那。走到一半的时候你突然看见一个黑影匆匆忙忙的从枯井方向窜向小树林方向。可能是张恶霸，于是你也转道往枯井方向走去。
+11点50，你到达枯井，因为恐怖传说你不敢向枯井里看，就看枯井附近什么都没有，连枯井都没靠近就走了。
+11点55，你来到雕像前看见了李小弟、郝闺蜜和林校花。你说自己一直在生物室待着，谁也没看见。接近12点的时候赵帅哥也来了，他说现在就剩张恶霸了没来了，我们等他一会。
+午夜零点多，你们5个人在雕像前等张恶霸，这时远远的看见一个黑影从学校正门走来，这个黑影佝偻着背，手里拿着一根铁棒托在地上发出沉重的“哗啦啦”的声音，一瘸一拐的向你们走来，很明显不是张恶霸。这时赵帅哥说了句，那是不是多出来的第七人。林校花马上尖叫着喊到鬼啊！大家吓得拔腿就跑，从后门翻墙各自回家了。   结果第二天，竟然传来了张恶霸的死讯，你作为嫌疑人受到了传唤……
+任务：
+   你不是凶手，请洗清嫌疑，并挖掘事件真相。
+`,
+                clues: [
+                    "一堆跌打药和骨科的病历，生产日期六七年前。",
+                    "一张黑市的收据，只有商品编号（对应强力昏迷药）。"
+                ]
+            },
+            "赵帅哥": {
+                name: "赵帅哥",
+                tasks: "你不是凶手，请洗清嫌疑，并挖掘事件真相。",
+                secrets: "1. 你母亲是张恶霸的后妈，你为保护母亲而接近张恶霸。\n2. 你准备用石头砸死张恶霸，但11:40到枯井时他已死，你抛尸入井。\n3. 你敲窗引出门卫，制造“第七人”恐慌让大家逃跑。",
+                script: `【赵帅哥剧本——你小的时候家里很穷，你常年瘫痪卧病在床的奶奶几乎每天药不离口，这笔庞大的医药费拖垮了你全家。你的妈妈辞掉了工作照顾奶奶，爸爸在外面打零工挣钱。奶奶经常在床头给你讲故事。但贫穷却和睦的生活没过多久，母亲因为受不了这种贫苦的生活决定和你的父亲离婚。后来你才知道，母亲是和一个有钱人走了，那个有钱人说可以和她结婚，还可以给她一笔钱照顾你的家庭，但要求她不能带自己的儿子嫁进来，因为那个有钱人也有个和你年纪相仿的儿子。自从母亲走后，父亲就一直意志很消沉经常借酒消愁，而奶奶因为没有人好好照顾在一年以后也去世了。而后父亲就像变了一个人一样，经常外出不回家。直到有一天父亲打扮的很周正的准备出门，走之前给你交代了很多，抱了抱你就头也不回的出门了。那是你最后一次看见活着的父亲，那一年你十岁。三天后一群人抬着父亲的尸体回来了，还有一些保险理赔的人在你的家里走来走去。父亲给自己买了一份保险，受益人是你。父亲出去的那几天就是制造了自己意外死亡的假象，你得到了那笔数额庞大的理赔金，但你只有年满16的时候才能自由支配这笔钱。在你成年之前你必须住在一个远方亲戚家。远方亲戚对你还不错，你在这个家也感受到了温暖。你对你的母亲有很复杂的感情，虽然你怨恨她离家而去，但你知道她是为了弄到那笔钱照顾你们，只不过结果不如人愿。你想要是以后有了本事，可以让妈妈回来住，那就再好不过了。
+你高中时，曾在一个豪宅前看见了自己的母亲。母亲正在送一个和你年纪相仿的少年上车，母亲百般讨好的笑着但那个少年却一脸不耐烦，最后还推了一把母亲坐上车走了。你通过那个少年的校服打听到了他的学校以及他的名字。他叫张恶霸，是这个学校的小霸王，仗着家里有钱有势天天不好好学习为非作歹。张恶霸对他的后妈，也就是你的亲妈也非常暴力，常常对她撒气，甚至动了拳脚。你听到这个消息之后非常愤怒，这个人竟然敢欺负你的母亲。你没办法照顾你的母亲，但你可以对付这个张恶霸，让他老实点。你知道，你和他不同校，他又有这么大的势力，根本不可能对付他，只有一种办法，就是和他考上同一所大学，找机会接近他，才能下手。在张恶霸上了大学以后，你复读了一年考中了和他一样的大学，作为低他一届的学弟进入了学校。你借着父亲留给你的钱，把自己伪装成一个富二代，成功接近了张恶霸并和他成为了好朋友。而张恶霸的未婚妻林校花，也成为了你的同学。林校花长得很漂亮，本来你从她下手，有一次你看到她蹲在地上哭，虽然你不知道为什么，可还是上前安慰，想套近乎。可是后来你发现张恶霸对这个未婚妻根本不上心，于是你就放弃了。但是这个林校花却反而很喜欢你的样子，还曾经偷偷给你写过情书，但你为了报仇,暂时还要和张恶霸装好朋友，就对林校花这些示好的事情视而不见。有一天你从别人口中得知学校里一直流传着一个恐怖传说“H大校园七大不思议事件”。你决定用这个传说和张恶霸打赌，把他晚上约出来找机会杀死他再伪装成诅咒而死的样子。于是你在七月十四中元节前一天去找张恶霸，当时张恶霸和李小弟还有王学习在一起。你劝服了张恶霸在中元节的晚上一起去冒险，并和他打赌谁要是先害怕回家就算输，要无条件答应对方三个要求。
+
+【中元节晚上11点】
+你们一行6人在学校后门集合。你注意到今天林校花穿的很漂亮，还画了精致的妆并不时的偷看你。不过你的心思都在今天晚上如何弄死张恶霸身上，对林校花暗送秋波的事情一点也没放在心上。王学习和李小弟弄开了旧教学楼的大门，一行人上了4楼，教学楼有东头和西头两个楼梯口，你们在西头的楼梯数了好几遍也没发现台阶多一阶。张恶霸有点不耐烦了，想回去了。你赶忙说，这个不灵我们就去试试下一个好了，一行人都同意，张恶霸也就点头了。
+11点15，一行人又来到4楼的生物室，张恶霸命令王学习去查看水龙头。王学习很害怕颤抖着打开了水龙头将手伸过去摸水，收回来的时候他手上一片血红。这时林校花大叫一声，有血！王学习也跟着叫了起来，并把手上的手电筒吓得掉在了地上，手电筒瞬间就熄灭了。大家陷入黑暗之后，你听见了大家吓得四散逃开的声音，你也跑了出去。你想趁着大家慌乱散开的时间去第六个传说枯井那里设个陷阱，到时候再把张恶霸骗去那里杀死。你考察过所有恐怖传说的地方，那里最适合下手了。
+11点20，你来到枯井边。你准备了一个大石头放在井边，准备把他推下去，然后拿石头砸死他。
+11点25，你到达旧教学楼，看到楼上有一间教室有微弱的光。然后你向楼上走去，却在三楼看见了躲在墙角的李小弟。你从后面拍了拍李小弟的肩膀，李小弟好像很害怕的样子。你问了一下张恶霸的去向，李小弟告诉你张恶霸和郝闺蜜去了小树林，于是你就下楼往小树林方向走去。
+11点30，你到达小树林却只看见郝闺蜜，郝闺蜜鬼鬼祟祟的好像在做什么事，看见你慌慌张张的迎了上来，但你没心思管郝闺蜜直接问张恶霸的去向。郝闺蜜说张恶霸突然像发了疯一样喊着“不要杀我”就跑向旧教学楼了。因为你从旧教学楼来，没听见声音也没看见人，想着张恶霸是不是往枯井边走去了，于是你就又跑去了枯井边。
+11点40，赵帅哥到达枯井边，在枯井边发现坐在地上的张恶霸，他的眼睛直勾勾的盯着前方发呆，一动也不动，脸上还挂着笑容，要多诡异有多诡异，倒是把你吓了一跳。你壮着胆子推了他一下，他却倒在地上还是不动，你摸了摸他的颈动脉，发现已然是死了。这让你觉得奇怪，不过他罪有应得，有几个人想杀他也不是怪事。不过你毕竟到了这里，万一被发现了，你嫌疑太大。于是你还是把他的尸体丢进了井里。然后你便赶往校长像了，因为12点的传说，你们要在那里集合，你得想个办法把他们吓走，不让他们来枯井，让事情拖久一点，你的嫌疑就更小一点。于是你从新教学楼绕到门卫室，并敲了敲门卫室的窗户，然后就跑了，想哄骗门卫出来巡逻。你们学校的门卫是个有点驼背，腿脚也不好的老人家，远远看去像个钟楼怪人一样，这乌漆墨黑的夜晚看着一定很吓人。做完这些以后已经快12点了，赵帅哥从小树林绕路走到校长像前，假装是从旧教学楼方向来。赵帅哥到达校长像前，看到了李小弟、王学习、林校花和郝闺蜜。你装作什么都不知道的样子，说就差张恶霸没来集合了，并提议在这里等等说不定一会就来了。午夜零点多你们5个人在雕像前等张恶霸，这时远远的看见一个黑影从学校正门走来，这个黑影佝偻着背，手里拿着一根铁棒托在地上发出沉重的“哗啦啦”的声音，一瘸一拐的向你们走来。赵帅哥知道这是门卫来了，但是远远的看这个黑影还真的很恐怖。于是你大叫着，那是不是多出来的第七个人。林校花马上尖叫着喊到鬼啊！大家吓得拔腿就跑，从后门翻墙各自回家了。
+   第二天，张恶霸的死讯还是传来了，你作为嫌疑人受到了传唤……
+任务：
+   你不是凶手，请洗清嫌疑，并挖掘事件真相。
+`,
+                clues: [
+                    "钱包里有一张他和母亲（张恶霸后妈）的合影。",
+                    "赵帅哥花钱阔绰但实际靠保险金，亲戚条件一般。",
+                    "林校花写给赵帅哥的情书。"
+                ]
+            }
+        },
+        commonClues: [
+            "【一轮线索】张恶霸尸体在枯井被发现，脸上带诡异微笑，死亡时间11:00-12:00。",
+            "枯井旁有一块四五十斤重的大石头（以前没有）。",
+            "门卫（驼背腿脚不便）称：近12点有人敲窗，他拿铁棒外出，在校长像前看见几个人影，对方尖叫逃跑。",
+            "小树林里发现隐藏深坑，内有长发白衣假人和一截绳子。",
+            "学校简易地图：各点之间步行约5分钟，枯井到小树林10分钟，奔跑约7-8分钟。",
+            "【二轮线索】毒药检测为“死亡微笑”可吸入粉末。",
+            "【地图参考】旧教学楼、小树林、校长像、枯井的相对位置。"
+        ],
+        truth: `【案件解析 · 完整真相】
+
+- 真凶：林校花。
+- 动机：被逼婚、家暴、爱上赵帅哥却无望，恨意积累。
+- 毒杀过程：11:33 林校花追上被迷幻药惊吓的张恶霸，在枯井边洒下“死亡微笑”毒药，张恶霸吸入后死亡，脸上残留诡异微笑。
+- 其他计划：
+  · 郝闺蜜设陷阱假人，但假人提前触发，张恶霸跑向枯井。
+  · 李小弟下迷幻药，导致张恶霸产生幻觉。
+  · 王学习备昏迷药，未遂后返回擦血包。
+  · 赵帅哥准备砸死张恶霸，但到时他已死，为脱嫌抛尸入井，并引门卫制造恐慌。
+- 时间线咬合：
+  11:25 郝闺蜜带张恶霸到小树林，假人惊吓，张恶霸跑向枯井。
+  11:33 林校花追上毒杀。
+  11:40 赵帅哥到达枯井，发现尸体抛入井中。
+  随后众人陆续到达校长像，门卫出现，“第七人”惊跑。
+- 关键物证：林校花的黑市收据、毒药残留；赵帅哥的抛尸行为（石头移动）；各人黑市收据对应不同药物。
+
+注：王学习、李小弟、郝闺蜜均有杀人意图，但均未直接造成张恶霸死亡。`,
+        endings: {
+            "昭雪": "【结局一 · 枯井昭雪】\n警方通过毒药来源锁定林校花，她对罪行供认不讳。郝闺蜜、李小弟、王学习的复仇计划虽未成功，但真相大白后都得到解脱。赵帅哥将母亲接出张家，开始了新生活。林校花因故意杀人被判刑，但考虑到长期受虐，获得从轻判决。张恶霸的恶行公之于众，H大的小树林里，那座无名坟冢终于等来祭奠。",
+            "错位": "【结局二 · 错位的罪】\n由于证据混淆，王学习的昏迷药被误认为毒药，李小弟的迷幻药也成了嫌疑点。两人因故意伤害罪入狱。林校花销毁了所有证据，继续活在阴影中，但每晚都会梦见张恶霸诡异的微笑。赵帅哥远走他乡，郝闺蜜守着表姐的秘密，一生未嫁。正义以错误的方式降临，无人真正解脱。",
+            "永夜": "【结局三 · 永夜】\n枯井案成为悬案。张恶霸家花钱摆平舆论，所有人回归表面平静。但郝闺蜜每晚都会去小树林对着假人说话；李小弟总在深夜听见厕所哭声；王学习再也不敢碰水龙头；林校花最终精神崩溃，住进疗养院；赵帅哥看着母亲的照片，永远不知道自己的抛尸行为是否加速了死亡。枯井的石头静静躺在那里，见证着永无止境的暗夜。"
+        }
+    };
+
+    let playerState = { 
+        roleKey: '', 
+        name: '',
+        voteMurderer: '',
+        voteCause: '',
+        voteMover: '',
+        selectedEnding: ''
+    };
+
+    window.onload = () => {
+        document.title = CONFIG.title + " · 五人封闭本";
+        const select = document.getElementById('role-select');
+        for (let key in CONFIG.roles) {
+            let opt = document.createElement('option');
+            opt.value = key;
+            opt.innerText = CONFIG.roles[key].name;
+            select.appendChild(opt);
+        }
+        createSnowflakes();
+        setInterval(createSnowflakes, 20000);
+    };
+
+    function switchView(step) {
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('view' + step).classList.remove('hidden');
+        document.getElementById('step' + step).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function toStep1() { switchView(1); }
+    function toStep2() {
+        const name = document.getElementById('player-name').value;
+        if(!name) { alert("请先输入你的代号！"); return; }
+        playerState.name = name;
+        playerState.roleKey = document.getElementById('role-select').value;
+        const roleData = CONFIG.roles[playerState.roleKey];
+        
+        document.getElementById('display-role-name').innerText = roleData.name;
+        document.getElementById('display-tasks').innerHTML = roleData.tasks.replace(/\n/g, '<br>');
+        document.getElementById('display-secrets').innerHTML = roleData.secrets.replace(/\n/g, '<br>');
+        document.getElementById('display-script').innerText = roleData.script;
+        
+        switchView(2);
+    }
+
+    function toStep3() {
+        const roleData = CONFIG.roles[playerState.roleKey];
+        const personalContainer = document.getElementById('personal-clues');
+        const commonContainer = document.getElementById('common-clues');
+        
+        personalContainer.innerHTML = '';
+        commonContainer.innerHTML = '';
+        
+        roleData.clues.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.innerHTML = `<span class="clue-number">${index + 1}</span>${c}`;
+            personalContainer.appendChild(div);
+        });
+        
+        CONFIG.commonClues.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'clue-card';
+            div.innerHTML = `<span class="clue-number">${index + 1}</span>${c}`;
+            commonContainer.appendChild(div);
+        });
+        
+        switchView(3);
+    }
+
+    function toStep4() {
+        if(confirm("进入最终裁决阶段，请确保已经充分讨论。是否继续？")) {
+            switchView(4);
+        }
+    }
+
+    function submitVotes() {
+        const murderer = document.getElementById('vote-murderer').value;
+        const cause = document.getElementById('vote-cause').value;
+        const mover = document.getElementById('vote-mover').value;
+        
+        if(!murderer || !cause || !mover) {
+            alert("请完成所有三问的选择！");
+            return;
+        }
+        
+        playerState.voteMurderer = murderer;
+        playerState.voteCause = cause;
+        playerState.voteMover = mover;
+        
+        let correct = 0;
+        if(murderer === "林校花") correct++;
+        if(cause === "中毒") correct++;
+        if(mover === "赵帅哥") correct++;
+        
+        let msg = correct === 3 ? "🎉 完美推理！你还原了全部真相！" :
+                 correct === 2 ? "✅ 接近真相，但遗漏了关键细节。" :
+                 correct === 1 ? "⚠️ 雾里看花，真相比你想象的更复杂。" :
+                 "❌ 误入歧途，不妨再审视一遍线索。";
+        alert(msg + "\n\n现在选择结局并输入口令可查看完整解析。");
+    }
+
+    function selectEnding(ending) {
+        playerState.selectedEnding = ending;
+        document.querySelectorAll('.ending-option').forEach(opt => {
+            opt.style.border = '1px solid rgba(168, 124, 59, 0.3)';
+        });
+        event.currentTarget.style.border = '2px solid var(--secondary)';
+        
+        document.getElementById('password-section').classList.remove('hidden');
+        document.getElementById('truth-password').value = '';
+        document.getElementById('truth-content').classList.add('hidden');
+    }
+
+    function verifyPassword() {
+        const pwd = document.getElementById('truth-password').value;
+        if (pwd === CONFIG.password) {
+            document.getElementById('password-section').classList.add('hidden');
+            document.getElementById('truth-content').classList.remove('hidden');
+            document.getElementById('display-truth').innerText = CONFIG.truth;
+            document.getElementById('display-ending').innerText = CONFIG.endings[playerState.selectedEnding] || "请先选择结局";
+            document.getElementById('truth-content').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert("❌ 口令错误！提示：生物室血水事件发生在11:15。");
+            document.getElementById('truth-password').value = '';
+            document.getElementById('truth-password').focus();
+        }
+    }
+
+    // 快捷返回
+</script>
+</body>
+</html>
