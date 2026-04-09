@@ -432,7 +432,33 @@
             
             <label>选择你的命缘：</label>
             <select id="role-select"></select>
-            
+            <script>
+    // 确保 CONFIG 已经定义（您的 CONFIG 在页面底部脚本中定义，但为了保险，可以用 DOMContentLoaded）
+    (function() {
+        var select = document.getElementById('role-select');
+        if (select && typeof CONFIG !== 'undefined' && CONFIG.roles) {
+            for (var key in CONFIG.roles) {
+                var opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = CONFIG.roles[key].name;
+                select.appendChild(opt);
+            }
+        } else {
+            // 如果 CONFIG 还未加载，则等待 DOM 加载完成后再尝试
+            document.addEventListener('DOMContentLoaded', function() {
+                var select = document.getElementById('role-select');
+                if (select && window.CONFIG && CONFIG.roles) {
+                    for (var key in CONFIG.roles) {
+                        var opt = document.createElement('option');
+                        opt.value = key;
+                        opt.textContent = CONFIG.roles[key].name;
+                        select.appendChild(opt);
+                    }
+                }
+            });
+        }
+    })();
+</script>
             <div style="margin-top: 25px;">
                 <span class="role-tag">双女主·情感沉浸</span>
             </div>
