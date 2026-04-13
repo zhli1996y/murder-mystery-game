@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>红楼梦中人 · 剧本杀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-parchment: #f9efdf;
+            --paper-dark: #e7d6bb;
+            --ink: #2c2a29;
+            --crimson: #9e2a2a;
+            --gold-amber: #b8860b;
+            --dusty-rose: #b5726f;
+            --shadow: rgba(60, 40, 20, 0.2);
+            --border-ink: #c2a575;
+        }
+
+        body {
+            font-family: 'Times New Roman', '宋体', '华文楷书', 'Microsoft YaHei', serif;
+            background: #3e2a21;
+            background-image: radial-gradient(circle at 10% 20%, rgba(100, 70, 45, 0.2) 2%, transparent 2.5%),
+                              repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 8px);
+            color: var(--ink);
+            margin: 0;
+            padding: 20px 0;
+            line-height: 1.55;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 20px 24px;
+            background: var(--bg-parchment);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(230, 200, 150, 0.6);
+            border-radius: 32px 12px 32px 12px;
+            position: relative;
+        }
+
+        .container::before {
+            content: "⚘";
+            font-size: 40px;
+            color: var(--gold-amber);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-family: serif;
+            pointer-events: none;
+        }
+
+        .step-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #e9dbc9;
+            padding: 10px 12px;
+            border-radius: 60px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border-ink);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .step {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #7c5e3a;
+            padding: 4px 12px;
+            border-radius: 30px;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .step.active {
+            background: var(--crimson);
+            color: #fef0dd;
+            box-shadow: 0 2px 6px rgba(158, 42, 42, 0.3);
+            border: none;
+        }
+
+        .card {
+            background: #fffaf2;
+            border-radius: 28px;
+            padding: 28px 26px;
+            box-shadow: 0 12px 28px var(--shadow);
+            border: 1px solid #e2cfae;
+            transition: all 0.2s ease;
+        }
+
+        h1, h2 {
+            font-family: '华文楷书', '楷体', 'Times New Roman', serif;
+            color: var(--crimson);
+            text-align: center;
+            font-weight: normal;
+            letter-spacing: 3px;
+            border-bottom: 1px dashed var(--gold-amber);
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 20px auto;
+            padding-bottom: 8px;
+        }
+
+        .game-title {
+            text-align: center;
+            font-style: italic;
+            color: #a57248;
+            margin-bottom: 28px;
+            font-size: 0.9rem;
+            border-bottom: none;
+        }
+
+        .script-text {
+            white-space: pre-wrap;
+            background: #fef5e6;
+            padding: 18px 22px;
+            border-radius: 20px;
+            border-left: 6px solid var(--crimson);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 0.98rem;
+            line-height: 1.65;
+            max-height: 520px;
+            overflow-y: auto;
+            color: #2d2418;
+            box-shadow: inset 0 0 0 1px #f3e5d2, 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .clue-grid {
+            display: grid;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        @media (min-width: 640px) {
+            .clue-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .clue-card {
+            background: #f7ede0;
+            padding: 16px 18px;
+            border-radius: 24px;
+            border-left: 5px solid var(--gold-amber);
+            font-size: 0.92rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .clue-card:hover {
+            background: #faeedf;
+            transform: translateY(-2px);
+        }
+
+        .clue-number {
+            display: inline-block;
+            background: var(--crimson);
+            color: #fff0e0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 26px;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 0.85rem;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 14px;
+            margin: 12px 0;
+            background: #fef5ea;
+            border: 1px solid #cfbc97;
+            border-radius: 48px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: #2f241b;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--crimson);
+            box-shadow: 0 0 0 2px rgba(158, 42, 42, 0.2);
+        }
+
+        button {
+            background: linear-gradient(145deg, #9e3e2a, #7a2a1a);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 50px;
+            color: #fff3e6;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 1.5px;
+            font-family: inherit;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            margin-top: 16px;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #b64a34, #8b3020);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(158, 42, 42, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #7d6748, #5e4a32);
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(145deg, #967a55, #6b543a);
+        }
+
+        .role-tag {
+            display: inline-block;
+            background: #dac29c;
+            color: #3a2a1e;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .task-box {
+            background: #f2e5d4;
+            border-left: 5px solid var(--gold-amber);
+            padding: 14px 18px;
+            border-radius: 20px;
+            margin: 18px 0;
+        }
+
+        .truth-box {
+            background: #efe2cf;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 24px;
+            border: 1px solid #cfb991;
+        }
+
+        .warning {
+            background: #ffefcf;
+            border-left: 4px solid var(--crimson);
+            padding: 12px;
+            font-size: 0.85rem;
+            margin-top: 20px;
+            text-align: center;
+            color: #794a2e;
+            border-radius: 24px;
+        }
+
+        .player-info {
+            background: #f3e9db;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.7rem;
+            color: #b3906a;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="step-bar">
+        <span id="step1" class="step active">壹·入梦</span>
+        <span id="step2" class="step">贰·阅卷</span>
+        <span id="step3" class="step">叁·勘痕</span>
+        <span id="step4" class="step">肆·问天</span>
+    </div>
+
+    <div id="view1" class="card">
+        <h1>红楼梦中人</h1>
+        <p class="game-title">「玉带林中挂，金簪雪里埋」<br>曹家别院 · 双姝横死 · 谁是真凶</p>
+        <div class="player-info">
+            <label>🍂 你的雅号：</label>
+            <input type="text" id="player-name" placeholder="如：怡红公子、潇湘妃子...">
+            <label>🎭 扮演角色：</label>
+            <select id="role-select"></select>
+            <div style="margin-top: 20px;">
+                <span class="role-tag">5人剧本</span>
+                <span class="role-tag">古风悬疑</span>
+                <span class="role-tag">家族恩怨</span>
+                <span class="role-tag">双尸奇案</span>
+            </div>
+        </div>
+        <button onclick="toStep2()">✨ 入此幻境，一探究竟 ✨</button>
+        <div class="warning">
+            📜 曹家别院后山惊现两具女尸：一人吊于林中，一人覆雪而亡。<br>
+            金陵风云再起，谁在说谎？建议游戏时长2小时，请记下可疑之处。<br>
+            流程：自我介绍→集中讨论→公屏搜证(每人2条)→讨论→私密搜证(每人3条)→最终讨论→投票
+        </div>
+    </div>
+
+    <div id="view2" class="card hidden">
+        <h2 id="display-role-name"></h2>
+        <div class="task-box">
+            <h4>📖 身负使命</h4>
+            <div id="display-tasks"></div>
+        </div>
+        <div class="script-text" id="display-script"></div>
+        <button onclick="toStep3()">🔍 我已读完剧本，开启搜证</button>
+        <button class="btn-secondary" onclick="toStep1()">🍃 返回选择</button>
+    </div>
+
+    <div id="view3" class="card hidden">
+        <h2>🕯️ 证物拾遗</h2>
+        <p style="font-style:italic; text-align:center;">第一轮公搜证据 + 第二轮私密线索（每人专属）</p>
+        <h3 style="color:#9e5a3a; margin-top: 24px;">📌 角色秘辛</h3>
+        <div id="personal-clues" class="clue-grid"></div>
+        <h3 style="color:#9e5a3a; margin-top: 28px;">📜 公堂遗证</h3>
+        <div id="common-clues" class="clue-grid"></div>
+        <button onclick="toStep4()">⚖️ 我已理清脉络，投出真凶</button>
+        <button class="btn-secondary" onclick="toStep2()">📖 重读剧本</button>
+    </div>
+
+    <div id="view4" class="card hidden">
+        <h1 style="color:#a1422a;">⚡ 金陵判词 ⚡</h1>
+        <p style="text-align:center;">宿孽总因情，如今要你一言定乾坤</p>
+        <div class="truth-box">
+            <h3>🎭 第一问 · 真凶何人</h3>
+            <label>谁导致牟芹与高雪双双殒命？</label>
+            <select id="vote-murderer">
+                <option value="">—— 请指认 ——</option>
+                <option value="甄石">甄石</option>
+                <option value="高蟠">高蟠</option>
+                <option value="谢燕">谢燕</option>
+                <option value="曹沾">曹沾</option>
+                <option value="脂砚斋">脂砚斋</option>
+            </select>
+            <h3 style="margin-top: 20px;">🌑 第二问 · 幕后关键推手</h3>
+            <label>谁隐藏了关键书稿/玉佛，暗中操纵大局？</label>
+            <select id="vote-organizer">
+                <option value="">—— 请指认 ——</option>
+                <option value="甄石">甄石</option>
+                <option value="高蟠">高蟠</option>
+                <option value="谢燕">谢燕</option>
+                <option value="曹沾">曹沾</option>
+                <option value="脂砚斋">脂砚斋</option>
+            </select>
+            <button onclick="submitVotes()">✍️ 呈上状纸</button>
+        </div>
+        <div class="truth-box">
+            <h3>🔮 真相之门</h3>
+            <label>⚙️ 解谜口令：</label>
+            <input type="password" id="truth-pass" placeholder="请输入密语 (红楼梦) ">
+            <button onclick="revealTruth()">🗝️ 开启结局</button>
+            <div id="truth-content" class="hidden" style="margin-top: 20px;">
+                <div class="script-text" id="display-truth" style="border-left-color: #9e5a3a;"></div>
+                <div id="display-ending" class="script-text" style="margin-top: 20px; border-left-color: #b8860b;"></div>
+                <button class="btn-secondary" onclick="location.reload()">🔄 重开幻境</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CONFIG = {
+        title: "红楼梦中人",
+        password: "honglou",
+        roles: {
+            "zhen_shi": {
+                name: "甄石",
+                tasks: "① 隐瞒你是杀害牟芹（勒颈）与导致高雪冻死的真凶事实。<br>② 尽量不暴露偷走玉佛的行径以及当晚时间线。<br>③ 找出当年玉佛失窃的真相，同时洗清自己表面嫌疑。",
+                script: `【甄石 · 金陵甄家小少爷】
+
+你是金陵甄家的小少爷，甄家原本是金陵第一大家族，可五年前突然家道中落，得罪皇族，被抄家了，你由于年纪小逃过一劫。后来方知，当年你父亲私吞了地方进贡的一尊玉佛，此玉佛价值连城，一直藏于家主卧房，你们与高雪、牟芹都曾在玩耍时见过此玉佛，后皇家查到此事，要甄家交出玉佛，否则便要治罪，你父亲为了保命只好选择交出玉佛，没想到此时却遍寻不到，最终甄家获罪，满门抄斩，整个甄家只剩下还未成年的你。
+你近几年，一直调查家中玉佛丢失的事件。由于认识的人太少，年龄小又没有经验，四处碰壁，毫无进展。
+    你从小在女人堆里长大，不谙世事，没了家业以后整日唉声叹气，身无所长的你无力养活自己和表妹，你的日子十分窘迫，其他的远房亲戚都因为甄家获罪，怕被牵连，不愿意收留你。你还有个远房表妹叫牟芹，原本父母双亡投靠在甄家，后和你一起流落漂泊。后来曹家长子曹沾找到你二人，收留了你们，让你们住在城外不远处的曹家的一所别院里。
+    你原本想要找些活计，但是由于性情直率，又是娇生惯养长大的，多次尝试都失败告终，使得你心境更加不堪，但是表妹总是能拿出钱来供你日常开销，你每次问起钱的来源，她总是笑而不语。
+    高雪是金陵高家的小姐，论辈分当是你堂姐，她举止高雅，风韵尤绝，你当年在甄府对她一见倾心，每与她在一起，都觉通体舒泰。然表妹却不同，她虽风流姣好，日常待你也很周到，但她从小身染顽疾，常悲观厌世，言语刁钻刻薄，你很是不喜。你与高雪原本是家中定好的姻缘，但家中败落之后，你不敢再与她提起此事，而高雪似乎对你也越发冷淡了。不过堂姐和表妹似乎交情甚笃，高雪每日都会来看望牟芹，多有攀谈，常帮牟芹熬了药，看她喝下才会离开。
+
+牟芹有一位神秘的朋友，乃一奇女子，品性高洁，自成风流，二人时常往来，此女却从不报自家姓名。
+你知道的关系：曹沾是你的好友，文章一流，颇有名气。谢燕是你的嫂子，吵架之后回了娘家。高蟠是高雪的哥哥，为人轻浮。
+
+    昨日清晨，你途径一名为脂砚斋的书斋，其建筑装饰颇为风雅。你进去想要看看有何稀罕书籍，却见一男一女正在交谈，桌上放着一尊玉佛，正是当年甄家丢失的那尊。你一惊之下非同小可，仔细观瞧，那女子正是牟芹的朋友。
+     当晚酉时三刻，你与好友曹沾约在酒楼饮酒，与他论起甄家当年的事，说你已发觉此事和牟芹脱不了干系。你本想与之商议如何让牟芹认罪，没想到的是曹沾听了大为恼火与你争辩起来，说他敢保证此事和牟芹绝无关联。你未料到一向与你亲厚的朋友竟不愿信你，你二人最终不欢而散。
+    亥时你从酒楼回别院去找表妹打算问清当年的事，在门口看见高蟠和谢燕吵得很厉害，你急于找表妹问清楚便没理他们，他们也未注意到你。
+你到了书房，刚刚推开书房的门就发现表妹一脸惊恐，满手是血，高雪躺在地上腹部插了一把刀，你顿时伤心欲绝，大哭起来。表妹哭着对你说她并非有意为之，你此时想起今天那尊玉佛，怒从心起，你悲愤交加，一气之下用腰带勒住了她的脖子，但奇怪的是牟芹居然没有挣扎，你一探之下发现人已经死了，你慌乱异常，觉得你既杀了牟芹，万一被捕必死无疑，先将高雪也搬到了树下，又将牟芹尸首搬到了后山树林，将用其吊于树上，伪装成牟芹刺死高芹，后畏罪自杀的假象。你在返回别院擦掉书房地上的血迹。
+你想起脂砚斋中的玉佛，你决定无论如何要找脂砚斋的主人问个清楚。你来到脂砚斋，发现没有人，于是翻窗而入，搜出了玉佛，将其偷走。回别院的路上下起了大雪。
+
+【戏精建议】 外表忧郁贵气，言语中要极力撇清与案发现场的关系，称自己醉酒或早睡。`,
+                clues: [
+                    "大量关于当年甄家被抄家的案卷",
+                    "一尊玉佛，为当年甄家丢失之物，底座刻有「贾」字",
+                    "有些潮湿的衣物"
+                ]
+            },
+            "gao_pan": {
+                name: "高蟠",
+                tasks: "① 隐瞒你偷走书房书稿（上半部）的事实。<br>② 找到后半部书稿的下落。<br>③ 找出杀害妹妹高雪与牟芹的真凶。",
+                script: `【高蟠 · 金陵高家大少爷】
+
+你是金陵高家的大少爷，死者高雪的兄长，高家虽说是大家族但是受到甄家抄家的牵连，日子一天不如一天，加上你本人十分好色嗜赌，欠了一屁股债，平时都靠妹妹高雪养活，高雪经常卖一些剧本小说给曹沾，赚取银两供你花销。前些天你欠了赌场的钱，赌场老板说再不还钱，就要取你的性命，你无奈之下只好去找妹妹，高雪生气大骂你一顿。
+前几天高雪拿了一本书来找你，让你寻得书中的一种药来，说找到它就能有法子帮你还债，你找到书中所记之药，案发当日你将此药交与高雪，还让你送了一封信给甄石。
+你知道甄石是原始甄家少爷，原本是打算与你妹妹成亲，甄家败落之后只得作罢。牟芹是甄石的表妹。谢燕是甄家长孙媳妇。
+昨日当晚戌时你寻到曹沾，打算一起喝酒，发现他似乎已喝过一旬，你与他闲聊说道甄家败落之事乃是自作自受，还说了一些轻薄话，曹沾听了十分恼火，竟与你动起手来。
+你打他不过，手臂受了伤，心里也十分窝火，你知高雪每晚都会去牟芹那里，你便打算去找她要点钱出去玩乐。
+大概戌时四刻到达曹家别院，你先去了牟芹房间，从窗子外看到牟芹躺在床上，桌子上有一个空碗，你未见高雪便离开，你又到了书房，在书房门口遇到高雪，向她要钱，她让你回家等候，将你赶走。你觉得奇怪，就偷偷藏在别院门口。
+戌时六刻，看到谢燕进了别院，不到一刻钟就急匆匆的出来了，不料谢燕发现了你。她一脸惊怒，走过来说你整日游手好闲，不务正业，你觉得十分莫名其妙，你也很生气和她顶撞了两句，可谢燕为人向来争强好胜，泼辣狠绝，怎容得你顶撞，一气之下和你动起手来。一来她乃一介女流，你不好与之动手，二来谢燕下手着实狠辣，最后终是将你手臂上挠伤多处，方才消气离开。
+谢燕走时已是亥时二刻，你再次进入别院找高雪，去了书房，发现有没有人，认为她大概从后门走了，但是书房被翻得很乱，桌上有一份书稿，地上还有血迹，你记得高雪经常拿稿卖给曹沾，你就把书稿拿走了，打算卖给曹沾换钱，拿了书稿之后怕被人发现赶紧走了，你虽觉得地上血迹可疑，但并未多想，觉得拿钱还债方是正事。
+等你子时回到家之后下起了大雪，但高雪仍旧没有回家。你翻了下书稿发现只有上半部分上面还沾了一些血迹。
+今日晨起你发现妹妹还未回家，便又一次来到别院，被告知高雪和牟芹已死。
+
+
+【戏精建议】 市井无赖相，但偶尔流露出对妹妹的愧疚，不可说出偷书稿与寻毒药之事。`,
+                clues: [
+                    "高蟠胳膊上有抓痕和伤",
+                    "房内有一本医书，记载有一种毒药，服用后大概一个半时辰致人死亡",
+                    "房间内藏有一部小说手稿，但是不全，只有上半部，上面粘了血迹",
+                    "家中有许多赌具和春宫画",
+                    "大量的威胁信件，催其还钱"
+                ]
+            },
+            "xie_yan": {
+                name: "谢燕",
+                tasks: "① 找到失散女儿的下落。<br>② 查出甄家抄家的真相（与一女子有关）。<br>③ 找回丢失的带有燕子花纹的刀，并找出凶手。",
+                script: `【谢燕 · 谢家长女 · 前甄家长孙媳】
+
+你是谢家长女，原本是甄长孙媳妇儿，甄石的嫂子，你一向精明能干，掌握家政大权，行事高调泼辣，原本会成为甄家主母，无奈甄家突然没落，若不是娘家花大价钱买通，把你搭救了出来，你早已命丧黄泉。虽保住一条性命，却无奈你的女儿在混乱中走失，你只此一女，丢失后伤心欲绝，但你性子强横，即使满心哀恸，还是生出一股狠劲，誓要查出甄家被抄的真相，找到丢失的女儿，几年来却只差查出，当年偷玉佛的人是个女人。
+你知道的关系：甄石是你的小叔子；高雪是高家小姐，原本是打算与你甄石成亲，甄家败落之后只得作罢；牟芹是甄石的表妹；高蟠是高家少爷。
+昨日收到高雪的信说找到了你的女儿，但是你要给她一大笔钱才会告诉你女儿在哪，你十分诧异，因为高雪性子素来温柔和顺，断不会做这等落井下石之事，你知道高雪向来与牟芹交好，每晚都会探望牟芹，便决定今晚找她说说清楚。为防万一你带了一把刀。
+戌时六刻，你来到曹家别院找高雪，你是在书房看到高雪的，她脸色十分不好，满脸忧虑，几乎快要病倒，看到她时似乎在找什么东西，你问她关于自己女儿的事，她一脸疲惫的告诉你，她也是出于无奈，由于自己哥哥荒淫无度，家中债台高筑，迫不得已方才出此下策，你若不给她钱 她断不会说出你女儿的下落，你很生气又无奈，不知道该不该冲她发火。你了解高蟠确实没出息，高雪所说多半是真的，你气冲冲的走了。
+别院大门口发现鬼鬼祟祟的高蟠，你见了便觉气血上涌忍不住骂了他吵了起来。他被骂急了，竟然回嘴，她一回嘴你更加生气，一想到自己女儿下落不明，还要花大量的钱去找线索，你发起狠索性动起手来，抓伤了他的手臂，过程中你本想拿出刀捅他，却发现，刀不见了，消气之后就回家了。
+回家的路上遇到了曹沾，打了招呼，大约是亥时三刻。
+今早，家中下人说曹家别院出了人命，你忽然想起自己丢的刀来，那刀上有你家的特有的图纹。你害怕惹上官司，便急匆匆的赶往别院，想趁机把刀找回来。
+
+
+【戏精建议】 高调强势，但谈及女儿时流露软弱，对高雪既恨又无奈。`,
+                clues: [
+                    "高雪写给谢燕的信说知道她女儿的下落，但是要给她一大笔钱才会告诉她",
+                    "托人调查的信件，说甄家被抄与一女子有关",
+                    "谢燕的发簪上有一种特殊的燕子花纹"
+                ]
+            },
+            "cao_zhan": {
+                name: "曹沾",
+                tasks: "① 找到全部书稿（石头记）。<br>② 尽量隐瞒找代笔、冒名小说的事实。<br>③ 找出杀死牟芹与高雪的真凶。",
+                script: `【曹沾 · 曹家少爷 · 风流文人】
+
+你是曹家的少爷，近些年原本的四大家族，其余三家都逐渐没落，甄家被抄家，其余两家被牵连。其实当年曹家与甄家虽然表面和和气气但是暗地里竞争十分激烈，已经到了生死存亡的时候。一方面你原本是甄石的好友，不愿两家敌对，可官场险恶，又不得不你死我活。
+一次喝酒之后和高雪说两家已势同水火，不久之后必有一方伤亡惨重，高雪突然说她必不会让你落难，你十分惊讶，虽然知道高雪一直喜欢你，但你没想到她会说这样的话，因为你知道高雪原本就是要嫁给甄石的。
+后来甄家真的被抄家了，你心里猜到是高雪做了手脚，但是她是为了你，你只好不做声。
+甄家莫落后，你出于愧疚收留了甄石和他的表妹。初次见到牟芹，便觉她风流灵巧，惹人怜爱，想多亲近，又觉唐突，整日思念却又不敢贸然交往。
+你十分喜欢戏剧和小说，但是文笔十分普通，只好到处搜集民间的优秀文章，谎称自己的作品，高价卖出，渐渐声名鹊起。后来你偶然看到高雪和牟芹一起写的小说，被牟芹的文笔惊艳了，你开始花高价买这本小说的手稿，对牟芹的爱慕日渐浓烈，但是你看得出牟芹真正喜欢的是甄石。
+一个月前，你父亲病重，家中重担突然落在你的身上，可你于家中生意一窍不通，没几天就亏空巨大，几乎倾家荡产，你苦于没有钱来周转生意。
+几天前高雪突然说有位书商要花大价钱买下这本书，并且出版销售，你十分焦急，你告诉高雪你曾经修改过小说的内容，谎称写的是自家事迹，经常拿出来给朋友看，小说一旦出版，你的谎言就会被戳穿。到时候你不仅颜面扫地，还会让你身败名裂。如今家中已是危难重重，如果再出事端，就回天乏术了。
+
+昨日清晨，你路过一家叫脂砚斋的书斋，本想去看看，却发现甄石怒气冲冲的出来。
+当晚酉时三刻，你与甄石一同约在酒楼喝酒，他谈论起甄家的事说他发现和牟芹有关，听到牟芹被怀疑，你十分气恼，你知道牟芹为了甄石付出良多，甄石却如此怀疑她，替牟芹感到十分不值。你说你敢保证此事和牟芹绝对无关。于是就不欢而散了。
+戌时高潘寻到你，打算一起喝酒，你已喝过一旬，便与他闲聊，听他说道甄家败落之事乃是自作自受，他还说了一些轻薄话，你十分恼火，与他动起手来。
+亥时你回到家。之后，十分担心牟芹，躺在床上难以入睡想来想去决定去别院看看，半路遇到了谢燕，打了个招呼。
+你到了别院发现一个人都没有，在牟芹房间门口捡到一张纸条，写着：子时相见，脂砚斋。你打算去她，半路上就下起了大雪，衣服也湿了，你到了脂砚斋，发现只有一位女子在，而且一身外出的衣服。她说约了牟芹她没来打算去找她，你告诉她牟芹不在家，此时雪越来越大，出不了门，你只好在脂砚斋待了一晚。你与其攀谈，发现她神思不定，双眼红肿似乎哭过，你觉得也许是女儿心事，也不好多问。
+今晨，你和脂砚斋听说别院死了人，便和脂砚斋一同来到别院。
+
+
+【戏精建议】 儒雅多情，文采风流，但内心焦虑，对牟芹之死悲恸。`,
+                clues: [
+                    "大量牟芹的画像",
+                    "湿透的外衣",
+                    "房间有很多戏剧和小说的手稿，但是笔记都不一样",
+                    "身上有一张字条：子时相见 脂砚斋"
+                ]
+            },
+            "zhi_yan": {
+                name: "脂砚斋",
+                tasks: "① 找出杀害牟芹的真凶。<br>② 隐瞒真实身份（贾舒颜）及对牟芹的深情。<br>③ 隐藏后半部书稿。",
+                script: `【脂砚斋 · 书斋女主人】
+
+你原是一位书商的女儿，本名贾舒颜，从小饱读诗书，才华横溢，清高自持。由于父亲获罪，全家逃亡至金陵，隐姓埋名。后父母离奇失踪，你立誓查明家中获罪真相，并寻找失踪的父母，自己开了一家书斋叫脂砚斋，你不敢透露本名，时间久了大家也都称你脂砚斋。
+三年前你初遇牟芹，践踏窈窕可爱，便心生爱慕，你表面是牟芹的至交好友，内心却用情至深，无奈苦于世俗，无法言明。
+你知道牟芹与一个叫高雪的姑娘，一直在写一部叫石头记的小说，她经常拿来给你看，并让你帮忙批注，你觉得牟芹的才华远胜过高雪，劝她之后的结局部分不要和高雪合作了，她听从你的意见自己写了结局，并拿给你看。刚好一个书商看到了，说要花大价钱买下并出版，牟芹十分高兴，商定了价钱。
+可几日前她突然提高了价钱，她还与你说小说的署名要写甄石，你听了十分不解，她告诉你她身体一直不好，最近感觉更加严重，大夫说她命不久矣，她怕死后甄石没人照顾，她想借此给甄石留一笔钱，想让他借此名扬天下，这样以后他的日子会好过一些，她说她会和高雪商量这件事。
+你听了之后十分伤心和气愤，伤心的事牟芹将不久于人世，气愤的是牟芹将感情错付于甄石，因为你看的出来，甄石并不喜欢牟芹。
+但你为了完成牟芹的心愿还是从中斡旋，与书商说了这件事，书商表示会再考虑。
+
+昨日清晨，书商来找你，说他愿意满足牟芹的要求，并拿来一尊玉佛，此玉佛品相极佳，一看就价值不菲，商人说愿意用此玉佛换取石头记手稿。你见此玉佛品相不凡，且不知何故，竟觉十分眼熟，问起来源。书商说，乃是他家养女之物。五年前有一年轻女子，领了一个女孩求他收养，并将此玉佛送与他作为谢礼。你留下了玉佛打算今晚就告诉牟芹这个消息。
+
+你让下人给牟芹送去一张纸条写道：子时见面 脂砚斋（脂砚斋是你的笔名）
+
+当晚突然想到自己的字条上并未写清在哪里见面，你暗骂自己糊涂，只好提前赶往曹家别院，想要告诉她书商已经答应她的要求。
+
+你亥时一刻到了曹家别院，发现门口有两人在打架。你并未理会。来到牟芹卧室发现没人，喊了两声也没人答应。却在书房看到了牟芹的尸体，你慌乱异常抱着牟芹哭了起来，你发现地上还有血迹，看到书房十分凌乱，桌子上放着石头记的两部分书稿。你不知道发生了什么，但绝非是什么好事，你深知石头记对牟芹的重要，你无论如何保全牟芹的心血，你强制自己冷静下来，拿走了牟芹所写的后半部手稿，然后从后门离开。
+
+子时你回到脂砚斋，半路上下起雪来，你回到家发现家里窗子没关，东西也有被翻过的痕迹，你担心有人打书稿的主意，此时听到敲门声，你迅速藏起书稿，开门后进来一名男子，此人正是曹沾，说是看了字条来找牟芹，你不知道他是何人，你说约了牟芹她没来打算去找她，他见你一身外出的衣服以为你正要出门就信了。此时雪越来越大，他告诉你牟芹不在家，曹沾看雪太大只好在书斋待了一晚。
+
+【戏精建议】 清冷才女，克制情感，言谈隐忍，对牟芹之死极度哀伤。`,
+                clues: [
+                    "有些潮湿的外衣",
+                    "有许多诗稿，都是些类似求不得，爱别离，非常悲切的情诗",
+                    "后半部书稿，上面沾有血迹",
+                    "窗户上有湿的鞋印"
+                ]
+            }
+        },
+        commonClues: [
+            "【尸体勘验 · 牟芹】",
+            "1. 牟芹尸体：脖子上有两处勒痕，一深一浅。",
+            "2. 牟芹尸体：手上有血，死因为中毒（体内检出毒药）。",
+            "3. 牟芹房间：卧室内有一个空碗，里面残留药渣，掺了毒药。",
+            "4. 书房内桌子一角有血迹，地面没有血迹。",
+            "",
+            "【尸体勘验 · 高雪】",
+            "5. 高雪尸体：腹部插着一把刀，刀上有燕子花纹（谢家标记）。",
+            "6. 高雪尸体：头部有撞击伤，死因为冻死（衣物贴近地面部分干燥，其余冻硬）。",
+            "7. 高雪身上有一瓶毒药（与牟芹所中之毒相同）。",
+            "8. 高雪房中有收拾好的行李，以及大量甄石写给她的情诗。",
+            "",
+            "【其他关键证物】",
+            "9. 高雪遗书（夹在后半部书稿中）：承认自己下毒杀牟芹、窃玉佛与偷女，为帮曹沾取书稿而犯案，打算远走。",
+            "10. 谢燕丢失的刀出现在高雪腹部，发簪花纹一致。",
+            "11. 甄石的玉佛底座刻有「贾」字，与脂砚斋身世关联。",
+            "12. 脂砚斋窗上有湿鞋印，玉佛失踪，后半部书稿被她藏匿。",
+            "13. 高蟠偷走的书稿上半部沾有血迹，且家中医书记载毒药特性。",
+            "14. 曹沾身上字条「子时相见 脂砚斋」，且收藏牟芹画像。"
+        ],
+        truth: `【红楼梦中人 · 完整真相】
+
+玉带林中挂，金簪雪里埋 —— 情与孽，终成雪泥鸿爪。
+
+🖌️ 真凶：甄石  
+（直接导致牟芹窒息死亡，并将高雪移至雪地使其冻死，构成双重命案主责）
+
+🌑 幕后关键推手：脂砚斋  
+（藏匿后半部书稿与遗书，隐瞒关键证据，且玉佛流转与其身世相关）
+
+───────── 命案还原 ─────────
+
+1. 高雪为帮曹沾凑钱周转，并取回全部《石头记》手稿（怕曹沾代笔之事败露），向哥哥高蟠讨来毒药，于案发当晚下在牟芹的药碗中。牟芹服药后回房躺下。
+
+2. 高雪潜入书房搜寻剩余书稿，期间被高蟠、谢燕先后打扰。高雪捡到谢燕遗落的刀。不久牟芹毒发但未死，挣扎到书房发现高雪在偷稿，二人争执。混乱中牟芹夺刀刺伤高雪腹部（非致命），高雪摔倒头撞桌角昏迷。
+
+3. 此时甄石推门而入，见高雪倒地流血、牟芹手上有血，误以为牟芹杀了高雪，暴怒之下用腰带勒住牟芹脖子。牟芹本就中毒将亡，被勒后迅速气绝（颈部两处勒痕：挣扎与勒杀）。甄石以为亲手杀死了牟芹，极度恐慌中伪造现场：将高雪尸体搬至后山树下，将牟芹吊于林中，伪装成牟芹杀高雪后自缢。但他未发觉高雪当时未死（昏迷）。
+
+4. 甄石返回擦除书房血迹，后去脂砚斋偷走玉佛。此时大雪骤降，高雪在昏迷中被冻死在山林。次日两具尸体被发现。
+
+5. 脂砚斋当晚提前到别院，发现牟芹已死，悲痛之下取走书房后半部手稿（其中夹着高雪的遗书），从后门离开，意图保全牟芹心血。子时书斋玉佛失窃（甄石所为），之后曹沾来访，脂砚斋隐瞒真相。
+
+高雪遗书（原文）：
+“曹沾吾兄，见字如面……雪儿对哥哥之情日渐笃深，不忍见哥哥落难，无奈之下，杀芹取稿，以解哥哥燃眉之急。然五年之前，窃佛盗女，已是罪孽深重，今杀人取稿，更是天理难容。雪儿自知无颜面对亲友高朋，决心远走他乡，再不复还，望自珍重，不复相见。”
+
+—— 高雪实为下毒真凶，但她已死；而甄石因冲动与伪造现场，造成牟芹加速死亡和高雪冻死，故为本案最终凶手。
+
+脂砚斋隐藏遗书与后半部书稿，阻碍真相，但亦是为情所困。`,
+        endings: {
+            "happy": `【🌸 沉冤得雪 · 大梦初醒 🌸】
+你精准指认甄石为真凶，并看破脂砚斋藏匿书稿的幕后之举。官府缉拿甄石，高雪遗书公之于众，谢燕寻回女儿（玉佛线索牵出养女正是她走失的孩子），脂砚斋交出后半部《石头记》并道明身世，曹沾痛改前非。红楼遗稿传世，风雪终霁。`,
+            "good": `【📖 真凶伏法 · 余恨未消 📖】
+你抓住了真凶甄石，但未能察觉脂砚斋的隐瞒。甄石被问罪，脂砚斋独守秘密终身未嫁，后半部书稿佚失，高雪遗书永埋尘埃。曹沾家业败落，只留得残缺《石头记》半部，令人扼腕。`,
+            "normal": `【⚔️ 幕后显形 · 正凶漏网 ⚔️】
+你揭穿脂砚斋藏稿与玉佛真相，却未锁定甄石。脂砚斋因包庇被判流徙，而甄石逍遥法外，终身愧疚疯癫。高蟠欠债被追索致死，谢燕孤老。悲剧未得全报。`,
+            "bad": `【🌧️ 万艳同悲 · 千古遗恨 🌧️】
+真凶与幕后皆未辨明，甄石隐瞒终身，脂砚斋心死焚稿，高家谢家没落。曹沾身败名裂，牟芹与高雪枉死无人昭雪。别院化为荒冢，只余一首“玉带林中挂”泣诉红尘不公。`
+        }
+    };
+
+    let playerState = { roleKey: '', name: '' };
+
+    window.onload = () => {
+        document.title = CONFIG.title + " · 剧本杀";
+        const select = document.getElementById('role-select');
+        for (let key in CONFIG.roles) {
+            let opt = document.createElement('option');
+            opt.value = key;
+            opt.innerText = CONFIG.roles[key].name;
+            select.appendChild(opt);
+        }
+    };
+
+    function switchView(step) {
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('view' + step).classList.remove('hidden');
+        document.getElementById('step' + step).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function toStep1() { switchView(1); }
+    function toStep2() {
+        const name = document.getElementById('player-name').value.trim();
+        if (!name) { alert("请先为自己取一个风雅名号"); return; }
+        playerState.name = name;
+        playerState.roleKey = document.getElementById('role-select').value;
+        const role = CONFIG.roles[playerState.roleKey];
+        document.getElementById('display-role-name').innerHTML = `🎋 ${role.name} · 金陵客 🎋`;
+        document.getElementById('display-tasks').innerHTML = role.tasks;
+        document.getElementById('display-script').innerText = role.script;
+        switchView(2);
+    }
+    function toStep3() {
+        const role = CONFIG.roles[playerState.roleKey];
+        const personalDiv = document.getElementById('personal-clues');
+        const commonDiv = document.getElementById('common-clues');
+        personalDiv.innerHTML = '';
+        commonDiv.innerHTML = '';
+        role.clues.forEach((c, idx) => {
+            let d = document.createElement('div');
+            d.className = 'clue-card';
+            d.innerHTML = `<span class="clue-number">${idx+1}</span>${c}`;
+            personalDiv.appendChild(d);
+        });
+        CONFIG.commonClues.forEach((c, idx) => {
+            let d = document.createElement('div');
+            d.className = 'clue-card';
+            d.innerHTML = c.includes("【") ? `<strong>${c}</strong>` : c;
+            commonDiv.appendChild(d);
+        });
+        switchView(3);
+    }
+    function toStep4() {
+        if (confirm("是否进入最终审判？投票后将无法更改，请确保讨论充分。")) switchView(4);
+    }
+    function submitVotes() {
+        const murderer = document.getElementById('vote-murderer').value;
+        const organizer = document.getElementById('vote-organizer').value;
+        if (!murderer || !organizer) { alert("两项指认均需完成！"); return; }
+        let result = "";
+        if (murderer === "甄石" && organizer === "脂砚斋") result = "happy";
+        else if (murderer === "甄石" && organizer !== "脂砚斋") result = "good";
+        else if (murderer !== "甄石" && organizer === "脂砚斋") result = "normal";
+        else result = "bad";
+        playerState.voteResult = result;
+        alert("状纸已呈递！输入密语“honglou”即可见判词。");
+    }
+    function revealTruth() {
+        const pwd = document.getElementById('truth-pass').value;
+        if (pwd === CONFIG.password) {
+            document.getElementById('display-truth').innerText = CONFIG.truth;
+            const endingType = playerState.voteResult || "bad";
+            document.getElementById('display-ending').innerText = CONFIG.endings[endingType];
+            document.getElementById('truth-content').classList.remove('hidden');
+            document.getElementById('truth-pass').disabled = true;
+        } else {
+            alert("密语错误，红楼梦之核心意象是「红楼梦」或「honglou」。");
+        }
+    }
+</script>
+</body>
+</html>
