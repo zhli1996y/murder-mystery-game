@@ -2,9 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>剧本杀大厅 - 提笔绘梨花</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>剧本杀大厅 · 提笔绘梨花</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --apple-bg: #f5f5f7;
             --apple-card: rgba(255, 255, 255, 0.8);
@@ -14,9 +20,9 @@
             --apple-blur: saturate(180%) blur(20px);
             --gold-finish: linear-gradient(135deg, #fffcf0 0%, #fff 100%);
             --nav-bg: rgba(245, 245, 247, 0.72);
+            --card-border: rgba(128, 128, 128, 0.1);
         }
 
-        /* 深色模式变量映射 */
         [data-theme='dark'] {
             --apple-bg: #000000;
             --apple-card: rgba(28, 28, 30, 0.8);
@@ -25,26 +31,71 @@
             --apple-blue: #0a84ff;
             --nav-bg: rgba(0, 0, 0, 0.72);
             --gold-finish: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
+            --card-border: rgba(255, 255, 255, 0.08);
         }
 
         body {
             background-color: var(--apple-bg);
             color: var(--apple-text);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-            margin: 0; -webkit-font-smoothing: antialiased;
-            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.4s ease;
         }
 
         /* 导航栏 */
-        nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: var(--apple-blur); border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 0; }
-        .nav-content { max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: var(--apple-blur);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 12px 0;
+        }
+        .nav-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: -0.3px;
+        }
 
-        /* 弹幕滚动区 */
-        .danmu-bar { background: #000; height: 40px; overflow: hidden; display: flex; align-items: center; position: relative; }
-        #danmu-wrapper { display: flex; white-space: nowrap; position: absolute; animation: scroll-left 40s linear infinite; will-change: transform; }
-        .danmu-item { font-size: 0.85rem; color: #fff; margin-right: 60px; display: flex; align-items: center; opacity: 0.9; }
-        .danmu-item span { color: #5fb9ff; margin-right: 8px; font-weight: 600; }
-
+        /* 弹幕区域 */
+        .danmu-bar {
+            background: #000;
+            height: 42px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        #danmu-wrapper {
+            display: flex;
+            white-space: nowrap;
+            position: absolute;
+            animation: scroll-left 45s linear infinite;
+            will-change: transform;
+        }
+        .danmu-item {
+            font-size: 0.85rem;
+            color: #e5e5ea;
+            margin-right: 60px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0.9;
+        }
+        .danmu-item span {
+            color: #5fb9ff;
+            font-weight: 600;
+        }
         @keyframes scroll-left {
             0% { transform: translateX(100vw); }
             100% { transform: translateX(-100%); }
@@ -52,420 +103,633 @@
 
         /* 弹幕发射器 */
         .input-area {
-            background: #fff; padding: 15px 40px; border-bottom: 1px solid #e1e1e1;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
+            background: var(--apple-card);
+            backdrop-filter: blur(12px);
+            padding: 12px 40px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .danmu-input {
-            width: 100%; max-width: 500px; border: 1px solid #d2d2d7; border-radius: 20px;
-            padding: 8px 15px; font-size: 0.9rem; outline: none; transition: 0.3s;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid rgba(128,128,128,0.2);
+            background: var(--apple-bg);
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            color: var(--apple-text);
+            outline: none;
+            transition: 0.2s;
         }
-        .danmu-input:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0,113,227,0.1); }
+        .danmu-input:focus {
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+        }
         .send-btn {
-            background: var(--apple-blue); color: #fff; border: none; padding: 8px 20px;
-            border-radius: 20px; font-size: 0.9rem; cursor: pointer; white-space: nowrap;
-            transition: background-color 0.3s;
+            background: var(--apple-blue);
+            color: white;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .send-btn:hover { background-color: #0056b3; }
+        .send-btn:hover {
+            opacity: 0.85;
+        }
 
-        header { max-width: 1100px; margin: 60px auto 40px; padding: 0 40px; }
-        header h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 10px; }
-
-        .container { max-width: 1100px; margin: 0 auto 100px; padding: 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
-
-
-        
-        /* 分类选择器 (iOS Style) */
-        .filter-wrapper { max-width: 1100px; margin: 30px auto 0; padding: 0 40px; }
+        /* 类型筛选栏 (原有) */
+        .filter-wrapper {
+            max-width: 1100px;
+            margin: 28px auto 0;
+            padding: 0 40px;
+        }
+        /* 人数筛选栏 (新增) */
+        .filter-people-wrapper {
+            max-width: 1100px;
+            margin: 12px auto 0;
+            padding: 0 40px;
+        }
         .segmented-control {
-            display: inline-flex; background: rgba(118, 118, 128, 0.12); border-radius: 10px; padding: 2px; position: relative;
+            display: inline-flex;
+            background: rgba(118, 118, 128, 0.12);
+            border-radius: 12px;
+            padding: 4px;
+            gap: 2px;
+            flex-wrap: wrap;
+            backdrop-filter: blur(4px);
         }
         .segment-item {
-            padding: 6px 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; border-radius: 8px; transition: 0.2s; position: relative; z-index: 1;
+            padding: 6px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: transparent;
+            color: var(--apple-text);
+            white-space: nowrap;
         }
-        .segment-item.active { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-        [data-theme='dark'] .segment-item.active { background: #636366; color: #fff; }
+        .segment-item.active {
+            background: #ffffff;
+            color: #1d1d1f;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        [data-theme='dark'] .segment-item.active {
+            background: #3a3a3c;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
 
         /* 搜索框 */
-        .search-area { max-width: 1100px; margin: 20px auto; padding: 0 40px; }
-        .search-input { 
-            width: 100%; max-width: 300px; border: none; background: rgba(118,118,128,0.12); 
-            padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; color: var(--apple-text); outline: none;
+        .search-area {
+            max-width: 1100px;
+            margin: 20px auto 10px;
+            padding: 0 40px;
+        }
+        .search-input {
+            width: 100%;
+            max-width: 320px;
+            border: none;
+            background: rgba(118, 118, 128, 0.12);
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: var(--apple-text);
+            outline: none;
+            transition: 0.2s;
+        }
+        .search-input:focus {
+            background: rgba(118, 118, 128, 0.2);
+            box-shadow: 0 0 0 2px rgba(0,113,227,0.2);
         }
 
-        /* 剧本卡片区 */
-        header { max-width: 1100px; margin: 40px auto; padding: 0 40px; }
-        header h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1.5px; margin: 0; }
-        .container { max-width: 1100px; margin: 0 auto 100px; padding: 0 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        /* 主标题区 */
+        header {
+            max-width: 1100px;
+            margin: 30px auto 20px;
+            padding: 0 40px;
+        }
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1.2px;
+            margin: 0;
+        }
+        header p {
+            color: var(--apple-text-secondary);
+            margin-top: 6px;
+        }
 
+        /* 卡片网格 */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 28px;
+        }
         .script-card {
-            background: var(--apple-card); border-radius: 20px; padding: 30px;
-            text-decoration: none; color: inherit; transition: 0.4s cubic-bezier(0.2, 0, 0, 1);
-            border: 1px solid rgba(128,128,128,0.1); display: flex; flex-direction: column; justify-content: space-between;
+            background: var(--apple-card);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            padding: 28px;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.35s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .script-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        
-        /* 状态与标签 */
-        .tag { font-size: 0.7rem; background: var(--apple-blue); color: #fff; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
-        .completed-badge { display: none; font-size: 0.7rem; color: #d4af37; font-weight: 700; }
-        .script-card.completed .completed-badge { display: block; }
-        .script-card.completed { border-color: rgba(212, 175, 55, 0.3); }
+        .script-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 36px -12px rgba(0, 0, 0, 0.25);
+            background: var(--apple-card);
+            border-color: rgba(0,113,227,0.3);
+        }
+        .tag {
+            font-size: 0.7rem;
+            background: var(--apple-blue);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+        .completed-badge {
+            display: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #d4af37;
+            background: rgba(212, 175, 55, 0.12);
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+        .script-card.completed .completed-badge {
+            display: inline-block;
+        }
+        .script-card.completed {
+            border-left: 3px solid #d4af37;
+        }
+        /* 底部体验按钮 */
+        .experience-link {
+            color: var(--apple-blue);
+            font-weight: 600;
+            margin-top: 20px;
+            display: inline-block;
+        }
 
-        /* 深色模式切换按钮 */
+        /* 主题切换悬浮球 */
         .theme-toggle {
-            position: fixed; bottom: 30px; left: 30px; width: 44px; height: 44px; 
-            background: var(--apple-card); backdrop-filter: var(--apple-blur);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid rgba(128,128,128,0.1); z-index: 1000;
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            width: 48px;
+            height: 48px;
+            background: var(--apple-card);
+            backdrop-filter: var(--apple-blur);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+            border: 1px solid var(--card-border);
+            z-index: 1000;
+            font-size: 1.3rem;
+            transition: 0.2s;
         }
-
-        footer { padding: 60px 0; text-align: center; color: var(--apple-text-secondary); font-size: 0.8rem; }
+        footer {
+            padding: 48px 20px 36px;
+            text-align: center;
+            color: var(--apple-text-secondary);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--card-border);
+        }
+        @media (max-width: 680px) {
+            .nav-content, .filter-wrapper, .filter-people-wrapper, .search-area, header, .container {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            .segment-item {
+                padding: 5px 14px;
+                font-size: 0.75rem;
+            }
+            header h1 {
+                font-size: 2.4rem;
+            }
+        }
     </style>
 </head>
 <body data-theme="light">
 
-    <nav>
-        <div class="nav-content">
-            <div class="nav-logo">Offline LARP</div>
-            <div style="font-size: 0.7rem; color: var(--apple-text-secondary); cursor: pointer;" onclick="localStorage.clear();location.reload();">重置档案</div>
-        </div>
-    </nav>
-
-    <!-- 弹幕滚动区 -->
-    <div class="danmu-bar">
-        <div id="danmu-wrapper"></div>
+<nav>
+    <div class="nav-content">
+        <div class="nav-logo">🎭 离线·剧本工坊</div>
+        <div style="font-size: 0.7rem; color: var(--apple-text-secondary); cursor: pointer;" onclick="localStorage.clear();location.reload();">♻️ 重置档案</div>
     </div>
+</nav>
 
-    <!-- 弹幕发射器 -->
-    <div class="input-area">
-        <input type="text" class="danmu-input" id="danmuInput" placeholder="输入你的感悟或疑问...">
-        <button class="send-btn" onclick="sendDanmu()">发射</button>
+<!-- 弹幕滚动区 -->
+<div class="danmu-bar">
+    <div id="danmu-wrapper"></div>
+</div>
+
+<!-- 弹幕发射器 -->
+<div class="input-area">
+    <input type="text" class="danmu-input" id="danmuInput" placeholder="留下你的推理或者组队暗号...">
+    <button class="send-btn" onclick="sendDanmu()">✈️ 发射弹幕</button>
+</div>
+
+<!-- 类型筛选栏 (原有) -->
+<div class="filter-wrapper">
+    <div class="segmented-control" id="typeFilterGroup">
+        <div class="segment-item active" data-type-filter="全部">📚 全部</div>
+        <div class="segment-item" data-type-filter="古风">🏮 古风</div>
+        <div class="segment-item" data-type-filter="现代">🏙️ 现代</div>
+        <div class="segment-item" data-type-filter="硬核">⚙️ 硬核</div>
+        <div class="segment-item" data-type-filter="欢乐">🎉 欢乐</div>
+        <div class="segment-item" data-type-filter="情感">💔 情感</div>
     </div>
+</div>
 
-    <div class="filter-wrapper">
-        <div class="segmented-control">
-            <div class="segment-item active" onclick="filterType('全部', this)">全部</div>
-            <div class="segment-item" onclick="filterType('古风', this)">古风</div>
-            <div class="segment-item" onclick="filterType('现代', this)">现代</div>
-            <div class="segment-item" onclick="filterType('硬核', this)">硬核</div>
-            <div class="segment-item" onclick="filterType('欢乐', this)">欢乐</div>
-            <div class="segment-item" onclick="filterType('情感', this)">情感</div>
-        </div>
+<!-- 🆕 新增人数筛选栏：紧挨着类型分类下面 -->
+<div class="filter-people-wrapper">
+    <div class="segmented-control" id="peopleFilterGroup">
+        <div class="segment-item active" data-people="全部">👥 全部人数</div>
+        <div class="segment-item" data-people="2">👤 2人本</div>
+        <div class="segment-item" data-people="3">👥 3人本</div>
+        <div class="segment-item" data-people="4">👥 4人本</div>
+        <div class="segment-item" data-people="5">👥 5人本</div>
     </div>
+</div>
 
-    <div class="search-area">
-        <input type="text" class="search-input" id="searchInput" placeholder="搜索案名..." oninput="runFilter()">
-    </div>
+<!-- 搜索框 -->
+<div class="search-area">
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索剧本名称..." oninput="runFilter()">
+</div>
 
-    <header>
-        <h1>剧本大厅</h1>
-        <p>真相，隐藏在被忽略的细节之中。</p>
-    </header>
+<header>
+    <h1>剧本大厅</h1>
+    <p>真相，藏在被忽略的细节里 · 邀三五好友，共赴悬案</p>
+</header>
 
-    <main class="container" id="scriptGrid">
-<a href="script1.html" class="script-card" data-type="古风" data-script-id="script1" onclick="markAsComplete('script1')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-                <span class="tag">古风武侠</span>
-                <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 2人
-                </span>
+<main class="container" id="scriptGrid">
+    <!-- 所有剧本卡片均已添加 data-person 人数属性，便于人数筛选 -->
+    <a href="script1.html" class="script-card" data-type="古风" data-person="2" data-script-id="script1" onclick="markAsComplete('script1')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px; flex-wrap:wrap;">
+                    <span class="tag">古风武侠</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; color: var(--apple-text-secondary); display: inline-flex; align-items: center; gap: 4px;">
+                        👤 2人
+                    </span>
+                </div>
+                <span class="completed-badge">✓ 已结案</span>
             </div>
-            <span class="completed-badge">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">断剑山庄的杀猪刀</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">庄主陨落，书房内却充斥着猪鸣。这是武林的秘闻还是荒诞的真相？</p>
         </div>
-        <h2 style="margin:15px 0 10px;">断剑山庄的杀猪刀</h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem;">庄主陨落，书房内却充斥着猪鸣。这是武林的秘闻还是荒诞的真相？</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-<a href="script2.html" class="script-card" data-type="现代" data-script-id="script2" onclick="markAsComplete('script2')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-                <span class="tag">现代悬疑</span>
-                <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 5人
-                </span>
+    <a href="script2.html" class="script-card" data-type="现代" data-person="5" data-script-id="script2" onclick="markAsComplete('script2')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">现代悬疑</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 5人
+                    </span>
+                </div>
+                <span class="completed-badge">✓ 已结案</span>
             </div>
-            <span class="completed-badge">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">十年·迷雾</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">十年前的未解谜案，五个灵魂。尘封的真相将在今夜解开。</p>
         </div>
-        <h2 style="margin:15px 0 10px;">十年·迷雾</h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem;">十年前的未解谜案，五个灵魂。尘封的真相将在今夜解开。</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-    <a href="script3.html" class="script-card" data-type="古风 情感" data-script-id="script3" onclick="markAsComplete('script3')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-                <span class="tag" style="background: linear-gradient(135deg, #8a6d3b, #a87c3b); color: #f5f1e8;">古风情感</span>
-                <span style="font-size: 0.7rem; background: rgba(138, 108, 59, 0.1); padding: 3px 8px; border-radius: 6px; color: #a87c3b; display: flex; align-items: center; gap: 3px;">
-                    👤 3人
-                </span>
+    <a href="script3.html" class="script-card" data-type="古风 情感" data-person="3" data-script-id="script3" onclick="markAsComplete('script3')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag" style="background: linear-gradient(135deg, #8a6d3b, #a87c3b);">古风情感</span>
+                    <span style="font-size: 0.7rem; background: rgba(138,108,59,0.15); padding: 3px 10px; border-radius: 20px; color: #a87c3b; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 3人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px; color: #a87c3b; font-family: 'STKaiti', serif;">长命锁</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">江南沈家庄，一桩悬命之局，三段错付深情。长命锁锁得住岁岁平安，可锁得住人心向背？</p>
         </div>
-        <h2 style="margin:15px 0 10px; color: #a87c3b; font-family: 'STKaiti', serif;">长命锁</h2>
-        <p style="color:#8a9a9a; font-size:0.9rem; line-height:1.5;">江南沈家庄，一桩悬命之局，三段错付深情。长命锁锁得住岁岁平安，可锁得住人心向背？</p>
-    </div>
-    <div style="color:#a87c3b; font-weight:600; margin-top:20px; font-family: 'STKaiti', serif;">进入沈家庄 〉</div>
-</a>
+        <div class="experience-link" style="color:#a87c3b;">进入沈家庄 〉</div>
+    </a>
 
-        <a href="script4.html" class="script-card" data-type="现代 欢乐" data-script-id="script4" onclick="markAsComplete('script4')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-               <span class="tag">现代欢乐</span>
-               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 2人
-                </span>
+    <a href="script4.html" class="script-card" data-type="现代 欢乐" data-person="2" data-script-id="script4" onclick="markAsComplete('script4')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">现代欢乐</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 2人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">完美的不在场证明</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">你的眼睛在欺骗你。诙谐反转，荒诞作案。</p>
         </div>
-        <h2 style="margin:15px 0 10px;">完美的不在场证明</h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem; line-height:1.5;">你的眼睛在欺骗你。</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-        <a href="script5.html" class="script-card" data-type="现代 硬核" data-script-id="script5" onclick="markAsComplete('script5')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-               <span class="tag">校园惊悚</span>
-               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 5人
-                </span>
+    <a href="script5.html" class="script-card" data-type="现代 硬核" data-person="5" data-script-id="script5" onclick="markAsComplete('script5')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">校园惊悚</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 5人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">校园不可思议事件</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">中元节夜，五人探险旧教学楼。枯井边浮现诡异微笑，每个人都有自己的秘密……</p>
         </div>
-        <h2 style="margin:15px 0 10px;">校园不可思议事件</h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem; line-height:1.5;">中元节夜，五人探险旧教学楼。枯井边浮现诡异微笑，每个人都有自己的秘密……真相，藏在时间裂缝里。</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-        </a>
-        <a href="script6.html" class="script-card" data-type="古风 情感" data-script-id="script6" onclick="markAsComplete('script6')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-               <span class="tag">古风</span>
-               <span class="tag">情感沉浸</span>
-               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 2人
-                </span>
+    <a href="script6.html" class="script-card" data-type="古风 情感" data-person="2" data-script-id="script6" onclick="markAsComplete('script6')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">古风</span>
+                    <span class="tag">情感沉浸</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 2人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">江月不渡</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">渡口茶蛋香，一只鞋两个人。阿桂的船篙撑得起一江寒水，却撑不起阿宁藏起的绣花……</p>
         </div>
-        <h2 style="margin:15px 0 10px;">江月不渡</h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem; line-height:1.5;">渡口茶蛋香，一只鞋两个人。阿桂的船篙撑得起一江寒水，却撑不起阿宁藏起的绣花……</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-        </a>
-        <a href="script7.html" class="script-card" data-type="古风 情感 硬核" data-script-id="script7" onclick="markAsComplete('script7')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-               <span class="tag">古风悬疑</span>
-               <span class="tag">家族恩怨</span>
-               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 5人
-                </span>
+    <a href="script7.html" class="script-card" data-type="古风 情感 硬核" data-person="5" data-script-id="script7" onclick="markAsComplete('script7')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">古风悬疑</span>
+                    <span class="tag">家族恩怨</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 5人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">红楼梦中人</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">「玉带林中挂，金簪雪里埋」金陵风云再起，曹家别院，双姝横死，谁是真凶……</p>
         </div>
-        <h2 style="margin:15px 0 10px;">红楼梦中人</h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem; line-height:1.5;">「玉带林中挂，金簪雪里埋」金陵风云再起，曹家别院，双姝横死，谁是真凶……</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-                </a>
-        <a href="script8.html" class="script-card" data-type="古风 硬核" data-script-id="script8" onclick="markAsComplete('script8')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-               <span class="tag">古风</span>
-               <span class="tag">K系列</span>
-               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 4人
-                </span>
+    <a href="script8.html" class="script-card" data-type="古风 硬核" data-person="4" data-script-id="script8" onclick="markAsComplete('script8')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">古风</span>
+                    <span class="tag">K系列</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 4人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">望雀 · 霜天血影</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">「死蛊入酒，婚书蒙尘，雀翎泣血，谁送寒刃」……</p>
         </div>
-        <h2 style="margin:15px 0 10px;">望雀 · 霜天血影 </h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem; line-height:1.5;">「死蛊入酒，婚书蒙尘，雀翎泣血，谁送寒刃」……</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
 
-                        </a>
-        <a href="script9.html" class="script-card" data-type="未来 变格 硬核" data-script-id="script9" onclick="markAsComplete('script9')">
-    <div>
-        <div style="display:flex; justify-content:space-between; align-items: center;">
-            <div style="display: flex; gap: 6px;">
-               <span class="tag">未来</span>
-               <span class="tag">K系列</span>
-               <span style="font-size: 0.7rem; background: rgba(128,128,128,0.1); padding: 3px 8px; border-radius: 6px; color: var(--apple-text-secondary); display: flex; align-items: center; gap: 3px;">
-                    👤 4人
-                </span>
+    <a href="script9.html" class="script-card" data-type="未来 变格 硬核" data-person="4" data-script-id="script9" onclick="markAsComplete('script9')">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag">未来</span>
+                    <span class="tag">K系列</span>
+                    <span style="font-size: 0.7rem; background: rgba(128,128,128,0.12); padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px;">
+                        👤 4人
+                    </span>
+                </div>
+                <span class="completed-badge" style="display:none;">✓ 已结案</span>
             </div>
-            <span class="completed-badge" style="display:none;">✓ 已结案</span>
+            <h2 style="margin:15px 0 10px;">觉醒</h2>
+            <p style="color:var(--apple-text-secondary); font-size:0.9rem;">「仿生人会梦见电子羊吗？3018，K科技董事长之死」……</p>
         </div>
-        <h2 style="margin:15px 0 10px;">觉醒 </h2>
-        <p style="color:var(--apple-text-secondary); font-size:0.9rem; line-height:1.5;">「仿生人会梦见电子羊吗？3018，K科技董事长之死」……</p>
-    </div>
-    <div style="color:var(--apple-blue); font-weight:600; margin-top:20px;">开始体验 〉</div>
-</a>
+        <div class="experience-link">开始体验 〉</div>
+    </a>
+</main>
 
+<div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+
+<footer>
+    <p>© 2026 提笔绘梨花 · 沉浸式剧本体验</p>
+    <div style="margin-top:12px; font-size:0.75rem;">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        🕵️ 今日到访: <span id="busuanzi_value_site_uv"></span> 位探员
+    </div>
+</footer>
+
+<script>
+    // ---------- 全局筛选变量 ----------
+    let currentType = '全部';      // 类型筛选
+    let currentPeople = '全部';    // 新增人数筛选，默认全部
+
+    // ---------- 弹幕系统 (保留原有体验) ----------
+    const defaultDanmu = [
+        { nick: "系统", msg: "欢迎来到侦探电台，输入感悟并点击发射！" },
+        { nick: "匿名", msg: "断剑山庄那个结局我直接裂开..." },
+        { nick: "天边的云", msg: "有人想一起玩古风本吗？求组队！" },
+        { nick: "小M", msg: "断剑山庄好玩吗？求推荐" },
+        { nick: "雨落成花99", msg: "今天刚玩了长命锁，有人交流下吗？" },
+        { nick: "贪吃的婷婷", msg: "想玩欢乐本，有人一起吗？缺人喊我！" },
+        { nick: "无人区", msg: "第一次玩，有新手教程吗？" },
+        { nick: "匿名", msg: "哪个本比较简单啊？求推荐新手本" },
+        { nick: "侦探甲", msg: "十年迷雾的细节控看过来。" },
+        { nick: "推理猫", msg: "觉醒的赛博朋克风太惊艳了！" }
+    ];
+
+    function renderDanmu() {
+        const wrapper = document.getElementById('danmu-wrapper');
+        const myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
+        const allDanmu = [...defaultDanmu, ...myDanmu];
+        wrapper.innerHTML = allDanmu.map(item => `
+            <div class="danmu-item"><span>🕵️ ${escapeHtml(item.nick)}:</span> ${escapeHtml(item.msg)}</div>
+        `).join('');
+        wrapper.style.animation = 'none';
+        setTimeout(() => {
+            wrapper.style.animation = 'scroll-left 45s linear infinite';
+        }, 20);
+    }
+
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function sendDanmu() {
+        const input = document.getElementById('danmuInput');
+        const val = input.value.trim();
+        if (!val) return;
+        let myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
+        myDanmu.push({ nick: "我", msg: val });
+        localStorage.setItem('my_danmus', JSON.stringify(myDanmu));
+        input.value = '';
+        renderDanmu();
+        const btn = document.querySelector('.send-btn');
+        const originText = btn.innerText;
+        btn.innerText = "✨ 已发射!";
+        setTimeout(() => btn.innerText = originText, 1000);
+    }
+
+    // ---------- 核心筛选逻辑 (类型 + 人数 + 搜索) ----------
+    function runFilter() {
+        const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.script-card');
         
-    </main>
-
-    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
-
-    <footer>
-        <p>© 2026 提笔绘梨花</p>
-        <div style="margin-top:10px; font-size:0.75rem; color:var(--apple-text-secondary);">
-            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-            今日用户到访: <span id="busuanzi_value_site_uv"></span> 位
-        </div>
-    </footer>
-
-    <script>
-        let currentType = '全部';
-
-        // --- 弹幕逻辑 ---
-        const defaultDanmu = [
-            { nick: "系统", msg: "欢迎来到侦探电台，输入感悟并点击发射！" },
-            { nick: "匿名", msg: "断剑山庄那个结局我直接裂开..." },
-            { nick: "天边的云", msg: "有人想一起玩古风本吗？求组队！" },
-            { nick: "小M", msg: "断剑山庄好玩吗？求推荐" },
-            { nick: "雨落成花99", msg: "今天刚玩了长命锁，有人交流下吗？" },
-            { nick: "贪吃的婷婷", msg: "想玩欢乐本，有人一起吗？缺人喊我！" },
-            { nick: "无人区", msg: "第一次玩，有新手教程吗？" },
-            { nick: "匿名", msg: "哪个本比较简单啊？求推荐新手本" },
-            { nick: "侦探甲", msg: "十年迷雾的细节控看过来。" }
-        ];
-
-        function renderDanmu() {
-            const wrapper = document.getElementById('danmu-wrapper');
-            const myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
-            const allDanmu = [...defaultDanmu, ...myDanmu];
-            wrapper.innerHTML = allDanmu.map(item => `
-                <div class="danmu-item"><span>🕵️ ${item.nick}:</span> ${item.msg}</div>
-            `).join('');
+        cards.forEach(card => {
+            const typeAttr = card.getAttribute('data-type') || '';
+            const peopleAttr = card.getAttribute('data-person');   // 例如 "2","3","4","5"
+            const titleElem = card.querySelector('h2');
+            const title = titleElem ? titleElem.innerText.toLowerCase() : '';
             
-            // 确保动画运行
-            wrapper.style.animation = 'none';
-            setTimeout(() => {
-                wrapper.style.animation = 'scroll-left 40s linear infinite';
-            }, 10);
+            // 类型匹配: 当前选中的类型为“全部” 或者 data-type字符串包含该类型关键词
+            let typeMatch = (currentType === '全部') || typeAttr.includes(currentType);
+            
+            // 人数匹配: 当前选中人数为“全部” 或者 data-person严格等于选中数字字符串
+            let peopleMatch = (currentPeople === '全部') || (peopleAttr === currentPeople);
+            
+            // 搜索匹配
+            let searchMatch = title.includes(searchVal);
+            
+            const shouldShow = typeMatch && peopleMatch && searchMatch;
+            card.style.display = shouldShow ? 'flex' : 'none';
+        });
+    }
+
+    // 类型筛选事件 (原有改造)
+    function initTypeFilters() {
+        const typeItems = document.querySelectorAll('#typeFilterGroup .segment-item');
+        typeItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                const typeVal = this.getAttribute('data-type-filter');
+                if (!typeVal) return;
+                // 更新样式
+                typeItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentType = typeVal;
+                runFilter();
+            });
+        });
+    }
+
+    // 🆕 人数筛选事件绑定
+    function initPeopleFilters() {
+        const peopleItems = document.querySelectorAll('#peopleFilterGroup .segment-item');
+        peopleItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                const peopleVal = this.getAttribute('data-people');
+                if (!peopleVal) return;
+                // 更新样式
+                peopleItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentPeople = peopleVal;
+                runFilter();
+            });
+        });
+    }
+
+    // ---------- 成就/结案逻辑 ----------
+    function markAsComplete(id) {
+        let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+        if (!completed.includes(id)) {
+            completed.push(id);
+            localStorage.setItem('larp_achievements', JSON.stringify(completed));
         }
-
-        function sendDanmu() {
-            const input = document.getElementById('danmuInput');
-            const val = input.value.trim();
-            if (!val) return;
-            
-            // 初始化存储
-            if (!localStorage.getItem('my_danmus')) {
-                localStorage.setItem('my_danmus', JSON.stringify([]));
-            }
-            
-            let myDanmu = JSON.parse(localStorage.getItem('my_danmus') || '[]');
-            myDanmu.push({ nick: "我", msg: val });
-            localStorage.setItem('my_danmus', JSON.stringify(myDanmu));
-            input.value = '';
-            renderDanmu();
-            
-            const btn = document.querySelector('.send-btn');
-            btn.innerText = "已发射!";
-            setTimeout(() => btn.innerText = "发射", 1000);
+        refreshAchievements();
+        // 可选：给一点小反馈
+        const card = document.querySelector(`[data-script-id="${id}"]`);
+        if(card && !card.classList.contains('completed')) {
+            card.classList.add('completed');
+            const badge = card.querySelector('.completed-badge');
+            if(badge) badge.style.display = 'inline-block';
         }
+    }
 
-        // --- 过滤逻辑 ---
-        function filterType(type, el) {
-            // 更新UI
-            document.querySelectorAll('.segment-item').forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
-            currentType = type;
-            runFilter();
-        }
+    function refreshAchievements() {
+        const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
+        completed.forEach(id => {
+            const card = document.querySelector(`[data-script-id="${id}"]`);
+            if (card) card.classList.add('completed');
+        });
+    }
 
-        function runFilter() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.script-card');
+    // 深色模式
+    function toggleTheme() {
+        const body = document.body;
+        const current = body.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    }
 
-            cards.forEach(card => {
-                const type = card.getAttribute('data-type');
-                const title = card.querySelector('h2').innerText.toLowerCase();
-                
-                const typeMatch = (currentType === '全部' || type.includes(currentType));
-                const searchMatch = title.includes(searchVal);
-
-                card.style.display = (typeMatch && searchMatch) ? 'flex' : 'none';
+    // 页面初始化
+    window.onload = () => {
+        // 主题
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        // 弹幕
+        renderDanmu();
+        // 成就标记
+        refreshAchievements();
+        // 筛选栏事件
+        initTypeFilters();
+        initPeopleFilters();
+        // 确保默认激活状态同步 (初始均为“全部”)
+        currentType = '全部';
+        currentPeople = '全部';
+        // 避免active样式意外丢失，手动同步一下
+        const defaultTypeBtn = document.querySelector('#typeFilterGroup .segment-item[data-type-filter="全部"]');
+        if(defaultTypeBtn) defaultTypeBtn.classList.add('active');
+        const defaultPeopleBtn = document.querySelector('#peopleFilterGroup .segment-item[data-people="全部"]');
+        if(defaultPeopleBtn) defaultPeopleBtn.classList.add('active');
+        // 初次执行筛选 (展示全部)
+        runFilter();
+        
+        // 弹幕回车
+        const danmuInput = document.getElementById('danmuInput');
+        if(danmuInput) {
+            danmuInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') sendDanmu();
             });
         }
-
-        // --- 深色模式逻辑 ---
-        function toggleTheme() {
-            const body = document.body;
-            const current = body.getAttribute('data-theme');
-            const next = current === 'light' ? 'dark' : 'light';
-            body.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-        }
-
-        // --- 成就逻辑 ---
-        function markAsComplete(id) {
-            let completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
-            if (!completed.includes(id)) {
-                completed.push(id);
-                localStorage.setItem('larp_achievements', JSON.stringify(completed));
-            }
-            refreshAchievements();
-        }
-
-        function refreshAchievements() {
-            const completed = JSON.parse(localStorage.getItem('larp_achievements') || '[]');
-            completed.forEach(id => {
-                const card = document.querySelector(`[data-script-id="${id}"]`);
-                if (card) card.classList.add('completed');
-            });
-        }
-
-        // --- 初始化 ---
-        window.onload = () => {
-            // 加载主题
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.body.setAttribute('data-theme', savedTheme);
-            
-            // 渲染弹幕
-            renderDanmu();
-            
-            // 加载已完成记录
-            refreshAchievements();
-            
-            // 弹幕输入框回车支持
-            const danmuInput = document.getElementById('danmuInput');
-            if (danmuInput) {
-                danmuInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        sendDanmu();
-                    }
-                });
-            }
-        };
-    </script>
+    };
+</script>
 </body>
 </html>
-
-
-
-
-
-
