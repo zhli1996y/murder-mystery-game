@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>群星落幕时 · K系列科幻情感剧本杀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-cosmic: #0a0c1a;
+            --star-glow: #c4b5fd;
+            --deep-space: #11162b;
+            --nebula: #2d3a6e;
+            --stardust: #e2d9ff;
+            --crimson-star: #b03e5c;
+            --gold-dust: #e6c87c;
+            --card-bg: #fefaf0;
+        }
+
+        body {
+            background: radial-gradient(ellipse at 20% 30%, #0f1225, #03050b);
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            padding: 24px 16px;
+            color: #e2e2f0;
+        }
+
+        .galaxy-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(10, 14, 30, 0.75);
+            backdrop-filter: blur(4px);
+            border-radius: 48px 24px 48px 24px;
+            border: 1px solid rgba(196, 181, 253, 0.3);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,240,200,0.1);
+            overflow: hidden;
+        }
+
+        .inner {
+            padding: 28px 24px 36px;
+        }
+
+        .step-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: #0a0e1c;
+            border-radius: 60px;
+            padding: 6px 8px;
+            margin-bottom: 28px;
+            gap: 6px;
+            border: 1px solid #2e3a5c;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 8px 4px;
+            border-radius: 40px;
+            color: #9aa9cf;
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .step.active {
+            background: var(--crimson-star);
+            color: #fef0e6;
+            box-shadow: 0 0 10px #b03e5c;
+        }
+
+        .step.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 24px 26px;
+            color: #1a1e2c;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+            border: 1px solid #e0cfb5;
+        }
+
+        h1, h2, h3 {
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .title-cosmic {
+            text-align: center;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #e2d9ff, #b8a9f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            font-family: 'Georgia', serif;
+        }
+
+        .sub {
+            text-align: center;
+            color: #6b5f8e;
+            border-bottom: 1px dashed #bfafd9;
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 20px auto;
+            padding-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        .role-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            margin: 24px 0;
+        }
+
+        .role-star {
+            flex: 1;
+            min-width: 200px;
+            background: #f1eef9;
+            border-radius: 32px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid #b7a8d4;
+            text-align: center;
+        }
+
+        .role-star.selected {
+            background: var(--crimson-star);
+            color: white;
+            border-color: #ffbc6e;
+            box-shadow: 0 0 15px #b03e5c;
+        }
+
+        .role-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .role-desc {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #4a3a60;
+        }
+
+        .role-star.selected .role-desc {
+            color: #fff0e0;
+        }
+
+        button {
+            background: linear-gradient(95deg, #2a3a5e, #1a2742);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 48px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 16px;
+            letter-spacing: 1px;
+            border: 1px solid #5b6d8f;
+        }
+
+        button.secondary {
+            background: linear-gradient(95deg, #3e3c5e, #2c2a48);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 4px 12px rgba(176, 62, 92, 0.4);
+        }
+
+        .pdf-viewer {
+            background: #e7e0d0;
+            border-radius: 24px;
+            padding: 8px;
+            margin: 18px 0;
+            border: 1px solid #c9bb9b;
+        }
+
+        iframe {
+            width: 100%;
+            min-height: 65vh;
+            border-radius: 20px;
+            border: none;
+            background: #f8f2e2;
+        }
+
+        .clue-group {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .clue-item {
+            background: #f2ebe0;
+            border-radius: 28px;
+            padding: 14px 20px;
+            border-left: 8px solid #9b7bcb;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .clue-title {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #352d55;
+        }
+
+        .clue-preview {
+            margin-top: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .task-area {
+            background: #e4dccf;
+            border-radius: 24px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-left: 5px solid var(--crimson-star);
+        }
+
+        .discuss-box {
+            background: #ece4d8;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #bcae8a;
+            background: #fffcf5;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .vote-panel {
+            background: #f1eadc;
+            border-radius: 28px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 40px;
+            border: 1px solid #bba88a;
+            background: white;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8f7fa3;
+            margin-top: 20px;
+        }
+
+        .flex-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-note {
+            font-size: 0.7rem;
+            color: #6a5a7c;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .truth-result {
+            background: #fdf7ed;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #e2cfae;
+            line-height: 1.5;
+        }
+
+        .ending-letter {
+            background: #fff3e0;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 6px solid #e6c87c;
+            font-style: italic;
+        }
+
+        .letter-preview {
+            margin-top: 12px;
+        }
+
+        hr {
+            margin: 16px 0;
+            border-color: #dacaa8;
+        }
+    </style>
+</head>
+<body>
+<div class="galaxy-container">
+    <div class="inner">
+        <!-- 步骤导航 -->
+        <div class="step-bar" id="stepNav">
+            <div class="step" data-step="0">❶ 星选·角色</div>
+            <div class="step" data-step="1">❷ 星轨·剧本</div>
+            <div class="step" data-step="2">❸ 初论·星语</div>
+            <div class="step" data-step="3">❹ 星尘·线索</div>
+            <div class="step" data-step="4">❺ 深推·圆桌</div>
+            <div class="step" data-step="5">❻ 终局·抉择</div>
+        </div>
+
+        <!-- 步骤0: 角色选择 + 背景 -->
+        <div id="step0" class="card">
+            <div class="title-cosmic">群星落幕时</div>
+            <div class="sub" style="display:block; text-align:center;">「暗夜已至，而她们正是闪耀之时」</div>
+            <div class="discuss-box" style="background:#e8e0d0;">
+                <p style="font-weight:bold;">🌌 故事背景</p>
+                <p>遥远的斯塔汉罗星系，因小行星带干扰终年不见阳光，被称为“群星落幕之地”。三位性格迥异的女性于此相遇——李斯楠、罗素、安安。她们结下不解之缘，然而一场关于“方旸”数据、夸父计划与永恸星毁灭的阴谋悄然展开。谁是真凶？谁将被数据流吞噬？群星之下，唯有真相能照亮黑暗。</p>
+            </div>
+            <div class="task-area">
+                <strong>✨ 选择你的角色</strong>
+                <div class="role-grid" id="roleGrid"></div>
+                <label>🌟 输入你的代号（可选）</label>
+                <input type="text" id="playerAlias" placeholder="例：星轨观测者 / 拾光者">
+                <button id="confirmRoleBtn">🪐 载入星魂 · 开启剧本 🪐</button>
+            </div>
+            <div class="badge-note">💫 流程：选角→阅读个人剧本PDF→第一轮公聊→全员线索公开→圆桌深推→投票指认真凶 → 揭晓结局与「致我的挚爱」信件</div>
+        </div>
+
+        <!-- 步骤1: 个人剧本 -->
+        <div id="step1" class="card hidden">
+            <h2 id="roleNameTitle" style="color:#5e4a7a;">—— 星尘档案 ——</h2>
+            <div id="missionArea" class="task-area">
+                <strong>📜 角色使命 & 秘密</strong>
+                <div id="roleTasks"></div>
+            </div>
+            <div class="pdf-viewer">
+                <iframe id="scriptFrame" title="角色剧本" src="about:blank"></iframe>
+            </div>
+            <div class="flex-buttons">
+                <button id="toDiscussBtn">💬 星轨交汇 · 进入初论</button>
+            </div>
+            <div class="badge-note">※ 若PDF无法预览，请尝试刷新或下载，建议横屏阅读。注意：选角后不可返回，请认真阅读。</div>
+        </div>
+
+        <!-- 步骤2: 第一轮公聊 -->
+        <div id="step2" class="card hidden">
+            <h2>🗣️ 星语 · 第一轮公开陈述</h2>
+            <div class="discuss-box">
+                <p>🔭 自我介绍、时间线、可公开信息（隐藏核心动机）。主持人引导，记录疑点。</p>
+                <textarea id="publicNote" rows="4" placeholder="记录矛盾点、人物关系..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toClueBtn">📡 公聊结束 · 开启星尘线索</button>
+                <button id="backToScriptFromDiscuss" class="secondary">📖 回看剧本</button>
+            </div>
+        </div>
+
+        <!-- 步骤3: 三个线索文件 -->
+        <div id="step3" class="card hidden">
+            <h2>🔮 星尘线索 · 全息调查</h2>
+            <p style="margin-bottom:12px;">点击下方线索卡片展开PDF（夸父/深入调查/微光）</p>
+            <div id="cluesList" class="clue-group"></div>
+            <div class="flex-buttons">
+                <button id="toRoundTableBtn">⚖️ 进入圆桌深推</button>
+                <button id="backToDiscussFromClue" class="secondary">↺ 返回公聊</button>
+            </div>
+        </div>
+
+        <!-- 步骤4: 圆桌深推 -->
+        <div id="step4" class="card hidden">
+            <h2>🌠 圆桌 · 最终推演</h2>
+            <div class="discuss-box">
+                <p>🌙 深入动机、数据诡计、三人的真实身份。记录最终指认思路。</p>
+                <textarea id="deepNote" rows="4" placeholder="锁定核诡、关键证据链..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toVoteBtn">🕯️ 星陨时刻 · 投票指认</button>
+                <button id="backToClueFromRound" class="secondary">🔍 复查线索</button>
+            </div>
+        </div>
+
+        <!-- 步骤5: 投票 + 结局展示 -->
+        <div id="step5" class="card hidden">
+            <h2>⚡ 终局 · 星痕裁决</h2>
+            <div class="vote-panel">
+                <p><strong>✍️ 指认真凶（核心投票）</strong></p>
+                <select id="murderVote">
+                    <option value="">—— 请选择 ——</option>
+                </select>
+                <button id="revealBtn">🌟 呈交星证 · 揭晓命运 🌟</button>
+            </div>
+            <!-- 结局与信件展示区域（初始隐藏） -->
+            <div id="endingArea" class="hidden">
+                <div class="truth-result" id="endingTextDiv">
+                    <h3>📖 群星结局</h3>
+                    <div id="endingContent"></div>
+                </div>
+                <div class="ending-letter" id="letterArea">
+                    <h3>💌 致我的挚爱 · 星尘遗信</h3>
+                    <div class="letter-preview" id="letterPreview">
+                        <iframe id="letterFrame" title="致我的挚爱信件" style="width:100%; height: 55vh; border-radius: 20px; border: none;" src="about:blank"></iframe>
+                    </div>
+                    <div class="badge-note">信件《致我的挚爱》 —— 跨越星海的告白</div>
+                </div>
+            </div>
+            <button id="restartGameBtn" class="secondary" style="margin-top:20px;">🔄 重启群星 · 再探真相</button>
+            <footer>群星落幕，但爱意永存</footer>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= 群星落幕时 配置 =======================
+    // 角色配置（包含详细信息）
+    const ROLES = {
+        li_sinan: {
+            name: "李斯楠",
+            pdf: "群星落幕时剧本李斯楠.pdf",
+            tasks: "📀 李斯楠 · 27岁 成功的商人<br>① 隐藏你与夸父计划的真实关联以及你为何持有加密数据。② 查明方旸碎片的下落，保护自己的数据不被删除。③ 找出导致永恸星毁灭的真凶，并守护重要之人。",
+            desc: "27岁，成功的商人。外表看上去成熟而知性。"
+        },
+        luo_su: {
+            name: "罗素",
+            pdf: "群星落幕时剧本罗素.pdf",
+            tasks: "⚡ 罗素 · 21岁 永恸星高级治安官<br>① 隐瞒你与元帅唐令的秘密约定。② 保护自己治安官身份下的真实任务（寻找方旸）。③ 找出真凶，避免自己被数据清除。",
+            desc: "21岁，永恸星高级治安官。性格开朗、身手矫健，穿着制服。"
+        },
+        an_an: {
+            name: "安安",
+            pdf: "群星落幕时剧本安安.pdf",
+            tasks: "📚 安安 · 24岁 知名学者<br>① 隐藏你曾经参与方旸核心编码的往事。② 不暴露你对夸父系统的真实认知。③ 找出杀害重要目标的凶手，同时保护残存的数据体。",
+            desc: "24岁，知名学者。性格略沉闷、孤僻、总穿着长裙。"
+        }
+    };
+
+    // 三个线索文件
+    const CLUES = [
+        { name: "🔭 夸父 · 深层星图", file: "群星落幕时剧本线索夸父.pdf", desc: "关于夸父计划的核心数据，小行星带干扰记录，意识传输协议。" },
+        { name: "📡 深入调查 · 加密卷宗", file: "群星落幕时剧本线索深入调查.pdf", desc: "永恸星爆炸前通讯记录，唐令元帅的最后指令，方旸片段。" },
+        { name: "✨ 微光 · 遗落记忆", file: "群星落幕时剧本线索微光.pdf", desc: "三位角色过去交集的影像碎片，未寄出的信件草稿。" }
+    ];
+
+    // 信件PDF固定
+    const LETTER_PDF = "群星落幕时结尾信致我的挚爱.pdf";
+
+    // 结局文本（根据真相手册）
+    const ENDINGS = {
+        luosu_guilty: `【✨ 结局 · 罗素被指认为凶手 ✨】<br>
+        三段数据中，代表罗素的那段被彻底删除，安安与李斯楠的两段数据进行了合流，在数据库中形成了一个不完全体的方旸。数据流选择沿着夸父的指引，到达首都星附近的猜想者号上。半个世纪后，属于方旸的一部分，终于见证了恒星的诞生。而握有“钥匙”的元帅唐令，则与永恸星一起彻底地消失了。`,
+        anan_guilty: `【🌙 结局 · 安安被指认为凶手 🌙】<br>
+        三段数据中，代表安安的那段被彻底删除，罗素与李斯楠的两段数据进行了合流，在数据库中形成了一个不完全体的方旸。由于罗素的个人意志鲜明而强烈，这个数据流选择去往永恸星，与唐令见了最后一面。他们在爆炸声中无声叹息，没有遗憾。`,
+        lisinan_guilty: `【💫 结局 · 李斯楠被指认为凶手 💫】<br>
+        三段数据彻底合流，形成了一个完整的方旸。这道数据流极快地筛选了夸父中的相关信息，启动了一直被停留在永恸星内部的穿梭艇，在最后关头，将唐令从爆炸中心强行带走。年迈的元帅在虚空乱流中再次见到年轻的爱人，身后，新生的恒星充满了生命力。这一次，再没有其他人了。`
+    };
+
+    // 全局状态
+    let currentStep = 0;
+    let selectedRoleKey = null;
+    let playerAlias = "";
+    let gameStarted = false; // 标记游戏是否已经开始（选角完成后变为true，直到重启）
+
+    // DOM 元素
+    const panels = {
+        0: document.getElementById("step0"),
+        1: document.getElementById("step1"),
+        2: document.getElementById("step2"),
+        3: document.getElementById("step3"),
+        4: document.getElementById("step4"),
+        5: document.getElementById("step5")
+    };
+    const stepDivs = document.querySelectorAll(".step");
+
+    function updateNavLock() {
+        // 游戏开始后，禁用步骤0（选角）和步骤5（投票）的直接跳转
+        stepDivs.forEach((el, idx) => {
+            if (gameStarted) {
+                if (idx === 0 || idx === 5) {
+                    el.classList.add("disabled");
+                } else {
+                    // 但允许在当前步骤及之前步骤之间切换（比如回看剧本、线索），但不可超过当前步骤
+                    if (idx > currentStep && idx !== 5) {
+                        el.classList.add("disabled");
+                    } else {
+                        el.classList.remove("disabled");
+                    }
+                }
+            } else {
+                // 未开始时只有步骤0可用
+                if (idx === 0) el.classList.remove("disabled");
+                else el.classList.add("disabled");
+            }
+        });
+    }
+
+    function setStep(step, allowViolation = false) {
+        if (step < 0 || step > 5) return;
+        // 权限检查：游戏开始后不能回到步骤0，不能提前跳到步骤5（除非从步骤4通过按钮进入）
+        if (gameStarted) {
+            if (step === 0) {
+                alert("游戏已开始，无法返回选角界面。如需重新开始请点击「重启群星」按钮。");
+                return;
+            }
+            if (step === 5 && currentStep < 4 && !allowViolation) {
+                alert("请先完成圆桌深推，再进入投票阶段。");
+                return;
+            }
+            // 不允许跳转到比当前步骤大2以上的步骤（防止跳过中间环节）
+            if (step > currentStep + 1 && step !== 5) {
+                alert("请按顺序进行游戏。");
+                return;
+            }
+        }
+        // 隐藏所有面板
+        for (let i = 0; i <= 5; i++) {
+            if (panels[i]) panels[i].classList.add("hidden");
+        }
+        if (panels[step]) panels[step].classList.remove("hidden");
+        stepDivs.forEach((el, idx) => {
+            if (idx === step) el.classList.add("active");
+            else el.classList.remove("active");
+        });
+        currentStep = step;
+        updateNavLock();
+        
+        if (step === 3) renderClues();
+        if (step === 5) {
+            populateVoteSelect();
+            const endingArea = document.getElementById("endingArea");
+            if (endingArea) endingArea.classList.add("hidden");
+        }
+        if (step === 1 && selectedRoleKey) loadRoleScript();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderRoleSelector() {
+        const container = document.getElementById("roleGrid");
+        if (!container) return;
+        container.innerHTML = "";
+        for (let [key, role] of Object.entries(ROLES)) {
+            const div = document.createElement("div");
+            div.className = "role-star";
+            div.innerHTML = `
+                <div class="role-name">${role.name}</div>
+                <div class="role-desc">${role.desc}</div>
+            `;
+            div.dataset.key = key;
+            div.addEventListener("click", () => {
+                if (gameStarted) return;
+                document.querySelectorAll(".role-star").forEach(c => c.classList.remove("selected"));
+                div.classList.add("selected");
+                selectedRoleKey = key;
+            });
+            container.appendChild(div);
+        }
+    }
+
+    function confirmRoleSelection() {
+        if (gameStarted) {
+            alert("游戏已开始，无法重选角色。");
+            return;
+        }
+        if (!selectedRoleKey) {
+            alert("请先选择你的角色：李斯楠、罗素或安安");
+            return;
+        }
+        const alias = document.getElementById("playerAlias").value.trim();
+        playerAlias = alias || ROLES[selectedRoleKey].name;
+        const role = ROLES[selectedRoleKey];
+        document.getElementById("roleNameTitle").innerHTML = `✨ ${role.name} · 「${playerAlias}」 ✨`;
+        document.getElementById("roleTasks").innerHTML = role.tasks;
+        gameStarted = true;
+        loadRoleScript();
+        setStep(1);
+    }
+
+    function loadRoleScript() {
+        if (!selectedRoleKey) return;
+        const role = ROLES[selectedRoleKey];
+        const frame = document.getElementById("scriptFrame");
+        if (frame) frame.src = role.pdf + "?t=" + Date.now();
+    }
+
+    function renderClues() {
+        const container = document.getElementById("cluesList");
+        if (!container) return;
+        container.innerHTML = "";
+        CLUES.forEach((clue, idx) => {
+            const expandId = `clueExp_${idx}`;
+            const clueDiv = document.createElement("div");
+            clueDiv.className = "clue-item";
+            clueDiv.innerHTML = `
+                <div class="clue-title">
+                    <span>📁 ${clue.name}</span>
+                    <span style="font-size:0.7rem; color:#7b5ea7;">▼ 点击展开</span>
+                </div>
+                <p style="margin: 6px 0 0 0; font-size:0.85rem; color:#4a3a60;">${clue.desc}</p>
+                <div id="${expandId}" class="clue-preview hidden">
+                    <div class="pdf-viewer" style="margin-top:12px;">
+                        <iframe style="height: 55vh;" src="${clue.file}?t=${Date.now()}" title="${clue.name}"></iframe>
+                    </div>
+                    <div class="badge-note">若无法预览请尝试下载或检查文件路径</div>
+                </div>
+            `;
+            const titleDiv = clueDiv.querySelector(".clue-title");
+            titleDiv.style.cursor = "pointer";
+            titleDiv.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const preview = document.getElementById(expandId);
+                if (preview) preview.classList.toggle("hidden");
+            });
+            container.appendChild(clueDiv);
+        });
+    }
+
+    function populateVoteSelect() {
+        const select = document.getElementById("murderVote");
+        select.innerHTML = '<option value="">—— 指认真凶 ——</option>';
+        for (let [key, role] of Object.entries(ROLES)) {
+            select.innerHTML += `<option value="${role.name}">${role.name}</option>`;
+        }
+    }
+
+    // 根据投票展示结局 + 信件
+    function revealEnding() {
+        const vote = document.getElementById("murderVote").value;
+        if (!vote) {
+            alert("请先指认真凶：李斯楠、罗素或安安");
+            return;
+        }
+        
+        let endingHtml = "";
+        if (vote === "罗素") {
+            endingHtml = ENDINGS.luosu_guilty;
+        } else if (vote === "安安") {
+            endingHtml = ENDINGS.anan_guilty;
+        } else if (vote === "李斯楠") {
+            endingHtml = ENDINGS.lisinan_guilty;
+        } else {
+            endingHtml = "【未知结局】数据流紊乱，请重新指认。";
+        }
+        
+        const endingArea = document.getElementById("endingArea");
+        const endingContentDiv = document.getElementById("endingContent");
+        endingContentDiv.innerHTML = endingHtml;
+        
+        const letterFrame = document.getElementById("letterFrame");
+        if (letterFrame) {
+            letterFrame.src = LETTER_PDF + "?t=" + Date.now();
+        }
+        
+        endingArea.classList.remove("hidden");
+        endingArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        setTimeout(() => {
+            alert("星轨收束，结局已揭晓。信件《致我的挚爱》将在下方呈现。");
+        }, 200);
+    }
+
+    function restartGame() {
+        if (confirm("重启将清空所有进度与笔记，是否返回星选？")) {
+            selectedRoleKey = null;
+            playerAlias = "";
+            gameStarted = false;
+            document.getElementById("playerAlias").value = "";
+            document.querySelectorAll(".role-star").forEach(c => c.classList.remove("selected"));
+            document.getElementById("publicNote").value = "";
+            document.getElementById("deepNote").value = "";
+            document.getElementById("murderVote").value = "";
+            const endingArea = document.getElementById("endingArea");
+            if (endingArea) endingArea.classList.add("hidden");
+            const scriptFrame = document.getElementById("scriptFrame");
+            if (scriptFrame) scriptFrame.src = "about:blank";
+            const letterFrame = document.getElementById("letterFrame");
+            if (letterFrame) letterFrame.src = "about:blank";
+            const cluesContainer = document.getElementById("cluesList");
+            if (cluesContainer) cluesContainer.innerHTML = "";
+            setStep(0);
+            updateNavLock();
+        }
+    }
+
+    function bindEvents() {
+        document.getElementById("confirmRoleBtn")?.addEventListener("click", confirmRoleSelection);
+        document.getElementById("toDiscussBtn")?.addEventListener("click", () => setStep(2));
+        document.getElementById("backToScriptFromDiscuss")?.addEventListener("click", () => setStep(1));
+        document.getElementById("toClueBtn")?.addEventListener("click", () => setStep(3));
+        document.getElementById("backToDiscussFromClue")?.addEventListener("click", () => setStep(2));
+        document.getElementById("toRoundTableBtn")?.addEventListener("click", () => setStep(4));
+        document.getElementById("backToClueFromRound")?.addEventListener("click", () => setStep(3));
+        document.getElementById("toVoteBtn")?.addEventListener("click", () => setStep(5, true)); // 允许从步骤4进入步骤5
+        document.getElementById("revealBtn")?.addEventListener("click", revealEnding);
+        document.getElementById("restartGameBtn")?.addEventListener("click", restartGame);
+        
+        stepDivs.forEach((stepEl, idx) => {
+            stepEl.addEventListener("click", () => {
+                if (stepEl.classList.contains("disabled")) {
+                    if (idx === 0) alert("游戏已开始，无法返回选角。如需重来请点击「重启群星」");
+                    else if (idx === 5) alert("请按顺序进行，先完成圆桌深推再投票");
+                    else alert("请按顺序进行游戏");
+                    return;
+                }
+                if (idx === 1 && !selectedRoleKey) { alert("请先在「星选·角色」中选择你的角色"); return; }
+                setStep(idx);
+            });
+        });
+    }
+
+    function init() {
+        renderRoleSelector();
+        bindEvents();
+        setStep(0);
+        updateNavLock();
+        const letterFrame = document.getElementById("letterFrame");
+        if (letterFrame) letterFrame.src = "about:blank";
+    }
+    init();
+</script>
+</body>
+</html>
