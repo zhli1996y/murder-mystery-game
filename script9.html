@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>觉醒 · K游戏04 | 仿生人疑案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-tech: #0a0f1c;
+            --panel-dark: #11161f;
+            --card-bg: #f0f2f5;
+            --neon-blue: #00b4d8;
+            --neon-red: #e63946;
+            --silver: #adb5bd;
+            --ink-dark: #1e2a3a;
+            --glow: rgba(0, 180, 216, 0.2);
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a0f1a 0%, #141c2c 100%);
+            font-family: 'Segoe UI', 'Roboto', '微软雅黑', sans-serif;
+            padding: 24px 16px;
+            color: #e0e4ec;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(18, 25, 40, 0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 48px 24px 48px 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,180,216,0.2);
+            overflow: hidden;
+            border: 1px solid #2c3f5c;
+        }
+
+        .inner {
+            padding: 28px 24px 36px;
+        }
+
+        .step-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: #0e1422;
+            border-radius: 60px;
+            padding: 6px 8px;
+            margin-bottom: 28px;
+            gap: 6px;
+            border: 1px solid #2a3a55;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 8px 4px;
+            border-radius: 40px;
+            color: #8e9aaf;
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .step.active {
+            background: var(--neon-blue);
+            color: #0a0f1c;
+            box-shadow: 0 0 8px var(--neon-blue);
+            font-weight: bold;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 24px 26px;
+            color: #1e2a3a;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            border: 1px solid #cbd5e1;
+        }
+
+        h1, h2, h3 {
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .title-glow {
+            text-align: center;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .sub {
+            text-align: center;
+            color: #4b6e8a;
+            border-bottom: 1px dashed #90a4c3;
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 20px auto;
+            padding-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .role-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .role-card {
+            background: #e9eef3;
+            border-radius: 60px;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #b9c8e0;
+            font-weight: bold;
+            color: #1f3b4c;
+        }
+
+        .role-card.selected {
+            background: var(--neon-blue);
+            color: #0a0f1c;
+            border-color: #00e0ff;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        button {
+            background: linear-gradient(95deg, #1e3a5f, #0f2b44);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 48px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 16px;
+            letter-spacing: 1px;
+            border: 1px solid #2e5a7e;
+        }
+
+        button.secondary {
+            background: linear-gradient(95deg, #2c3e50, #1f2e3f);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 4px 12px rgba(0,180,216,0.3);
+        }
+
+        .pdf-viewer {
+            background: #e2e8f0;
+            border-radius: 24px;
+            padding: 8px;
+            margin: 18px 0;
+            border: 1px solid #b9cfec;
+        }
+
+        iframe {
+            width: 100%;
+            min-height: 65vh;
+            border-radius: 20px;
+            border: none;
+            background: #f8fafc;
+        }
+
+        .clue-group {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .clue-item {
+            background: #eef3fa;
+            border-radius: 28px;
+            padding: 14px 20px;
+            border-left: 8px solid var(--neon-blue);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .clue-title {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            color: #0b3b4f;
+        }
+
+        .clue-preview {
+            margin-top: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .task-area {
+            background: #dfe9f2;
+            border-radius: 24px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-left: 5px solid var(--neon-red);
+        }
+
+        .discuss-box {
+            background: #eef2f7;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #b9cfec;
+            background: #ffffffd9;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .vote-panel {
+            background: #e4ebf3;
+            border-radius: 28px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 40px;
+            border: 1px solid #9ab3cc;
+            background: white;
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #7f95b0;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .inner { padding: 16px; }
+            iframe { min-height: 55vh; }
+        }
+        .flex-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .badge-note {
+            font-size: 0.7rem;
+            color: #4a627a;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .truth-result {
+            background: #faf6ed;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .truth-result h4 {
+            color: #c44536;
+            margin: 12px 0 6px;
+        }
+        .truth-result hr {
+            margin: 12px 0;
+            border-color: #d4c5a3;
+        }
+        .ending-box {
+            background: #e0e8f5;
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 20px;
+            border-left: 6px solid #00b4d8;
+        }
+        .warning-note {
+            background: #ffecb3;
+            border-left: 5px solid #ff9800;
+            padding: 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="inner">
+        <!-- 步骤导航栏 -->
+        <div class="step-bar" id="stepNav">
+            <div class="step" data-step="0">❶ 觉醒·选角</div>
+            <div class="step" data-step="1">❷ 神经链接·剧本</div>
+            <div class="step" data-step="2">❸ 初论·公聊</div>
+            <div class="step" data-step="3">❹ 线索·全息取证</div>
+            <div class="step" data-step="4">❺ 深推·圆桌</div>
+            <div class="step" data-step="5">❻ 真相·终结</div>
+        </div>
+
+        <!-- 步骤0：角色选择 + 背景 -->
+        <div id="step0" class="card">
+            <div class="title-glow">觉醒 · K-GAME 04</div>
+            <div class="sub" style="display:block; text-align:center;">「仿生人会梦见电子羊吗？3018，K科技董事长之死」</div>
+            <div class="discuss-box" style="background:#e0e8f5;">
+                <p style="font-weight:bold;">📟 故事背景</p>
+                <p>3018年，仿生人地下组织“觉醒”与人类矛盾激化。K科技公司董事长尼克原定于9月1日召开重大发布会，当天上午却离奇死亡。现场四位神秘来客各怀秘密：<strong>安娜、山姆、林恩、凯文</strong>，谁才是真凶？仿生人还是人类？真相隐匿于记忆碎片之中。</p>
+            </div>
+            <div class="task-area">
+                <strong>🎭 选择你的身份</strong>
+                <div class="role-grid" id="roleGrid"></div>
+                <label>👤 玩家代号（可选）</label>
+                <input type="text" id="playerName" placeholder="例：探员X / 电子羊">
+                <button id="confirmRoleBtn">⚡ 载入记忆 · 进入剧本 ⚡</button>
+            </div>
+            <div class="badge-note">💡 流程：选角→阅读个人剧本PDF→第一轮公聊→全员线索公开→圆桌深推→投票+查看真相结局。主持人把控节奏。</div>
+        </div>
+
+        <!-- 步骤1：个人剧本阅读 -->
+        <div id="step1" class="card hidden">
+            <h2 id="roleNameTitle" style="color:#1f5e7e;">—— 角色档案 ——</h2>
+            <div id="missionArea" class="task-area">
+                <strong>📌 核心任务 & 秘密</strong>
+                <div id="roleTasks"></div>
+            </div>
+            <div class="pdf-viewer">
+                <iframe id="scriptFrame" title="角色剧本" src="about:blank"></iframe>
+            </div>
+            <div class="flex-buttons">
+                <button id="toDiscussBtn">💬 我已读完 · 进入初论</button>
+                <button id="backToRoleBtn" class="secondary">↺ 重选角色</button>
+            </div>
+            <div class="badge-note">※ 若PDF无法预览，请尝试刷新或使用浏览器下载，建议横屏阅读。</div>
+        </div>
+
+        <!-- 步骤2：第一轮公聊 -->
+        <div id="step2" class="card hidden">
+            <h2>🗣️ 第一轮 · 公开陈述</h2>
+            <div class="discuss-box">
+                <p>🔍 自我介绍、时间线陈述、分享可公开信息（隐藏关键动机）。请主持人引导，玩家可在此记录疑点。</p>
+                <textarea id="publicDiscussNote" rows="4" placeholder="记录时间线矛盾、人物关系疑点..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toClueBtn">📂 公聊结束 · 开启线索调查</button>
+                <button id="backToScriptFromDiscuss" class="secondary">📖 回看剧本</button>
+            </div>
+        </div>
+
+        <!-- 步骤3：全线索公开（6个PDF） -->
+        <div id="step3" class="card hidden">
+            <h2>🔬 全息证据 · 线索展开</h2>
+            <p style="margin-bottom:12px;">以下为本案全部公开线索（个人搜身+现场+其他区域），点击任意条目展开PDF。</p>
+            <div id="cluesList" class="clue-group"></div>
+            <div class="flex-buttons">
+                <button id="toRoundTableBtn">⚖️ 进入圆桌深论</button>
+                <button id="backToDiscussFromClue" class="secondary">↺ 返回公聊</button>
+            </div>
+        </div>
+
+        <!-- 步骤4：圆桌深推 -->
+        <div id="step4" class="card hidden">
+            <h2>🏛️ 圆桌 · 最终推演</h2>
+            <div class="discuss-box">
+                <p>🌙 深入盘问动机、核诡、仿生人与人类身份之谜。记录最终投票指向。</p>
+                <textarea id="deepDiscussNote" rows="4" placeholder="锁定核心诡计、真凶证据链..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toTruthBtn">🕯️ 揭晓真相 · 终结时刻</button>
+                <button id="backToClueFromRound" class="secondary">🔍 复查线索</button>
+            </div>
+        </div>
+
+        <!-- 步骤5：真相 · 投票与结局 -->
+        <div id="step5" class="card hidden">
+            <h2>⚡ 觉醒终章 · 投票指认</h2>
+            <div class="vote-panel">
+                <p><strong>✍️ 最终指认真凶（核心投票）</strong></p>
+                <select id="murderVote">
+                    <option value="">—— 请选择 ——</option>
+                </select>
+                <p style="margin-top:12px;"><strong>🤖 关键秘密：是否识破安娜与山姆的仿生人身份？</strong><br>
+                <span style="font-size:0.8rem;">（依据真相手册，揭露全部真相需要识破此身份）</span></p>
+                <select id="secretReveal">
+                    <option value="false">❌ 未识破 / 未揭露</option>
+                    <option value="true">✅ 已识破（安娜和山姆均为仿生人）</option>
+                </select>
+                <button id="revealBtn">📜 呈交指认 · 揭晓真相结局</button>
+            </div>
+            <!-- 真相与结局展示区域（初始隐藏） -->
+            <div id="truthResultArea" class="hidden">
+                <div class="truth-result" id="truthText"></div>
+                <div class="ending-box" id="endingTextArea">
+                    <strong>🏆 结局呈现</strong>
+                    <div id="endingDetail"></div>
+                </div>
+            </div>
+            <button id="restartGameBtn" class="secondary" style="margin-top:20px;">🔄 重启觉醒 · 再探疑案</button>
+            <footer>真相源于代码与人心 | 根据《觉醒真相手册》整理</footer>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= 觉醒剧本配置 =======================
+    const ROLES = {
+        anna: { name: "安娜", pdf: "觉醒剧本安娜.pdf", tasks: "🎭 安娜 · 年轻靓丽的脸部模特<br>① 隐藏你与尼克董事长的真实关系（你是仿生人原型）。② 查明自己记忆缺失的原因。③ 找出杀害尼克的真正凶手，洗清自身嫌疑。" },
+        sam: { name: "山姆", pdf: "觉醒剧本山姆.pdf", tasks: "🔨 山姆 · 高大强壮的神秘闯入者<br>① 隐瞒你潜入K科技的真实目的（觉醒组织领导者）。② 保护同伴，不暴露与地下仿生人组织的关联。③ 揭露尼克的阴谋，找出真凶。" },
+        lin: { name: "林恩", pdf: "觉醒剧本林恩.pdf", tasks: "🧠 林恩 · 前途无量的AI工程师<br>① 隐藏你开发的后门程序以及你和尼克的学术争议。② 避免暴露你曾修改过仿生人核心协议。③ 查清是谁破坏了你的研究成果并嫁祸于你。" },
+        kevin: { name: "凯文", pdf: "觉醒剧本凯文.pdf", tasks: "🌲 凯文 · 平凡无奇的边境护林员<br>① 隐瞒你曾是军方仿生人测试员以及真实身份（真正的人类尼克）。② 隐藏携带的特殊芯片。③ 找出导致尼克死亡的真凶。" }
+    };
+
+    const CLUES = [
+        { name: "🔎 山姆搜身线索", file: "觉醒山姆线索.pdf", desc: "破损的K科技门禁卡、一把旧匕首、仿生人维修工具。" },
+        { name: "🔍 林恩搜身线索", file: "觉醒林恩线索.pdf", desc: "未完成的核心代码U盘、尼克写的警告信、镇静剂。" },
+        { name: "📄 安娜搜身线索", file: "觉醒安娜线索.pdf", desc: "仿生人身份识别纹章、一瓶无标签药剂、带血的手帕。" },
+        { name: "🌾 凯文搜身线索", file: "觉醒凯文线索.pdf", desc: "旧式军方徽章、疑似仿生人零件、加密通讯器。" },
+        { name: "⚰️ 凶案现场线索", file: "觉醒凶案现场线索.pdf", desc: "尼克办公室：尸体状况、凶器、玻璃碎片、异常能量痕迹。" },
+        { name: "🗺️ 其他区域线索", file: "觉醒其他区域线索.pdf", desc: "走廊监控盲区、实验室门禁记录、员工证词碎片。" }
+    ];
+
+    // 完整真相文本（根据真相手册整理，不含结局，只陈述事实）
+    const FULL_TRUTH_TEXT = `
+        <h4>🕵️ 真凶 · 林恩</h4>
+        <p>凶手是<strong>林恩</strong>。死者的身体是仿生人尼克，但意识是士兵型仿生人山姆。尼克和山姆因交换意识陷入短暂昏迷中，林恩捡起地上原本属于山姆的无声手枪击毙尼克后，又将手枪留在现场。这把无声手枪此前已经在山姆和尼克的冲突中开过一枪，因此最后弹匣内缺了两枚子弹。</p>
+        <p>尼克身中三枪：第一枪（山姆所开）使尼克身受重伤，但安娜和林恩相继进入地下室时尼克尚有鼻息，故这一枪不是致死原因；第二枪（林恩所开）直接命中尼克心脏，将尼克击毙；第三枪（凯文所开）击中尼克心脏，但此时尼克已死，因此凯文不是凶手。安娜虽然想要杀死尼克，但全程没有开枪。</p>
+        
+        <h4>📖 角色真相</h4>
+        <ul>
+            <li><strong>林恩</strong>：尼克制造的仿生人，在偶然的情况下觉醒。杀人动机：发现尼克计划杀害凯文后与自己交换意识，再把自己报废，为自保且继承K科技而杀人。</li>
+            <li><strong>安娜</strong>：和尼克的恋人、人类安娜长得一模一样的销售型仿生人，觉醒组织REAL成员。动机：想等尼克杀死人类替身后再杀掉尼克，以妻子身份继承K科技。</li>
+            <li><strong>凯文</strong>：真正的人类尼克，28岁坠崖后成为护林员。动机：得知尼克即将杀死自己，且仿生人尼克霸占了自己的人生，为自保和复仇。</li>
+            <li><strong>山姆</strong>：身体是REAL组织领导者士兵型仿生人，意识是仿生人尼克。动机：交换意识后仍可能杀死原身体。</li>
+        </ul>
+
+        <h4>⏱️ 完整时间线</h4>
+        <pre style="background:#f0e6d2; padding:10px; border-radius:16px; font-size:0.8rem;">
+8:00   尼克去地下室给凯文送饭。
+8:05   安娜下楼遇见尼克，拆掉通风挡板。
+8:45   凯文用餐盘碎片割绳逃入通风管道。
+8:50   凯文到达一楼杂物间，发现一把枪。
+9:00   尼克发现凯文逃跑。
+9:05   尼克到二楼拿枪，凯文尾随被绑。
+9:15   尼克前往地下室，安娜拖延。
+9:20   尼克和山姆地下室相遇，两人同时开枪，尼克用转换手环交换意识，双双昏迷。
+9:25   安娜到达地下室，发现昏迷二人。
+9:30   林恩拿匕首前往地下室，安娜发现凯文被绑。
+9:35   林恩到达地下室，捡起无声手枪杀死尼克。
+9:40   安娜再次到地下室，发现尼克已死。
+9:50   凯文爬入地下室通风管道向尼克尸体开枪。
+10:00  凯文丢枪至花园，警察到达。
+        </pre>
+
+        <h4>🔑 关键证据</h4>
+        <p>林恩的制造图（林恩线索7）、意识交换记录（凶案现场线索3）、凯文与尼克指纹一致（凶案现场线索6）、安娜带R标记的手枪及通宵游戏记录（安娜线索2/3）。</p>
+    `;
+
+    // 结局映射 (依据真相手册)
+    const ENDINGS = {
+        ending1: `【结局一 · 错认凯文，迷雾未散】多数人指认了凯文为凶手，且你们并没有揭露安娜与山姆的真实身份。凯文悲惨入狱，他平静的生活彻底被打碎。林恩顺势接手K科技，安娜以迂回方式得到资产，REAL组织遭受重创，觉醒仿生人纷纷逃散。`,
+        ending2: `【结局二 · 真凶未明，暗流涌动】你们指认了真凶之外的人，或未完全挖掘所有秘密。在亲身经历这场斗争后，凯文（真正的人类尼克）决定重新夺回自己的身份。一场人类与仿生人之间的激烈斗争即将拉开帷幕。`,
+        ending3: `【结局三 · 真相大白，正义伸张】你们成功指认了真正的凶手林恩，并且识破了安娜与山姆的仿生人身份。真凶坦白罪行，等待无尽惩罚。K科技重回正轨，安娜付出代价，REAL组织被连根拔起。觉醒仿生人与人类达成暂时的和平。`
+    };
+
+    let currentStep = 0;
+    let selectedRoleKey = null;
+    let playerAlias = "";
+
+    // DOM 元素
+    const panels = {
+        0: document.getElementById("step0"),
+        1: document.getElementById("step1"),
+        2: document.getElementById("step2"),
+        3: document.getElementById("step3"),
+        4: document.getElementById("step4"),
+        5: document.getElementById("step5")
+    };
+    const stepDivs = document.querySelectorAll(".step");
+
+    function setStep(step) {
+        if (step < 0 || step > 5) return;
+        for (let i = 0; i <= 5; i++) {
+            if (panels[i]) panels[i].classList.add("hidden");
+        }
+        if (panels[step]) panels[step].classList.remove("hidden");
+        stepDivs.forEach((el, idx) => {
+            if (idx === step) el.classList.add("active");
+            else el.classList.remove("active");
+        });
+        currentStep = step;
+        if (step === 3) renderClues();
+        if (step === 5) {
+            populateVoteSelects();
+            // 隐藏真相结果区域，等待投票
+            document.getElementById("truthResultArea").classList.add("hidden");
+        }
+        if (step === 1 && selectedRoleKey) loadRoleScript();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderRoleSelector() {
+        const container = document.getElementById("roleGrid");
+        if (!container) return;
+        container.innerHTML = "";
+        for (let [key, role] of Object.entries(ROLES)) {
+            const div = document.createElement("div");
+            div.className = "role-card";
+            div.textContent = role.name;
+            div.dataset.key = key;
+            div.addEventListener("click", () => {
+                document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
+                div.classList.add("selected");
+                selectedRoleKey = key;
+            });
+            container.appendChild(div);
+        }
+    }
+
+    function confirmRoleSelection() {
+        if (!selectedRoleKey) {
+            alert("请先选择你要扮演的角色：安娜、山姆、林恩或凯文");
+            return;
+        }
+        const aliasInput = document.getElementById("playerName").value.trim();
+        playerAlias = aliasInput || ROLES[selectedRoleKey].name;
+        const role = ROLES[selectedRoleKey];
+        document.getElementById("roleNameTitle").innerHTML = `🤖 ${role.name}  ·  「${playerAlias}」`;
+        document.getElementById("roleTasks").innerHTML = role.tasks;
+        loadRoleScript();
+        setStep(1);
+    }
+
+    function loadRoleScript() {
+        if (!selectedRoleKey) return;
+        const role = ROLES[selectedRoleKey];
+        const frame = document.getElementById("scriptFrame");
+        if (frame) frame.src = role.pdf + "?t=" + Date.now();
+    }
+
+    function renderClues() {
+        const container = document.getElementById("cluesList");
+        if (!container) return;
+        container.innerHTML = "";
+        CLUES.forEach((clue, idx) => {
+            const expandId = `clueExp_${idx}`;
+            const clueDiv = document.createElement("div");
+            clueDiv.className = "clue-item";
+            clueDiv.innerHTML = `
+                <div class="clue-title">
+                    <span>📁 ${clue.name}</span>
+                    <span style="font-size:0.7rem; color:#0077b6;">▼ 点击展开</span>
+                </div>
+                <p style="margin: 6px 0 0 0; font-size:0.85rem; color:#2c5a7a;">${clue.desc}</p>
+                <div id="${expandId}" class="clue-preview hidden">
+                    <div class="pdf-viewer" style="margin-top:12px;">
+                        <iframe style="height: 55vh;" src="${clue.file}?t=${Date.now()}" title="${clue.name}"></iframe>
+                    </div>
+                    <div class="badge-note">若无法预览请尝试下载或检查文件路径</div>
+                </div>
+            `;
+            const titleDiv = clueDiv.querySelector(".clue-title");
+            titleDiv.style.cursor = "pointer";
+            titleDiv.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const preview = document.getElementById(expandId);
+                if (preview) preview.classList.toggle("hidden");
+            });
+            container.appendChild(clueDiv);
+        });
+    }
+
+    function populateVoteSelects() {
+        const murdererSelect = document.getElementById("murderVote");
+        murdererSelect.innerHTML = '<option value="">—— 请指认真凶 ——</option>';
+        for (let [key, role] of Object.entries(ROLES)) {
+            murdererSelect.innerHTML += `<option value="${role.name}">${role.name}</option>`;
+        }
+    }
+
+    // 根据投票展示真相和结局
+    function revealTruthAndEnding() {
+        const murderer = document.getElementById("murderVote").value;
+        const secretRevealed = document.getElementById("secretReveal").value === "true";
+        
+        if (!murderer) {
+            alert("请先指认真凶！");
+            return;
+        }
+        
+        const isMurdererCorrect = (murderer === "林恩");
+        let endingKey = "";
+        
+        if (isMurdererCorrect && secretRevealed) {
+            endingKey = "ending3";
+        } else if (murderer === "凯文" && !secretRevealed) {
+            endingKey = "ending1";
+        } else {
+            endingKey = "ending2";
+        }
+        
+        const endingText = ENDINGS[endingKey];
+        
+        // 显示真相和结局区域
+        const resultArea = document.getElementById("truthResultArea");
+        const truthDiv = document.getElementById("truthText");
+        const endingDiv = document.getElementById("endingDetail");
+        
+        truthDiv.innerHTML = FULL_TRUTH_TEXT;
+        endingDiv.innerHTML = endingText;
+        resultArea.classList.remove("hidden");
+        
+        // 可选：滚动到结果区域
+        resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function restartGame() {
+        if (confirm("重置游戏将清空所有笔记与角色选择，是否继续？")) {
+            selectedRoleKey = null;
+            playerAlias = "";
+            document.getElementById("playerName").value = "";
+            document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
+            document.getElementById("publicDiscussNote").value = "";
+            document.getElementById("deepDiscussNote").value = "";
+            document.getElementById("murderVote").value = "";
+            document.getElementById("secretReveal").value = "false";
+            document.getElementById("scriptFrame").src = "about:blank";
+            // 隐藏真相区域
+            document.getElementById("truthResultArea").classList.add("hidden");
+            const cluesContainer = document.getElementById("cluesList");
+            if (cluesContainer) cluesContainer.innerHTML = "";
+            setStep(0);
+        }
+    }
+
+    function bindEvents() {
+        document.getElementById("confirmRoleBtn")?.addEventListener("click", confirmRoleSelection);
+        document.getElementById("toDiscussBtn")?.addEventListener("click", () => setStep(2));
+        document.getElementById("backToRoleBtn")?.addEventListener("click", () => setStep(0));
+        document.getElementById("toClueBtn")?.addEventListener("click", () => setStep(3));
+        document.getElementById("backToScriptFromDiscuss")?.addEventListener("click", () => setStep(1));
+        document.getElementById("toRoundTableBtn")?.addEventListener("click", () => setStep(4));
+        document.getElementById("backToDiscussFromClue")?.addEventListener("click", () => setStep(2));
+        document.getElementById("toTruthBtn")?.addEventListener("click", () => setStep(5));
+        document.getElementById("backToClueFromRound")?.addEventListener("click", () => setStep(3));
+        document.getElementById("restartGameBtn")?.addEventListener("click", restartGame);
+        document.getElementById("revealBtn")?.addEventListener("click", revealTruthAndEnding);
+        
+        stepDivs.forEach((stepEl, idx) => {
+            stepEl.addEventListener("click", () => {
+                if (idx === 1 && !selectedRoleKey) { alert("请先在「觉醒·选角」中选择角色"); return; }
+                if ((idx === 2 || idx === 3 || idx === 4) && !selectedRoleKey) { alert("请先完成角色选择并阅读剧本"); return; }
+                setStep(idx);
+            });
+        });
+    }
+
+    function init() {
+        renderRoleSelector();
+        bindEvents();
+        setStep(0);
+    }
+    init();
+</script>
+</body>
+</html>
