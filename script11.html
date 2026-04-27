@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>星火号 · K系列科幻悬疑剧本杀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0a0c14;
+            --space-blue: #0f1a2f;
+            --ship-metal: #2c3e4e;
+            --engine-glow: #f5a623;
+            --nebula: #5c6bc0;
+            --starlight: #ffe6b3;
+            --card-bg: #f8f4e8;
+            --crimson: #b53b2e;
+            --accent: #3a6ea5;
+        }
+
+        body {
+            background: radial-gradient(ellipse at 30% 40%, #0c1122, #03060c);
+            font-family: 'Segoe UI', 'Roboto', 'Orbitron', monospace;
+            padding: 24px 16px;
+            color: #eef2ff;
+        }
+
+        .starship-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(8, 14, 26, 0.8);
+            backdrop-filter: blur(3px);
+            border-radius: 48px 24px 48px 24px;
+            border: 1px solid rgba(245, 166, 35, 0.5);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.7), inset 0 0 20px rgba(245,166,35,0.1);
+            overflow: hidden;
+        }
+
+        .inner {
+            padding: 28px 24px 36px;
+        }
+
+        .step-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: #0b111f;
+            border-radius: 60px;
+            padding: 6px 8px;
+            margin-bottom: 28px;
+            gap: 6px;
+            border: 1px solid #f5a62340;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 8px 4px;
+            border-radius: 40px;
+            color: #9ba9c7;
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .step.active {
+            background: var(--engine-glow);
+            color: #0a0f1c;
+            box-shadow: 0 0 12px #f5a623;
+        }
+
+        .step.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 24px 26px;
+            color: #1f2a3e;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+            border: 1px solid #d7cfa5;
+        }
+
+        h1, h2, h3 {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .title-ship {
+            text-align: center;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffe6b3, #f5a623);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .sub {
+            text-align: center;
+            color: #6b7f9e;
+            border-bottom: 1px dashed #bfb083;
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 20px auto;
+            padding-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        .role-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 24px 0;
+        }
+
+        .role-card {
+            flex: 1;
+            min-width: 160px;
+            background: #eef2f9;
+            border-radius: 28px;
+            padding: 18px 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid #bfcddf;
+            text-align: center;
+        }
+
+        .role-card.selected {
+            background: var(--engine-glow);
+            color: #1c2a3a;
+            border-color: #ffbc3e;
+            box-shadow: 0 0 15px #f5a623;
+        }
+
+        .role-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .role-desc {
+            font-size: 0.8rem;
+            line-height: 1.3;
+            color: #4a5c74;
+        }
+
+        .role-card.selected .role-desc {
+            color: #2a2a1a;
+        }
+
+        button {
+            background: linear-gradient(95deg, #2a4b6e, #1a3a52);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 48px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 16px;
+            letter-spacing: 1px;
+            border: 1px solid #f5a623;
+        }
+
+        button.secondary {
+            background: linear-gradient(95deg, #3a4a5e, #2a3a4a);
+            border-color: #7f8c8d;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 4px 12px rgba(245,166,35,0.4);
+        }
+
+        .pdf-viewer {
+            background: #dfd8c6;
+            border-radius: 24px;
+            padding: 8px;
+            margin: 18px 0;
+            border: 1px solid #c9bb8a;
+        }
+
+        iframe {
+            width: 100%;
+            min-height: 65vh;
+            border-radius: 20px;
+            border: none;
+            background: #f2ede0;
+        }
+
+        .clue-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .clue-card {
+            background: #f2ede0;
+            border-radius: 28px;
+            padding: 14px;
+            border-left: 8px solid #f5a623;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .clue-title {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #3a2c1f;
+            margin-bottom: 8px;
+        }
+
+        .clue-preview {
+            margin-top: 12px;
+        }
+
+        .clue-preview img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid #c0aa7a;
+            cursor: zoom-in;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .task-area {
+            background: #e0d6c4;
+            border-radius: 24px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-left: 5px solid var(--engine-glow);
+        }
+
+        .discuss-box {
+            background: #e8e0d0;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #bcae8a;
+            background: #fffcf5;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .vote-panel {
+            background: #f0e8da;
+            border-radius: 28px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        select, .vote-checkbox {
+            width: 100%;
+            padding: 10px;
+            border-radius: 40px;
+            border: 1px solid #bba88a;
+            background: white;
+            margin: 10px 0;
+        }
+
+        .vote-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fdf8ef;
+        }
+        .vote-checkbox input {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8f9bb3;
+            margin-top: 20px;
+        }
+
+        .flex-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-note {
+            font-size: 0.7rem;
+            color: #6a5a7c;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .truth-result {
+            background: #fdf7ed;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #e2cfae;
+            line-height: 1.5;
+        }
+
+        .ending-area {
+            background: #fff3e0;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 6px solid #f5a623;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="starship-container">
+    <div class="inner">
+        <div class="step-bar" id="stepNav">
+            <div class="step" data-step="0">❶ 启航·选角</div>
+            <div class="step" data-step="1">❷ 星图·剧本</div>
+            <div class="step" data-step="2">❸ 初论·通讯</div>
+            <div class="step" data-step="3">❹ 深空·线索</div>
+            <div class="step" data-step="4">❺ 圆桌·推演</div>
+            <div class="step" data-step="5">❻ 裁决·真相</div>
+        </div>
+
+        <!-- 步骤0: 角色选择 -->
+        <div id="step0" class="card">
+            <div class="title-ship">🛸 星火号 🚀</div>
+            <div class="sub" style="display:block; text-align:center;">「绿星疑云 · 归途惊变」</div>
+            <div class="discuss-box" style="background:#e0d6c4;">
+                <p style="font-weight:bold;">🌍 故事背景</p>
+                <p>2116年，“拓宇计划”26艘飞船返航。星火号载着绿星科考成果即将回归，全球直播中异变陡生……五名船员各怀秘密，真相隐藏在深空迷雾中。</p>
+            </div>
+            <div class="task-area">
+                <strong>🪐 选择你的角色</strong>
+                <div class="role-grid" id="roleGrid"></div>
+                <label>📡 通讯代号（可选）</label>
+                <input type="text" id="playerAlias" placeholder="例：领航员 / 星火瞭望者">
+                <button id="confirmRoleBtn">🚀 点火启航 · 进入剧本 🚀</button>
+            </div>
+            <div class="badge-note">流程：选角→阅读剧本→第一轮公聊→线索调查（图片）→圆桌深推→投票→真相结局</div>
+        </div>
+
+        <!-- 步骤1: 个人剧本 -->
+        <div id="step1" class="card hidden">
+            <h2 id="roleNameTitle" style="color:#3a6ea5;">—— 船员档案 ——</h2>
+            <div id="missionArea" class="task-area">
+                <strong>📜 角色使命 & 秘密</strong>
+                <div id="roleTasks"></div>
+            </div>
+            <div class="pdf-viewer">
+                <iframe id="scriptFrame" title="角色剧本" src="about:blank"></iframe>
+            </div>
+            <div class="flex-buttons">
+                <button id="toDiscussBtn">💬 星轨交汇 · 进入初论</button>
+            </div>
+            <div class="badge-note">※ 选角后不可返回，请认真阅读剧本。若PDF无法预览请刷新或下载。</div>
+        </div>
+
+        <!-- 步骤2: 第一轮公聊 -->
+        <div id="step2" class="card hidden">
+            <h2>🗣️ 第一轮 · 公开陈述</h2>
+            <div class="discuss-box">
+                <p>🔭 自我介绍、时间线、可公开信息（隐藏核心动机）。主持人引导，记录疑点。</p>
+                <textarea id="publicNote" rows="4" placeholder="记录矛盾点、人物关系..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toClueBtn">📡 公聊结束 · 开启深空线索</button>
+                <button id="backToScriptFromDiscuss" class="secondary">📖 回看剧本</button>
+            </div>
+        </div>
+
+        <!-- 步骤3: 线索图片展示（6组） -->
+        <div id="step3" class="card hidden">
+            <h2>🔍 深空线索 · 影像档案</h2>
+            <p style="margin-bottom:12px;">以下为调查获得的线索图片，点击图片可放大查看。</p>
+            <div id="cluesContainer" class="clue-group"></div>
+            <div class="flex-buttons">
+                <button id="toRoundTableBtn">⚖️ 进入圆桌深推</button>
+                <button id="backToDiscussFromClue" class="secondary">↺ 返回公聊</button>
+            </div>
+        </div>
+
+        <!-- 步骤4: 圆桌深推 -->
+        <div id="step4" class="card hidden">
+            <h2>🌠 圆桌 · 最终推演</h2>
+            <div class="discuss-box">
+                <p>🌙 深入动机、核诡、飞船异变真相。记录最终指认思路。</p>
+                <textarea id="deepNote" rows="4" placeholder="锁定关键证据链、真凶推理..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toVoteBtn">🕯️ 星火裁决 · 投票指认</button>
+                <button id="backToClueFromRound" class="secondary">🔍 复查线索</button>
+            </div>
+        </div>
+
+        <!-- 步骤5: 投票 + 真相结局 -->
+        <div id="step5" class="card hidden">
+            <h2>⚡ 终局 · 星火号裁决</h2>
+            <div class="vote-panel">
+                <p><strong>✍️ 公投指认真凶（单选）</strong></p>
+                <select id="murderVote">
+                    <option value="">—— 请选择 ——</option>
+                </select>
+                <div class="vote-checkbox">
+                    <input type="checkbox" id="privateVoteCheckbox">
+                    <label for="privateVoteCheckbox">🔒 若您是政府官员，且在私投中指认正确，请勾选此选项（影响结局二）</label>
+                </div>
+                <button id="revealBtn">🌟 提交推理 · 揭晓真相 🌟</button>
+            </div>
+            <div id="endingArea" class="hidden">
+                <div class="truth-result" id="truthTextDiv">
+                    <h3>📖 真相摘要</h3>
+                    <div id="truthContent"></div>
+                </div>
+                <div class="ending-area" id="endingTextDiv">
+                    <h3>🏆 结局呈现</h3>
+                    <div id="endingContent"></div>
+                </div>
+            </div>
+            <button id="restartGameBtn" class="secondary" style="margin-top:20px;">🔄 重启星火号 · 再探深空</button>
+            <footer>星火不灭，真相永恒</footer>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= 星火号配置 =======================
+    const ROLES = {
+        captain: {
+            name: "船长",
+            pdf: "星火号剧本船长.pdf",
+            tasks: "👨‍✈️ 船长 · 40岁 · 星火号最高负责人<br>① 隐藏飞船返航前的真正遭遇。② 保护船员，不可暴露决策失误。③ 查明绿星科考成果被篡改的真相。",
+            desc: "男，40岁。星火号的最高负责人，成熟稳重，有大将之风。"
+        },
+        official: {
+            name: "政府官员",
+            pdf: "星火号剧本政府官员.pdf",
+            tasks: "🏛️ 政府官员 · 42岁<br>① 隐瞒你背后接受的秘密指令。② 阻止真相泄露影响地球政局。③ 找出导致直播异变的元凶。",
+            desc: "男，42岁。与船长共同决策星火号的科考任务，思想前卫而激进。"
+        },
+        biologist: {
+            name: "生物学家",
+            pdf: "星火号剧本生物学家.pdf",
+            tasks: "🧬 生物学家 · 45岁<br>① 隐藏绿星样本的真实活性。② 保护研究成果不被别有用心者利用。③ 揭开飞船异变的生物原因。",
+            desc: "女，45岁。星火号探索绿星最中坚的科考力量，博学严谨。"
+        },
+        mechanic: {
+            name: "机械师",
+            pdf: "星火号剧本机械师.pdf",
+            tasks: "🔧 机械师 · 36岁<br>① 隐瞒飞船隐性故障及个人改装记录。② 找出破坏通讯设备的内鬼。③ 保证飞船安全返航。",
+            desc: "男，36岁。管理星火号各种设备的日常养护和维修，大大咧咧而不修边幅。"
+        },
+        medic: {
+            name: "医护人员",
+            pdf: "星火号剧本医护人员.pdf",
+            tasks: "💊 医护人员 · 22岁<br>① 隐藏你对某位船员的特殊感情及秘密药物记录。② 保护病患隐私。③ 发现导致船员异常的真正原因。",
+            desc: "女，22岁。负责科考期间船员的伤病救治及日常饮食，敏感细心而充满活力。"
+        }
+    };
+
+    // 线索图片（6个文件，按顺序展示）
+    const CLUE_IMAGES = [
+        { name: "🌊 瀚海运征 · 卷一 (1-10)", file: "星火号线索瀚海运征1-10.jpg", desc: "航海日志片段，航行轨迹异常记录。" },
+        { name: "🌊 瀚海运征 · 卷二 (11-20)", file: "星火号线索瀚海运征11-20.jpg", desc: "船员通讯抄件，绿星环境初探。" },
+        { name: "🚨 迷航疑云 · 卷一 (21-30)", file: "星火号线索迷航疑云21-30.jpg", desc: "事故报告，设备故障时间线。" },
+        { name: "🚨 迷航疑云 · 卷二 (31-40)", file: "星火号线索迷航疑云31-40.jpg", desc: "监控影像截取，神秘身影。" },
+        { name: "🔥 星火再临 · 卷一 (41-50)", file: "星火号线索星火再临41-50.jpg", desc: "实验室残留样本分析，异变源头。" },
+        { name: "🔥 星火再临 · 卷二 (51-55)", file: "星火号线索星火再临51-55.jpg", desc: "真相拼图，最终证据。" }
+    ];
+
+    // 真相摘要（基于真相手册）
+    const TRUTH_SUMMARY = `
+        <h4>🕵️ 完整真相还原</h4>
+        <p>根据调查，案发当天共有三人四次篡改代码。生物学家设置01:20代码，机械师发现后重置并加密，医护人员查看时未发现加密代码，便设置了01:05生效的第三段代码。</p>
+        <p>当晚机械臂运行两次：01:05医护人员设置的代码杀死船长。此时外星生命（副船长）目睹后趁机身份掉包：它将船长搬离，脱下副船长制服套在自己身上，破胸而出寄生到船长体内，制造了副船长被机械臂杀死的假象。</p>
+        <p><strong>真凶：船长（被外星生命寄生）。</strong> 详细时间线及证据链请参考完整手册。</p>
+    `;
+
+    // 结局文本（根据真相手册）
+    const ENDINGS = {
+        ending1: `【结局一：新纪元】<br><br>
+        公投锁定船长为真凶。副船长的死亡画面给地球带来巨大恐慌，漫长的七小时过后，星火号影像再次点亮全球屏幕。面容疲倦的生物学家坐在驾驶舱里，宣布了新纪元的开端——人类终于第一次见证了外星生命的存在。<br><br>
+        船长和副船长的遗体被装进逃生舱发射向太阳，完成壮烈的星葬。凯旋的星火号全体船员被授予联合政府最高荣誉奖章。一年后，星火号作为领航舰，带领两千六百艘星舰再次启程前往绿星，这一次，人类将与外星生命来一场面对面的“谈判”。`,
+        ending2: `【结局二：隐秘合作】<br><br>
+        公投未锁定船长，但政府官员在私投中指认了船长。在地球联合政府的秘密会议上，十八名脑科专家划开船长的左胸，寄生体内的外星生物无所遁形。政府官员提出大胆想法：这种外星生物可以操控寄主思想，若能反向操控，人类将收获另一个文明。<br><br>
+        一年后，星火号再次启程。曾经带领科考任务的船长继续引领希望之船——人们对他的崇敬有增无减。驾驶舱里，政府官员和船长并肩而立，一切都不一样了……`,
+        ending3: `【结局三：战乱开端】<br><br>
+        公投未锁定船长，且政府官员未在私投中指认船长。纯金的勋章被送到船长手上，授勋仪式在一片欢愉中继续。命案的阴霾早已被发现新家园的喜悦冲淡，星火号船员成为全人类新晋的英雄。<br><br>
+        外星生命操纵着船长的躯壳在人群中穿行，它已经读取了船长的记忆。一年后，船长再次登上万众瞩目的星火号，开启前往绿星的新航程。十五年后，人们才会知道真相——战争因何而起。`
+    };
+
+    // 全局状态
+    let currentStep = 0;
+    let selectedRoleKey = null;
+    let playerAlias = "";
+    let gameStarted = false;
+
+    const panels = {
+        0: document.getElementById("step0"),
+        1: document.getElementById("step1"),
+        2: document.getElementById("step2"),
+        3: document.getElementById("step3"),
+        4: document.getElementById("step4"),
+        5: document.getElementById("step5")
+    };
+    const stepDivs = document.querySelectorAll(".step");
+
+    function updateNavLock() {
+        stepDivs.forEach((el, idx) => {
+            if (gameStarted) {
+                if (idx === 0 || (idx === 5 && currentStep < 4)) {
+                    el.classList.add("disabled");
+                } else if (idx > currentStep && idx !== 5) {
+                    el.classList.add("disabled");
+                } else {
+                    el.classList.remove("disabled");
+                }
+            } else {
+                if (idx === 0) el.classList.remove("disabled");
+                else el.classList.add("disabled");
+            }
+        });
+    }
+
+    function setStep(step, allowSkip = false) {
+        if (step < 0 || step > 5) return;
+        if (gameStarted) {
+            if (step === 0) { alert("游戏已开始，无法返回选角。如需重开请点击「重启星火号」"); return; }
+            if (step === 5 && currentStep < 4 && !allowSkip) { alert("请先完成圆桌深推，再进入投票阶段。"); return; }
+            if (step > currentStep + 1 && step !== 5 && !allowSkip) { alert("请按顺序进行游戏。"); return; }
+        }
+        for (let i = 0; i <= 5; i++) {
+            if (panels[i]) panels[i].classList.add("hidden");
+        }
+        if (panels[step]) panels[step].classList.remove("hidden");
+        stepDivs.forEach((el, idx) => {
+            if (idx === step) el.classList.add("active");
+            else el.classList.remove("active");
+        });
+        currentStep = step;
+        updateNavLock();
+        if (step === 3) renderClueImages();
+        if (step === 1 && selectedRoleKey) loadRoleScript();
+        if (step === 5) {
+            populateVoteSelect();
+            document.getElementById("endingArea").classList.add("hidden");
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderRoleSelector() {
+        const container = document.getElementById("roleGrid");
+        container.innerHTML = "";
+        for (let [key, role] of Object.entries(ROLES)) {
+            const div = document.createElement("div");
+            div.className = "role-card";
+            div.innerHTML = `<div class="role-name">${role.name}</div><div class="role-desc">${role.desc}</div>`;
+            div.dataset.key = key;
+            div.addEventListener("click", () => {
+                if (gameStarted) return;
+                document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
+                div.classList.add("selected");
+                selectedRoleKey = key;
+            });
+            container.appendChild(div);
+        }
+    }
+
+    function confirmRole() {
+        if (gameStarted) { alert("游戏已开始，无法重选。"); return; }
+        if (!selectedRoleKey) { alert("请选择你的角色！"); return; }
+        const alias = document.getElementById("playerAlias").value.trim();
+        playerAlias = alias || ROLES[selectedRoleKey].name;
+        const role = ROLES[selectedRoleKey];
+        document.getElementById("roleNameTitle").innerHTML = `🚀 ${role.name} · 「${playerAlias}」 🚀`;
+        document.getElementById("roleTasks").innerHTML = role.tasks;
+        gameStarted = true;
+        loadRoleScript();
+        setStep(1);
+    }
+
+    function loadRoleScript() {
+        const role = ROLES[selectedRoleKey];
+        const frame = document.getElementById("scriptFrame");
+        frame.src = role.pdf + "?t=" + Date.now();
+    }
+
+    let modal = null;
+    function showImageModal(src) {
+        if (modal) modal.remove();
+        modal = document.createElement("div");
+        modal.className = "modal";
+        const img = document.createElement("img");
+        img.src = src;
+        modal.appendChild(img);
+        modal.addEventListener("click", () => modal.remove());
+        document.body.appendChild(modal);
+    }
+
+    function renderClueImages() {
+        const container = document.getElementById("cluesContainer");
+        container.innerHTML = "";
+        CLUE_IMAGES.forEach((clue, idx) => {
+            const expandId = `imgPreview_${idx}`;
+            const card = document.createElement("div");
+            card.className = "clue-card";
+            card.innerHTML = `
+                <div class="clue-title">
+                    <span>📸 ${clue.name}</span>
+                    <span style="font-size:0.7rem; color:#b87c00;">▼ 点击展开</span>
+                </div>
+                <p style="font-size:0.8rem; margin-bottom:8px;">${clue.desc}</p>
+                <div id="${expandId}" class="clue-preview hidden">
+                    <img src="${clue.file}" alt="${clue.name}" style="width:100%; border-radius:16px; cursor:pointer;" title="点击放大">
+                </div>
+            `;
+            const titleDiv = card.querySelector(".clue-title");
+            titleDiv.style.cursor = "pointer";
+            titleDiv.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const previewDiv = document.getElementById(expandId);
+                previewDiv.classList.toggle("hidden");
+                if (!previewDiv.classList.contains("hidden")) {
+                    const imgEl = previewDiv.querySelector("img");
+                    if (imgEl && !imgEl.hasListener) {
+                        imgEl.addEventListener("click", (e2) => {
+                            e2.stopPropagation();
+                            showImageModal(imgEl.src);
+                        });
+                        imgEl.hasListener = true;
+                    }
+                }
+            });
+            container.appendChild(card);
+        });
+    }
+
+    function populateVoteSelect() {
+        const select = document.getElementById("murderVote");
+        select.innerHTML = '<option value="">—— 指认真凶 ——</option>';
+        for (let [key, role] of Object.entries(ROLES)) {
+            select.innerHTML += `<option value="${role.name}">${role.name}</option>`;
+        }
+    }
+
+    function revealEnding() {
+        const vote = document.getElementById("murderVote").value;
+        const isPrivateVote = document.getElementById("privateVoteCheckbox").checked;
+        if (!vote) { alert("请先指认真凶！"); return; }
+
+        // 判断结局条件
+        let endingKey = "";
+        const isCaptainVoted = (vote === "船长");
+        const isOfficialAndPrivateCaptain = (selectedRoleKey === "official" && isPrivateVote) || (isPrivateVote && vote !== "船长"); 
+        // 结局二条件：公投未锁定船长（即vote !== "船长") 且 政府官员私投锁定了船长（isPrivateVote为true）
+        // 注意：只有政府官员角色勾选才有效，但我们简化：只要isPrivateVote为true且公投不是船长，即视为结局二
+        // 更精确：检查玩家选择的角色是否是政府官员且勾选了私投
+        const isOfficialPlayer = (selectedRoleKey === "official");
+        const privateVoteValid = isOfficialPlayer && isPrivateVote;
+        
+        if (isCaptainVoted) {
+            endingKey = "ending1";
+        } else if (!isCaptainVoted && privateVoteValid) {
+            endingKey = "ending2";
+        } else {
+            endingKey = "ending3";
+        }
+
+        const endingText = ENDINGS[endingKey];
+        const endingArea = document.getElementById("endingArea");
+        const truthDiv = document.getElementById("truthContent");
+        const endingContentDiv = document.getElementById("endingContent");
+        
+        truthDiv.innerHTML = TRUTH_SUMMARY;
+        endingContentDiv.innerHTML = endingText;
+        endingArea.classList.remove("hidden");
+        endingArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // 额外提示（可选）
+        setTimeout(() => {
+            alert("真相已经揭晓，结局根据您的投票呈现在下方。");
+        }, 100);
+    }
+
+    function restartGame() {
+        if (confirm("重启将清空所有记录，是否返回选角界面？")) {
+            selectedRoleKey = null;
+            playerAlias = "";
+            gameStarted = false;
+            document.getElementById("playerAlias").value = "";
+            document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
+            document.getElementById("publicNote").value = "";
+            document.getElementById("deepNote").value = "";
+            document.getElementById("murderVote").value = "";
+            document.getElementById("privateVoteCheckbox").checked = false;
+            document.getElementById("endingArea").classList.add("hidden");
+            document.getElementById("scriptFrame").src = "about:blank";
+            const cluesContainer = document.getElementById("cluesContainer");
+            if (cluesContainer) cluesContainer.innerHTML = "";
+            setStep(0);
+        }
+    }
+
+    function bindEvents() {
+        document.getElementById("confirmRoleBtn").addEventListener("click", confirmRole);
+        document.getElementById("toDiscussBtn").addEventListener("click", () => setStep(2));
+        document.getElementById("backToScriptFromDiscuss").addEventListener("click", () => setStep(1));
+        document.getElementById("toClueBtn").addEventListener("click", () => setStep(3));
+        document.getElementById("backToDiscussFromClue").addEventListener("click", () => setStep(2));
+        document.getElementById("toRoundTableBtn").addEventListener("click", () => setStep(4));
+        document.getElementById("backToClueFromRound").addEventListener("click", () => setStep(3));
+        document.getElementById("toVoteBtn").addEventListener("click", () => setStep(5, true));
+        document.getElementById("revealBtn").addEventListener("click", revealEnding);
+        document.getElementById("restartGameBtn").addEventListener("click", restartGame);
+        stepDivs.forEach((el, idx) => {
+            el.addEventListener("click", () => {
+                if (el.classList.contains("disabled")) {
+                    if (idx === 0) alert("游戏已开始，如需重开请点击重启");
+                    else if (idx === 5) alert("请先完成圆桌推演再投票");
+                    else alert("请按顺序进行");
+                    return;
+                }
+                if (idx === 1 && !selectedRoleKey) { alert("请先在选角界面选择角色"); return; }
+                setStep(idx);
+            });
+        });
+    }
+
+    function init() {
+        renderRoleSelector();
+        bindEvents();
+        setStep(0);
+    }
+    init();
+</script>
+</body>
+</html>
