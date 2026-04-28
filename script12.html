@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>无间旅途 · 英伦悬疑剧本杀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-navy: #1a2a3a;
+            --travel-brown: #5c3e2b;
+            --parchment: #faf3e0;
+            --dark-parchment: #e8dccc;
+            --blood-red: #9e2a2a;
+            --gold-leaf: #c7a252;
+            --shadow-heavy: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            background: #2c2418;
+            background-image: linear-gradient(45deg, #3a2c1e 0%, #1f1a12 100%);
+            font-family: 'Georgia', 'Times New Roman', '宋体', serif;
+            padding: 24px 16px;
+            color: #2c2418;
+        }
+
+        .journey-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(250, 243, 224, 0.95);
+            border-radius: 32px 16px 32px 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 245, 215, 0.8);
+            overflow: hidden;
+            border: 1px solid #d4b68a;
+        }
+
+        .inner {
+            padding: 28px 24px 36px;
+        }
+
+        .step-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: #e2d5c0;
+            border-radius: 60px;
+            padding: 6px 10px;
+            margin-bottom: 28px;
+            gap: 6px;
+            border: 1px solid #b69b6e;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 8px 4px;
+            border-radius: 40px;
+            color: #6b4c2c;
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .step.active {
+            background: var(--blood-red);
+            color: #fef0e0;
+            box-shadow: 0 2px 8px rgba(158,42,42,0.4);
+        }
+
+        .step.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--parchment);
+            border-radius: 28px;
+            padding: 24px 26px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 1px solid #ddceb2;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        .title-journey {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--blood-red);
+            text-shadow: 1px 1px 0 #c9b28b;
+            margin-bottom: 8px;
+        }
+
+        .sub {
+            text-align: center;
+            color: #8b6946;
+            border-bottom: 1px dashed var(--gold-leaf);
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 20px auto;
+            padding-bottom: 6px;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .role-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 24px 0;
+        }
+
+        .role-card {
+            flex: 1;
+            min-width: 180px;
+            background: #f5ede0;
+            border-radius: 28px;
+            padding: 16px 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid #cfbc97;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .role-card.selected {
+            background: var(--gold-leaf);
+            color: #2a2418;
+            border-color: #9e6b3e;
+            box-shadow: 0 2px 12px rgba(158,42,42,0.2);
+        }
+
+        .role-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+        }
+
+        .role-desc {
+            font-size: 0.8rem;
+            line-height: 1.3;
+            color: #5a4630;
+            margin-top: 6px;
+        }
+
+        button {
+            background: linear-gradient(145deg, #7a5a3a, #5e3e22);
+            border: none;
+            padding: 12px 18px;
+            border-radius: 48px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 16px;
+            letter-spacing: 1.5px;
+            font-family: inherit;
+        }
+
+        button.secondary {
+            background: linear-gradient(145deg, #5e6b5e, #3e4a3a);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+        }
+
+        .script-box {
+            background: #fef7e8;
+            padding: 18px 22px;
+            border-radius: 24px;
+            border-left: 6px solid var(--blood-red);
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            max-height: 550px;
+            overflow-y: auto;
+            color: #2c2418;
+            margin: 18px 0;
+            white-space: pre-wrap;
+        }
+
+        .task-tag {
+            background: #e8dccc;
+            border-radius: 24px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            border-left: 5px solid var(--gold-leaf);
+        }
+
+        .clue-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .clue-item {
+            background: #f5ede0;
+            border-radius: 24px;
+            padding: 14px 18px;
+            border-left: 6px solid var(--gold-leaf);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .clue-title {
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+        }
+
+        .clue-content {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-top: 1px dashed #cfbc97;
+            padding-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .discuss-box {
+            background: #f2eadc;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #bcae8a;
+            background: #fffcf5;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .vote-panel {
+            background: #f0e8da;
+            border-radius: 28px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 40px;
+            border: 1px solid #bcae8a;
+            background: white;
+            margin: 10px 0;
+            font-family: inherit;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8b7355;
+            margin-top: 20px;
+        }
+
+        .flex-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .truth-area {
+            background: #f2e8d9;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .ending-box {
+            background: #e5d5bd;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 20px;
+            border-left: 6px solid #9e2a2a;
+        }
+    </style>
+</head>
+<body>
+<div class="journey-container">
+    <div class="inner">
+        <div class="step-bar" id="stepNav">
+            <div class="step" data-step="0">❶ 旅途·选角</div>
+            <div class="step" data-step="1">❷ 剧本·阅卷</div>
+            <div class="step" data-step="2">❸ 初论·公聊</div>
+            <div class="step" data-step="3">❹ 第一轮线索</div>
+            <div class="step" data-step="4">❺ 第二轮线索</div>
+            <div class="step" data-step="5">❻ 圆桌·深推</div>
+            <div class="step" data-step="6">❼ 终局·指认</div>
+        </div>
+
+        <!-- 步骤0: 角色选择 -->
+        <div id="step0" class="card">
+            <div class="title-journey">无间旅途</div>
+            <div class="sub" style="display:block;">「背叛·爱恋·仇恨·终点」</div>
+            <div class="discuss-box">
+                <p>💀 201X年10月，M旅行社英国深度游，旅程尾声，刘导游惨死房中。四位各怀鬼胎的团员……谁是藏在暗处的真凶？</p>
+            </div>
+            <div class="task-area">
+                <strong>🎭 选择你的身份</strong>
+                <div class="role-grid" id="roleGrid"></div>
+                <label>✈️ 旅行代号（可选）</label>
+                <input type="text" id="playerAlias" placeholder="例：雾都旅人 / 暗夜侦探">
+                <button id="confirmRoleBtn">🕵️ 开启迷局 · 步入酒店 🕵️</button>
+            </div>
+            <div class="badge-note" style="margin-top:12px; color:#6b4c2c;">流程：选角→阅读完整剧本→公聊→一轮线索→二轮线索→圆桌推演→投票指认真凶→真相结局</div>
+        </div>
+
+        <!-- 步骤1: 剧本阅读（完整文本内嵌） -->
+        <div id="step1" class="card hidden">
+            <h2 id="roleNameTitle" style="color:#6b3e1a;">—— 伦敦往事 · 角色档案 ——</h2>
+            <div class="task-tag">
+                <strong>📌 角色使命 & 秘密</strong>
+                <div id="roleTasks"></div>
+            </div>
+            <div class="script-box" id="scriptContent">
+                <!-- 动态加载剧本文本 -->
+            </div>
+            <div class="flex-buttons">
+                <button id="toDiscussBtn">💬 我已读完 · 进入公聊</button>
+            </div>
+            <div class="badge-note">※ 请牢记您的任务与时间线，注意隐藏关键信息。</div>
+        </div>
+
+        <!-- 步骤2: 第一轮公聊 -->
+        <div id="step2" class="card hidden">
+            <h2>🗣️ 第一轮 · 公开陈述</h2>
+            <div class="discuss-box">
+                <p>🔍 自我介绍、时间线分享、可透露信息。记录疑点与矛盾。</p>
+                <textarea id="publicNote" rows="4" placeholder="记录时间线冲突、人物关系疑点..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toFirstClueBtn">📜 公聊结束 · 开启一轮搜证</button>
+                <button id="backToScriptFromDiscuss" class="secondary">📖 回看剧本</button>
+            </div>
+        </div>
+
+        <!-- 步骤3: 第一轮线索 -->
+        <div id="step3" class="card hidden">
+            <h2>🔎 第一轮 · 现场证物</h2>
+            <p style="margin-bottom:12px;">警方初步勘察发现的物证（点击条目展开）</p>
+            <div id="cluesRound1" class="clue-group"></div>
+            <div class="flex-buttons">
+                <button id="toSecondClueBtn">📂 进入第二轮搜证</button>
+                <button id="backToDiscussFrom1" class="secondary">↺ 返回公聊</button>
+            </div>
+        </div>
+
+        <!-- 步骤4: 第二轮线索 -->
+        <div id="step4" class="card hidden">
+            <h2>🔬 第二轮 · 深入调查</h2>
+            <p style="margin-bottom:12px;">进一步搜证获得的线索（点击条目展开）</p>
+            <div id="cluesRound2" class="clue-group"></div>
+            <div class="flex-buttons">
+                <button id="toRoundTableBtn">⚖️ 进入圆桌深推</button>
+                <button id="backToFirstFromSecond" class="secondary">↺ 返回一轮线索</button>
+            </div>
+        </div>
+
+        <!-- 步骤5: 圆桌深推 -->
+        <div id="step5" class="card hidden">
+            <h2>🏛️ 圆桌 · 最终推演</h2>
+            <div class="discuss-box">
+                <p>🌙 深入动机、核诡、时间线碰撞。记录最终指认思路。</p>
+                <textarea id="deepNote" rows="4" placeholder="锁定真凶证据链..."></textarea>
+            </div>
+            <div class="flex-buttons">
+                <button id="toVoteBtn">🕯️ 无间终点 · 投票指认</button>
+                <button id="backToSecondFromRound" class="secondary">🔍 复查线索</button>
+            </div>
+        </div>
+
+        <!-- 步骤6: 投票 + 真相结局 -->
+        <div id="step6" class="card hidden">
+            <h2>⚡ 终局 · 指认真凶</h2>
+            <div class="vote-panel">
+                <p><strong>✍️ 投票：谁杀害了刘导游？</strong></p>
+                <select id="murderVote">
+                    <option value="">—— 请选择 ——</option>
+                </select>
+                <button id="revealBtn">🌑 落下帷幕 · 揭晓真相 🌑</button>
+            </div>
+            <div id="endingArea" class="hidden">
+                <div class="truth-area">
+                    <h3>📖 案件解析 · 真相还原</h3>
+                    <div id="truthContent"></div>
+                </div>
+                <div class="ending-box">
+                    <h3>🎭 结局 · 旅程终点</h3>
+                    <div id="endingText"></div>
+                </div>
+            </div>
+            <button id="restartBtn" class="secondary" style="margin-top:20px;">🔄 重开旅途 · 再探疑云</button>
+            <footer>无间旅途，人心即迷途</footer>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= 完整剧本数据（无删减） =======================
+    const ROLES = {
+        bai_duyun: {
+            name: "柏渡昀",
+            desc: "22岁，医学生，校草，网络红人。",
+            tasks: "⚠️ 你是凶手！请逃离抓捕。<br>① 不要承认膝撞致命伤，可用癫痫咬手掩饰伤痕。<br>② 对安眠药的事情不要撒谎。<br>③ 隐藏你对刘导游的杀意。",
+            script: `【柏渡昀 · 医学生 · 二十二岁】
+
+成绩优秀，长相俊美，是大学校草，女友为苏柠。在外人眼里你是像王子一样的存在，因为穿校服的照片被发到网上而一度成了网络红人"校服男神"。
+
+但其实你的家庭条件非常窘迫，总穿校服也是因为没钱买衣服。你热爱旅游，但也只能骑自行车去穷游。直到你认识了苏柠，她很爱你，请你去旅游，你很惭愧，于是把她照顾的无微不至，最终你们确认了恋爱关系。你发誓要努力学习，攒钱，对她更好。
+
+不料，三个月前，一场车祸改变了一切，你的父亲被车祸撞成植物人，本身就不富裕的家里因为救治费用而债台高筑，肇事者周明只是象征性地给予了几千元赔偿，并未按其责任支付应缴的五十万元医药费，而亲人的伤痛、家庭的破碎和财产的损失则更是远远不能够被弥补。
+
+后来你调查到，实际肇事人是周明的妻子刘某，而彼时她甚至是无证驾驶。后来二人运用金钱的力量将事件摆平，并将肇事者换成周，使得刘免于牢狱之灾。不久后此两人离婚。你家里势单力薄，父亲植物人，母亲身体也不好，你瞬间感到前途灰暗，人生无望。
+
+你拿出打工很久积攒的积蓄聘请了私家侦探，最终得知刘周二人离婚也是逃避惩罚和赔偿的手段之一，而且刘导游是威胁周，说要将周的商业泄密昭告天下，而胁迫周替她顶罪的。什么商业秘密你却是不知道，侦探说这个情报需要额外加费用，你不感兴趣，也没有钱再支付了。
+
+在得知刘还在旅游公司工作，负责英国出境游后，特地向朋友借钱当作自己的存款以便于办理签证，透支信用卡用作旅费，找刘某算账。单独去旅行很容易被怀疑，遂索性以女友即将到英国学习为由拉上女友一起来到英国。在旅行团中，你不但看到了刘导游，还见到了她的前夫周明。冤有头债有主，你只想找刘导游质问当年的事情，质问这个让你几近家破人亡的凶手。
+
+你和苏柠虽然在一起很久了，但一直没有到达那一步，所以这次旅行你们也没有住在同一间房。
+
+【你的时间线】
+10月12日 19:00
+来到英国，入住酒店，女友苏柠在弹钢琴。你把她的行李搬进房间。又安置了自己的行李。终于等到了这个机会，于是你决定今晚就做个了断。
+
+10月12日 20:00
+你看到刘导游从房间出去了，就试着扭了扭她的门把手，不料门开了，于是你进入刘导游房间。随后你将安眠药撒在了刘导游的水杯里。后来回到苏柠房间等待苏柠。你掏出安眠药，想着接下来的复仇计划，不禁出了神。这时苏柠突然回来，你下意识地把安眠药扔进抽屉里关上抽屉。
+
+10月12日 22:00
+你回到自己房间，才意识到安眠药忘记带走，找机会再拿回来吧。
+
+10月13日 00:30
+你觉得安眠药药效该起了，就起身前往刘导游房间，刘导游房间还是没有锁，你推门进去，不料安眠药药效不够，刘导游从睡梦中惊醒。
+你亮明身份，和她对峙，威胁她如果不承认所犯的罪行并为此负责，就和她同归于尽。两人争执起来，刘导游像疯了一样扑过来咬你的手，你挣脱不开。
+你有着丰富的医学知识，这也是这段时间来为了复仇积累下来的。你抓住机会，狠狠一膝撞在她左上腹的位置。她痛苦的捂住肚子，松嘴倒了下去。这一膝，你基本确定会导致她的脾脏破裂，内出血而亡，而且她根本意识不到事情的严重性，在这异国他乡求医困难，她势必错过最佳的治疗时间（大约会在3到4小时后真正死亡）。再者，就算她不死，她也不会说出是你干的，毕竟做贼心虚。
+（你手上被咬的痕迹很深，建议你看情况选择需不需要为这个伤痕说谎，提供一个理由：你从小有癫痫的毛病，当晚你犯了病，犯病时很容易咬到舌头，于是你把手塞进嘴里以防这种情况。癫痫是你的确患有的病，只不过因为你一直吃药，很久没犯过病了，没人知道而已。你狠狠顶了她一膝盖，这必然是致命伤，千万别承认！）
+
+10月13日 5:00
+苏柠敲门，你赶紧假装自己没睡醒。苏柠说自己做了噩梦，于是你俩一起看电视到天亮。
+
+【提示】①你是凶手，请逃离抓捕。②建议不要对安眠药的事情撒谎，否则很容易暴露。`
+        },
+        su_ning: {
+            name: "苏柠",
+            desc: "21岁，大学生，钢琴专业，家境优渥。",
+            tasks: "🔍 你不是凶手，请洗脱嫌疑。<br>① 隐藏你拆下钢琴线、录制录音的动机。<br>② 不要暴露母亲照片背后的真相。<br>③ 支线任务：查出周明与自家企业危机的关联。",
+            script: `【苏柠 · 二十一岁 · 大学生】
+
+你外形靓丽，家境优渥，父母都是商人，从小富养，但并不娇气。你很有钢琴天赋，在大学里学习钢琴专业，梦想成为一名演奏家。在外人眼中的你单纯可爱，热情大方，朋友很多，还俘获了大学校草柏渡昀的心，你们交往一年有余，虽然他家境普通，但你们感情很好。因本科毕业后有望前往英国攻读硕士研究生，而与男友柏渡昀一起来英国旅游。
+
+但事实上，你并没有那么单纯，虽然父母将你保护的很好，但你还是从小目睹了商场的尔虞我诈，三年前，你父亲的合伙人——周明，违背约定出卖了商业机密，因此获取大量利益。而你家的企业却遭遇重大危机，你的母亲甚至患上抑郁症，结束了自己的生命，但你却没有告诉任何人，甚至男友柏渡昀，而是选择用自己的力量改变家里的状况。
+
+由于家庭条件下降，你出国留学的梦想恐怕难以实现，但是你不知情的男友却强烈要求陪你一同去英国，你没有理由拒绝，只得答应，顺便散心。旅行的准备工作都是由柏渡昀做的，所以你直到旅行团在北京集合的时候才发现刘导游居然是周明的妻子（她不认识你，你当时也不知道刘和周离婚了）。你知道直接找周明肯定问不出来什么，从妻子下手可能是个好主意，看看从她嘴里能不能套出话来。在旅途中，你经常接近刘导游，跟她聊关于她家庭的事情，还偷偷录了音，但她都没有正面回答你。
+
+你和柏渡昀虽然在一起很久了，但一直没有到达那一步，所以这次旅行你们也没有住在同一间房。
+
+【你的时间线】
+10月12日 19:00
+和大家一起进入酒店，柏渡昀帮你领取了房卡，并将行李搬进了房间。你则在酒店大厅弹奏了钢琴，围观的人都拍手叫好。
+（可暂时隐瞒的信息：你在众人散去后趁酒店服务人员不备拆下了一条钢琴线，因为你以后打算会和刘、周对峙，以备不时之需。）
+
+10月12日 21:30
+回到房间，在走廊看到蔺可可和周明在交谈，两人似乎很熟，蔺可可很动情，你怕被周明发现，躲在一边。柏渡昀在房间等你，你们一起欣赏了今天拍的照片，聊了聊天，柏渡昀于22:00回到他自己的房间。
+
+10月13日 03:00
+你噩梦惊醒，隐隐约约又听到了门外有人走动的声音，更加睡不着了。起来看到了母亲的照片，悲从心中来，你便决定今晚找导游摊牌。并做了相应计划。
+
+10月13日 04:00
+你出发前往导游房间，你正准备敲门，却听到里面有说话的声音，你便转身回去了。
+
+10月13日 05:00
+你又前往了刘导游的房间，敲了敲门，没人理，试着拧动门把手，却发现竟然能打开。你走进去，里面很黑，只能隐约看到刘导游躺在床上，安静的连呼吸声都没有。你凑近一看，发现刘导游躺在床上，已经死亡。
+你自己只身找导游，嫌疑重大，没敢报警。由于害怕，你去了柏渡昀房间，柏渡昀还没有起床，你说自己做了噩梦，于是你俩就躺在床上看电视一直到八点。
+
+【支线任务】你不是凶手，请洗脱嫌疑。完成支线任务的同时，要牢记自己的主线任务哟。`
+        },
+        lin_keike: {
+            name: "蔺可可",
+            desc: "30岁，大学教师，女博士。",
+            tasks: "💢 你不是凶手，请洗脱嫌疑。<br>① 隐藏你曾与刘导游扭打并揪掉头发的事实。<br>② 手臂划伤可适当解释。<br>③ 保护周明，不要暴露情感。",
+            script: `【蔺可可 · 三十岁 · 大学教师】
+
+你是一位三十岁的女博士，年轻有为的大学教师。柏渡昀是你们学院的学生，因为他是校草而对他早有耳闻，虽然他估计不认识你。你知道他领了贫困助学金，却疑惑他为什么总有钱到处旅行。正好你们这次在一个旅行团，好奇的你可以一探究竟。
+
+不过这并不是你这次旅行的真正理由。你未婚，在一次聚会中认识周明，被他的深沉眼神杀俘获，加上他事业有成，你喜欢上了他。得知他已结婚非常遗憾，但仍然关注他。前些日子知道他离婚了，以为你有了机会。但却听说他受到了前妻的陷害而有可能身陷囹圄。于是你加入了他前妻刘导游的旅行团，想为了周明找到刘导游的把柄，让刘导游伏法。却意外发现周明也在旅行团里。
+
+【你的时间线】
+10月12日 19:00
+来到酒店，收拾好行李后到大厅听苏柠弹钢琴。
+
+10月12日 21:00
+你回到房间，并和周明在走廊见了一面，你说要为他报复刘导游，他不让你这样做。你们互相安慰了很久。半小时后你与周明分别，回了房间。
+
+10月13日 01:40
+你来到刘导游的房间，你下意识扭了一下门把手，本以为没有用，却发现能打开。你进了门，刘导游坐在床边有些憔悴。你和她说了你的来意，忍不住和她吵了起来。你才知道她是个泼妇，她大骂你们一个个都别想好过，顺手抓起剪刀就划破了你的胳膊，你夺过剪刀，和她扭打在一起，但你不想杀她，没敢用剪刀，扭打中你揪掉了她很多头发，这才把她放倒，转身离开。她好像有点累，骂了你几句，没有追上来。
+
+10月13日 02:00
+经历了刚刚的事情，你回到房间给周明发了短信，在不安中睡着了。
+
+【提示】你不是凶手，请洗脱嫌疑。`
+        },
+        zhou_ming: {
+            name: "周明",
+            desc: "45岁，商人。",
+            tasks: "🔪 你不是凶手，但曾尝试勒颈（尸体已死）。<br>① 隐藏你买通服务员破坏门锁的事实。<br>② 不要承认你曾用鱼线勒过死者。<br>③ 保护自己商业泄密的秘密。",
+            script: `【周明 · 四十五岁 · 商人】
+
+因为利欲熏心，你泄露了合作伙伴苏某的商业机密，导致其几乎家破人亡。当然，你一个人做不了这些，你本性懦弱。你的前妻刘导游才是一切的幕后智囊。
+
+后来刘导游无证驾驶撞了人，以威胁你要将你泄露商业机密的事情昭告天下为由，让你当替罪羊。并且为保护财产利益与你离婚，以逃脱车祸的惩罚和赔偿。
+
+虽然你并不是什么正直之士，但仍为曾经犯下的错误感到后悔，多行不义必自毙，没想到竟是最亲近的妻子让你尝到苦果。刘导游处处威胁、压制你，让你感到坐立难安。你屡次想和刘导游谈谈，但她居然拒绝你的对话。再下去事情暴露，不仅你要蹲大狱，你辛苦打拼的事业也要烟消云散。为此，你起了杀心，你觉得，杀人可以隐瞒，但这满肚子祸水的女人迟早会让你身败名裂。
+
+蔺可可是你的追求者，在得知你已婚后没有打扰你，你离婚后，来找你，并得知了关于车祸的事情，她一心要为你伸张，但你对她并没有感情，也不想耽误她，于是没有多说。
+
+刘导游是负责英国出境游的，你在即将入住的酒店买通关系，让服务员在刘导游的房间做好手脚，把门锁弄坏，虽然刷房卡有反应，但不用刷房卡也可以扭把手进去，如果再次沟通不成，你就准备潜入房间干掉她。而刘导游长期住酒店，刷房卡已成习惯，很难发现门锁坏了的事情。就算她发现了，也扯不到你身上。
+
+【你的时间线】
+10月12日 19:00
+来到酒店。再次找刘导游谈话被拒绝。随后到大厅听苏柠弹钢琴，和蔺可可约定今晚见面。
+
+10月12日 20:30
+回房间收拾东西。
+
+10月12日 21:00
+和蔺可可见面交谈，她说要为你去找刘导游，虽然你知道蔺可可是爱你的，但你不希望不相关的人卷进来，所以拒绝了，只是诉了诉苦。聊了半小时，你俩分别回到了房间。
+
+10月13日 2:00
+你收到了蔺可可的短信，她去找了刘导游并且被刁难了。你对刘导游的所作所为终于忍无可忍。
+
+10月13日 3:55
+你到了她的房间，打开了门。你发现刘导游躺在床上，却醒着，发现了你。你感觉她很虚弱，你逼问她到底要怎么样，你说了很多，她却没点反应，只是喃喃的念叨："别烦我，滚，滚，全都滚。"你一气之下，掏出准备好的鱼线，勒住了刘导游的脖子，不过令你诧异的是，刘导游竟然没反抗，甚至没点动静。你松手查看，却发现她已然是死了。不可能是你杀的，你基本还没使劲呢。你吓了一条，逃回了房间。回到房间的时候大概是4:20。
+
+【提示】你不是凶手，请洗脱嫌疑。`
+        }
+    };
+
+    // 第一轮线索
+    const CLUES_ROUND1 = [
+        { title: "【苏柠房间】", content: "苏柠和导游交谈的一段录音，录音时间是在这几天的旅途中，其中苏柠不断向导游提问，问的都是关于刘导游家庭的私人问题，而导游则有些不耐烦。" },
+        { title: "【柏渡昀房间】", content: "①柏渡昀和苏柠的旅行社报名和签证办理手续。②一封黑信封的信，没有任何署名，里面的内容：'刘周二人离婚是为了逃避车祸的惩罚和赔偿的手段，而且刘导游威胁周要将周的商业泄密的事情昭告天下，而胁迫周替她顶罪的。如果需要知道商业秘密的具体内容，请联系我们另交费用。'" },
+        { title: "【蔺可可手机】", content: "收到一则短信，来自蔺可可的闺蜜：可可，你知道吗？他终于离婚了。时间在两周之前。" },
+        { title: "【周明手机】", content: "一条来自英国的短信，说'先生，门锁我已处理好。'" }
+    ];
+
+    // 第二轮线索
+    const CLUES_ROUND2 = [
+        { title: "【大厅】", content: "钢琴少了一根弦。" },
+        { title: "【苏柠房间】", content: "①苏柠母亲的照片，照片背面用红笔写了一个'周'字。②一根钢琴弦，和一把钳子。③有安眠效果的药。" },
+        { title: "【柏渡昀房间】", content: "①借款单据、转账单据、欠钱两万元的信用卡。②手上有很深的牙印。③一瓶抗癫痫药。" },
+        { title: "【蔺可可房间】", content: "①一把沾血的剪刀。②手机短信：'周大哥，我刚刚去了她的屋子，我......感到害怕，具体情况明天再和你说。'③手臂新划伤。" },
+        { title: "【周明房间】", content: "钓鱼的工具，鱼竿鱼线等等。" }
+    ];
+
+    // 真相解析 + 结局文本
+    const TRUTH_TEXT = `【无间旅途】案件解析<br><br>
+    凶手是柏渡昀。<br>
+    死者真正的死因是脾脏破裂导致的内出血过多而死，死者脾脏处，即左上腹曾受过重击，导致脾脏破裂。柏渡昀在00:30与刘导游对峙时，狠狠一膝撞在其左上腹，造成致命伤，约3-4小时后死亡。其他嫌疑人虽各有动作：蔺可可揪掉头发、剪刀划伤；周明用鱼线勒颈但死者已死；苏柠曾意图但未动手。警方根据牙印、安眠药、抗癫痫药以及柏渡昀的借款记录锁定其为真凶。<br><br>
+    【完整时间线还原】<br>
+    20:00 柏渡昀在刘导游水杯下安眠药。<br>
+    00:30 柏渡昀与刘争执，膝撞致命。<br>
+    01:40 蔺可可进入房间与刘扭打，揪掉头发、划伤手臂。<br>
+    03:55 周明进入房间用鱼线勒颈（其时刘已濒死或已死）。<br>
+    05:00 苏柠进入房间发现尸体。<br>
+    核心证据：柏渡昀手上的牙印（与刘导游咬痕吻合）、抗癫痫药（掩饰咬痕）、安眠药与借款单揭示动机。`;
+
+    const ENDING_SUCCESS = `【结局 · 真相大白】<br>
+    你们成功指认真凶——柏渡昀。法庭上，他承认因父亲被撞成植物人、家庭破碎而痛恨刘导游，最终失控杀人。周明因商业泄密与买通门锁被调查，蔺可可受到警告，苏柠放下了仇恨。一场旅途终点，正义虽迟但到。所有暗流终被阳光照透。`;
+
+    const ENDING_FAIL = `【结局 · 迷雾未散】<br>
+    你们未能找到真凶。柏渡昀逃脱了法律制裁，继续与苏柠维持表面平静，但内心永远背负罪孽。周明惶惶不可终日，蔺可可陷入自我怀疑。刘导游之死成为悬案，无间旅途，终无归途。`;
+
+    let currentStep = 0;
+    let selectedRoleKey = null;
+    let playerAlias = "";
+    let gameStarted = false;
+
+    const panels = {
+        0: document.getElementById("step0"),
+        1: document.getElementById("step1"),
+        2: document.getElementById("step2"),
+        3: document.getElementById("step3"),
+        4: document.getElementById("step4"),
+        5: document.getElementById("step5"),
+        6: document.getElementById("step6")
+    };
+    const stepDivs = document.querySelectorAll(".step");
+
+    function updateNavLock() {
+        stepDivs.forEach((el, idx) => {
+            if (gameStarted) {
+                if (idx === 0 || (idx === 6 && currentStep < 5)) el.classList.add("disabled");
+                else if (idx > currentStep && idx !== 6) el.classList.add("disabled");
+                else el.classList.remove("disabled");
+            } else {
+                if (idx === 0) el.classList.remove("disabled");
+                else el.classList.add("disabled");
+            }
+        });
+    }
+
+    function setStep(step, allowSkip = false) {
+        if (step < 0 || step > 6) return;
+        if (gameStarted) {
+            if (step === 0) { alert("游戏已开始，无法返回选角。如需重开请点击「重开旅途」。"); return; }
+            if (step === 6 && currentStep < 5 && !allowSkip) { alert("请先完成圆桌深推再投票。"); return; }
+            if (step > currentStep + 1 && step !== 6 && !allowSkip) { alert("请按顺序进行游戏。"); return; }
+        }
+        for (let i = 0; i <= 6; i++) if (panels[i]) panels[i].classList.add("hidden");
+        if (panels[step]) panels[step].classList.remove("hidden");
+        stepDivs.forEach((el, idx) => { if (idx === step) el.classList.add("active"); else el.classList.remove("active"); });
+        currentStep = step;
+        updateNavLock();
+        if (step === 1 && selectedRoleKey) loadRoleScript();
+        if (step === 3) renderClues(CLUES_ROUND1, "cluesRound1");
+        if (step === 4) renderClues(CLUES_ROUND2, "cluesRound2");
+        if (step === 6) populateVote();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderRoleSelector() {
+        const container = document.getElementById("roleGrid");
+        container.innerHTML = "";
+        for (let [key, role] of Object.entries(ROLES)) {
+            const div = document.createElement("div");
+            div.className = "role-card";
+            div.innerHTML = `<div class="role-name">${role.name}</div><div class="role-desc">${role.desc}</div>`;
+            div.dataset.key = key;
+            div.addEventListener("click", () => {
+                if (gameStarted) return;
+                document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
+                div.classList.add("selected");
+                selectedRoleKey = key;
+            });
+            container.appendChild(div);
+        }
+    }
+
+    function confirmRole() {
+        if (gameStarted) { alert("游戏已开始，无法重选。"); return; }
+        if (!selectedRoleKey) { alert("请选择你的角色！"); return; }
+        const alias = document.getElementById("playerAlias").value.trim();
+        playerAlias = alias || ROLES[selectedRoleKey].name;
+        const role = ROLES[selectedRoleKey];
+        document.getElementById("roleNameTitle").innerHTML = `🚩 ${role.name} · 「${playerAlias}」 🚩`;
+        document.getElementById("roleTasks").innerHTML = role.tasks;
+        gameStarted = true;
+        loadRoleScript();
+        setStep(1);
+    }
+
+    function loadRoleScript() {
+        const role = ROLES[selectedRoleKey];
+        document.getElementById("scriptContent").innerHTML = role.script.replace(/\n/g, '<br>');
+    }
+
+    function renderClues(cluesArray, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        cluesArray.forEach((clue, idx) => {
+            const expandId = `clue_${containerId}_${idx}`;
+            const div = document.createElement("div");
+            div.className = "clue-item";
+            div.innerHTML = `
+                <div class="clue-title">
+                    <span>📜 ${clue.title}</span>
+                    <span style="font-size:0.7rem;">▼ 点击展开</span>
+                </div>
+                <div id="${expandId}" class="clue-content hidden">${clue.content}</div>
+            `;
+            const titleDiv = div.querySelector(".clue-title");
+            titleDiv.style.cursor = "pointer";
+            titleDiv.addEventListener("click", () => {
+                const contentDiv = document.getElementById(expandId);
+                contentDiv.classList.toggle("hidden");
+            });
+            container.appendChild(div);
+        });
+    }
+
+    function populateVote() {
+        const select = document.getElementById("murderVote");
+        select.innerHTML = '<option value="">—— 指认真凶 ——</option>';
+        for (let [key, role] of Object.entries(ROLES)) {
+            select.innerHTML += `<option value="${role.name}">${role.name}</option>`;
+        }
+    }
+
+    function revealEnding() {
+        const vote = document.getElementById("murderVote").value;
+        if (!vote) { alert("请投票指认真凶"); return; }
+        const endingArea = document.getElementById("endingArea");
+        const truthDiv = document.getElementById("truthContent");
+        const endingDiv = document.getElementById("endingText");
+        truthDiv.innerHTML = TRUTH_TEXT;
+        if (vote === "柏渡昀") {
+            endingDiv.innerHTML = ENDING_SUCCESS;
+        } else {
+            endingDiv.innerHTML = ENDING_FAIL;
+        }
+        endingArea.classList.remove("hidden");
+        endingArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function restartGame() {
+        if (confirm("重开旅途将清空所有进度，是否继续？")) {
+            selectedRoleKey = null;
+            playerAlias = "";
+            gameStarted = false;
+            document.getElementById("playerAlias").value = "";
+            document.querySelectorAll(".role-card").forEach(c => c.classList.remove("selected"));
+            document.getElementById("publicNote").value = "";
+            document.getElementById("deepNote").value = "";
+            document.getElementById("murderVote").value = "";
+            document.getElementById("endingArea").classList.add("hidden");
+            setStep(0);
+        }
+    }
+
+    function bindEvents() {
+        document.getElementById("confirmRoleBtn").addEventListener("click", confirmRole);
+        document.getElementById("toDiscussBtn").addEventListener("click", () => setStep(2));
+        document.getElementById("backToScriptFromDiscuss").addEventListener("click", () => setStep(1));
+        document.getElementById("toFirstClueBtn").addEventListener("click", () => setStep(3));
+        document.getElementById("backToDiscussFrom1").addEventListener("click", () => setStep(2));
+        document.getElementById("toSecondClueBtn").addEventListener("click", () => setStep(4));
+        document.getElementById("backToFirstFromSecond").addEventListener("click", () => setStep(3));
+        document.getElementById("toRoundTableBtn").addEventListener("click", () => setStep(5));
+        document.getElementById("backToSecondFromRound").addEventListener("click", () => setStep(4));
+        document.getElementById("toVoteBtn").addEventListener("click", () => setStep(6, true));
+        document.getElementById("revealBtn").addEventListener("click", revealEnding);
+        document.getElementById("restartBtn").addEventListener("click", restartGame);
+        stepDivs.forEach((el, idx) => {
+            el.addEventListener("click", () => {
+                if (el.classList.contains("disabled")) {
+                    if (idx === 0) alert("游戏已开始，如需重开请点击重开旅途");
+                    else if (idx === 6) alert("请先完成圆桌深推");
+                    else alert("请按顺序进行");
+                    return;
+                }
+                if (idx === 1 && !selectedRoleKey) { alert("请先在选角界面选择角色"); return; }
+                setStep(idx);
+            });
+        });
+    }
+
+    function init() {
+        renderRoleSelector();
+        bindEvents();
+        setStep(0);
+    }
+    init();
+</script>
+</body>
+</html>
